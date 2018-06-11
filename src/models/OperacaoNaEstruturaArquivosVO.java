@@ -6,6 +6,9 @@ public class OperacaoNaEstruturaArquivosVO {
 	private int codOperacao;
 	private int qtdBlocos;
 	
+	public static final int OP_EXCLUIR = 1;
+	public static final int OP_CRIAR = 0;
+	
 	public OperacaoNaEstruturaArquivosVO(int idProcesso, int codOperacao,String nomeArquivo) {
 		this.idProcesso = idProcesso;
 		this.codOperacao = codOperacao;

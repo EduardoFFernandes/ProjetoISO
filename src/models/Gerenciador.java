@@ -1,6 +1,6 @@
 package models;
 
-public abstract class Gerenciador {
+public abstract class Gerenciador implements Runnable{
 
 	private String nome;
 	private int uid;
@@ -17,7 +17,5 @@ public abstract class Gerenciador {
 	public int getUid() {
 		return uid;
 	}
-	
-//	public abstract void print();
 	
 }

@@ -21,7 +21,13 @@ public enum Constantes {
 	BOTAO_TXT_INICIAR_SO("<html>Iniciar<br/>SO</html>"),
 	
 	NAO_SELECIONADO_ARQ_PROCESSOS("Não foi selecionado um arquivo de Processos."),
-	NAO_SELECIONADO_ARQ_ARQUIVOS("Não foi selecionado um arquivo da Estrutura de Arquivos.")
+	NAO_SELECIONADO_ARQ_ARQUIVOS("Não foi selecionado um arquivo da Estrutura de Arquivos."),
+	
+	DISCO_PROCESSO_SEM_PERMISSAO("Processo não possui permissão para excluir o arquivo: "),
+	DISCO_MAPA_OCUPACAO("Mapa de ocupação do disco: "),
+	
+	
+	NEWLINE("\n")
 	
 	;
 	

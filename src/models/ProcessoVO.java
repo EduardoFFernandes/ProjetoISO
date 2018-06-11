@@ -15,7 +15,7 @@ public class ProcessoVO {
 	
 	
 	public ProcessoVO(int tempoInicializacao, int prioridade, int tempoProcessador, int blocosEmMemoriaRAM,
-			int reqCodImpressora, int reqScanner, int reqModem, int reqCodDisco) {
+			int reqCodImpressora, int reqScanner, int reqModem, int reqCodDisco,int PID) {
 
 		this.tempoInicializacao = tempoInicializacao;
 		this.prioridade = prioridade;
@@ -25,6 +25,7 @@ public class ProcessoVO {
 		this.reqScanner = reqScanner;
 		this.reqModem = reqModem;
 		this.reqCodDisco = reqCodDisco;
+		this.PID = PID;
 	}
 	
 	public int getTempoInicializacao() {
@@ -51,6 +52,7 @@ public class ProcessoVO {
 	public int getReqCodDisco() {
 		return reqCodDisco;
 	}
-	
-	
+	public int getPID() {
+		return PID;
+	}
 }

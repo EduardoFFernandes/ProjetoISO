@@ -61,6 +61,7 @@ public class ManipuladorDeArquivos {
 	@SuppressWarnings("unchecked")
 	private boolean validaProcessos() throws IOException {
 		BufferedReader leitorBuffer = getBufferedReaderFromFile(aSerValidado);
+		int processId = 0;
 
 		String linha;
 		while ((linha = leitorBuffer.readLine()) != null) {
@@ -77,8 +78,9 @@ public class ManipuladorDeArquivos {
 				}
 			}
 			ProcessoVO processo = new ProcessoVO(getInt(valores[0]), getInt(valores[1]), getInt(valores[2]),
-					getInt(valores[3]), getInt(valores[4]), getInt(valores[5]), getInt(valores[6]), getInt(valores[7]));
+					getInt(valores[3]), getInt(valores[4]), getInt(valores[5]), getInt(valores[6]), getInt(valores[7]), processId);
 			objetosValidados.add(processo);
+			processId++;
 		}
 
 		leitorBuffer.close();
@@ -110,7 +112,7 @@ public class ManipuladorDeArquivos {
 			if(!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2]) ){
 				return false;
 			}
-			ArquivoVO arquivo = new ArquivoVO(valores[0], getInt(valores[1]), getInt(valores[2]));
+			ArquivoVO arquivo = new ArquivoVO(valores[0], getInt(valores[1]), getInt(valores[2]), ArquivoVO.ARQUIVO_PADRAO);
 			arquivosValidados.add(arquivo);
 		}
 

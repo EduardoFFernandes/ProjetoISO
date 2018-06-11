@@ -4,8 +4,8 @@ import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
+import gerenciador.ModuloSO;
 import models.ArquivoVO;
 import models.Constantes;
 import util.ManipuladorDeArquivos;
@@ -22,9 +22,9 @@ public class Main {
 	private File arquivoDeProcessos = null;
 	private File arquivoEstruturaArquivos = null;
 
-	private List<?> processos;
-	private List<?> operacoesEstruturaArq;
-	private List<ArquivoVO> arquivosEmDisco;
+	private ArrayList<?> processos;
+	private ArrayList<?> operacoesEstruturaArq;
+	private ArrayList<ArquivoVO> arquivosEmDisco;
 	
 	private ManipuladorDeArquivos manipulador;
 	
@@ -64,7 +64,10 @@ public class Main {
 			telaPrincipal.printaNoTerminal("Arquivos Iguais.",DispatcherWindow.RED);//TODO: retirar a string daqui.
 			return;
 		}
-		telaPrincipal.printaNoTerminal("SO iniciado Sem problemas",DispatcherWindow.DARK_GREEN);//TODO: retirar a string daqui.
+		telaPrincipal.printaNoTerminal("Iniciando SO...",DispatcherWindow.DARK_GREEN);//TODO: retirar a string daqui.
+		
+		ModuloSO SO = new ModuloSO("SO",0, processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
+		SO.run();
 	}
 	
 	public void validaArquivo(File aSerValidado,String tipoArquivo){
