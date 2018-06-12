@@ -31,6 +31,8 @@ public class Main {
 	public static final String ARQ_PROCESSOS = "Processos";
 	public static final String ARQ_ESTRUTURA_ARQUIVOS = "Arquivos";
 	public static final String INICIAR_SO = "iniciarSO";
+	
+	private Thread soThread;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -67,7 +69,9 @@ public class Main {
 		telaPrincipal.printaNoTerminal("Iniciando SO...",DispatcherWindow.DARK_GREEN);//TODO: retirar a string daqui.
 		
 		ModuloSO SO = new ModuloSO("SO",0, processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
-		SO.run();
+		soThread = new Thread(SO);
+		soThread.setDaemon(true);
+		soThread.start();
 	}
 	
 	public void validaArquivo(File aSerValidado,String tipoArquivo){
