@@ -2,14 +2,11 @@ package gerenciador;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import models.ArquivoVO;
 import models.Gerenciador;
 import models.OperacaoNaEstruturaArquivosVO;
-import models.OperacaoNaEstruturaArquivosVO.Operacoes;
 import models.ProcessoVO;
 import view.DispatcherWindow;
 
@@ -22,9 +19,8 @@ public class ModuloSO extends Gerenciador {
 	private volatile ModuloDisco HD1;
 	private volatile ModuloCPU CPU0;
 	
-	private Thread moduloDisco;
 	private Thread threadCPU;
-	Semaphore esperaFilaDeProcessos,esperaCPU;
+	Semaphore esperaCPU;
 
 	@SuppressWarnings("unchecked")
 	public ModuloSO(String nome, int uid, ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
@@ -37,8 +33,6 @@ public class ModuloSO extends Gerenciador {
 		HD1 = new ModuloDisco("HD1", 1, qtdBlocosDisco, this, arquivosEmDisco);
 		CPU0 = new ModuloCPU("CPU0",1,esperaCPU);
 
-		
-		esperaFilaDeProcessos = new Semaphore(1);
 		esperaCPU = new Semaphore(1);
 	}
 
@@ -46,22 +40,10 @@ public class ModuloSO extends Gerenciador {
 	public void run() {
 
 		// inicia HD;
-		moduloDisco = new Thread(HD1);
-		moduloDisco.setDaemon(true);
-		moduloDisco.start();
 		this.operacoesEstruturaArq.forEach(op -> {
-//			HD1.executaOperacao(op);
-			HD1.op = op;
-			HD1.operacaoThread = Operacoes.OP_EXECUTAR.getValue();
-			synchronized (HD1) {
-				HD1.notify();				
-			}
+			HD1.executaOperacao(op);
 		});
-//		HD1.printSituacaoDisco();
-		HD1.operacaoThread = Operacoes.OP_IMPRIMIR.getValue();
-		synchronized (HD1) {
-			HD1.notify();				
-		}
+			HD1.printSituacaoDisco();
 		// inicia RAM;
 
 		// inicia recursos;
@@ -82,18 +64,15 @@ public class ModuloSO extends Gerenciador {
 		boolean filaVazia = false;
 		while (!filaVazia) {
 			//pedir para a fila de processos calcular qual o proximo processo
-			//ProcessoVO p; 
-			//gerenciadorDeFilas.calculaProximoProcesso();
-			esperaFilaDeProcessos.acquire();
-//			CPU.setProcesso(gerenciadorDeFilas.pegaProximoProcesso());
+			//ProcessoVO p = gerenciadorDeFilas.calculaProximoProcesso();
+//			CPU0.setProcesso(p);
 			threadCPU = new Thread(CPU0);
 			//pegar o proximo processo da fila de processos;
 			// verifica os recursos que o processo precisa.
-			// CPU.setNovoProcesso(p);
 			threadCPU.start();
 			esperaCPU.acquire();
 			// verifica se a thread foi interrompida
-			// pega o processoX, diminui o contador
+			// pega o timer e aumenta em 1
 			// Se o processo terminar, libera os recursos
 		}
 	}

@@ -6,21 +6,8 @@ public class OperacaoNaEstruturaArquivosVO {
 	private int codOperacao;
 	private int qtdBlocos;
 	
-//	public static final int OP_EXCLUIR = 1;
-//	public static final int OP_CRIAR = 0;
-//	public static final int OP_IMPRIMIR = 2;
-	public enum Operacoes{
-		OP_EXCLUIR(0),OP_CRIAR(1),OP_IMPRIMIR(100),OP_EXECUTAR(200),OP_DESLIGAR(900);
-		
-		private int i;
-		private Operacoes(int i){
-			this.i = i;
-		}
-		
-		public int getValue(){
-			return i;
-		}
-	}
+	public static final int OP_EXCLUIR = 1;
+	public static final int OP_CRIAR = 0;
 	
 	public OperacaoNaEstruturaArquivosVO(int idProcesso, int codOperacao,String nomeArquivo) {
 		this.idProcesso = idProcesso;
