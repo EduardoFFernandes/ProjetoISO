@@ -5,6 +5,7 @@ public class ProcessoVO {
 	private int prioridade;
 	private int tempoProcessador;
 	private int blocosEmMemoriaRAM;
+	private int inicioProcessoRAM;
 	private int ReqCodImpressora;
 	private int reqScanner;
 	private int reqModem;
@@ -26,6 +27,8 @@ public class ProcessoVO {
 		this.reqModem = reqModem;
 		this.reqCodDisco = reqCodDisco;
 		this.PID = PID;
+		
+		this.inicioProcessoRAM = -1;
 	}
 	
 	public int getTempoInicializacao() {
@@ -36,6 +39,9 @@ public class ProcessoVO {
 	}
 	public int getTempoProcessador() {
 		return tempoProcessador;
+	}
+	public void diminuiTempoProcessador(){
+		this.tempoProcessador--;
 	}
 	public int getBlocosEmMemoriaRAM() {
 		return blocosEmMemoriaRAM;
@@ -55,4 +61,13 @@ public class ProcessoVO {
 	public int getPID() {
 		return PID;
 	}
+
+	public int getInicioProcessoRAM() {
+		return inicioProcessoRAM;
+	}
+
+	public void setInicioProcessoRAM(int inicioProcessoRAM) {
+		this.inicioProcessoRAM = inicioProcessoRAM;
+	}
+
 }

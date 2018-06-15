@@ -61,10 +61,7 @@ public class ModuloDisco  {
 				}
 			}
 		}
-		if (salvou) {
-			return true;
-		}
-		return false;
+		return salvou;
 	}
 
 	public boolean deleteFile(ArquivoVO arquivo) {
