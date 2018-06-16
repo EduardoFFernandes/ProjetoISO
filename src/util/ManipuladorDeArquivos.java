@@ -40,6 +40,7 @@ public class ManipuladorDeArquivos {
 	 * 
 	 * 
 	 * @return	Se o arquivo selecionado é valido ou não.
+	 
 	 * */
 	public boolean validaArquivo() throws IOException {
 
