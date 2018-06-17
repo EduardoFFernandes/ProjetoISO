@@ -1,4 +1,4 @@
-package gerenciador;
+package modulos;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -19,6 +19,9 @@ public class ModuloSO extends Gerenciador {
 	private volatile ModuloCPU CPU0;
 	private ModuloDisco HD1;
 	private ModuloMemoria RAM;
+	private ModuloRecursos REC;
+	private ModuloProcessos gerenciadorDeFilas;
+	
 	private int CLOCK;
 	
 	private Thread threadCPU;
@@ -33,8 +36,10 @@ public class ModuloSO extends Gerenciador {
 		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
 		
 		HD1 = new ModuloDisco("HD1", 1, qtdBlocosDisco, this, arquivosEmDisco);
+		gerenciadorDeFilas = new ModuloProcessos();
 		CPU0 = new ModuloCPU("CPU0",1,esperaCPU);
 		RAM = new ModuloMemoria();
+		REC = new ModuloRecursos();
 		
 		CLOCK = 0;
 
@@ -61,37 +66,34 @@ public class ModuloSO extends Gerenciador {
 
 	public void filaProcessosLoop() throws InterruptedException {
 		ProcessoVO processoAtual = null;
-		//pedir para a fila de processos calcular qual o proximo processo
-		while(processoAtual != null){
-//		while ((processoAtual = gerenciadorDeFilas.calculaProximoProcesso()) != null) {
-			//verifica se tem algum processo que vai iniciar nesse exato CLOCK
-			////se sim, adiciona o mesmo no gerenciadorDeFilas
+		while ((processoAtual = gerenciadorDeFilas.pegaProximoProcesso()) != null || !processos.isEmpty()) {
+			if(processoAtual == null) {
+				//TODO:printa que não existem processos no gerenciador de filas mas nem todos os processos foram inicializados
+				clockTick();
+				continue;
+			}
 			if(!RAM.isProcessoEmMemoria(processoAtual)){//Significa que é a primeira vez que processo roda no processador
-				boolean inicializou = false;
 				if(!RAM.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
-					//printa na tela que o processo não pode ser alocado por falta de RAM
-					//recoloca ele no gerenciador de filas
+					//TODO:printa na tela que o processo não pode ser alocado por falta de RAM
+					clockTick();
 					continue;
 				}
 				//aloca recursos
-				//inicializou = recursos.AlocaRecursos(p);
-				if(!inicializou){
-					//printa na tela que o processo não pode ser alocado por falta de recursos
-					//recoloca ele no gerenciador de filas
+				if(!REC.alocaTodosOsRecursosParaProcesso(processoAtual)){
+					//TODO:printa na tela que o processo não pode ser alocado por falta de recursos
+					clockTick();
 					continue;
 				}
 			}
-//			CPU0.setProcesso(p);
+			CPU0.setProcesso(processoAtual);
 			threadCPU = new Thread(CPU0);
-			//pegar o proximo processo da fila de processos;
-			// verifica os recursos que o processo precisa.
 			threadCPU.start();
 			esperaCPU.acquire();
-			// verifica se a thread foi interrompida
-			CLOCK++;
-			processoAtual.diminuiTempoProcessador();
-			wait(1000);//simula processador lento
+			
+			clockTick();
+			processoAtual.diminuiTempoProcessador();		
 			// Se o processo terminar, libera os recursos
+			verificaContinuidadeDoProcesso(processoAtual);	
 		}
 	}
 
@@ -115,4 +117,28 @@ public class ModuloSO extends Gerenciador {
 		}
 		return false;
 	}
+	
+	private void verificaProcessoInicializandoAgora() {
+		processos.forEach((pr)->{
+			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
+				gerenciadorDeFilas.adicionaProcesso(pr);//adiciona o mesmo às filas de processo
+				processos.remove(pr);// remove o mesmo dos processos que nao foram inicializados
+			}
+		});
+	}
+	
+	private void verificaContinuidadeDoProcesso(ProcessoVO pr) {
+		if(pr.getTempoProcessador()<1) {
+			gerenciadorDeFilas.removeProcesso(pr);
+			RAM.desalocaMemoria(pr);
+			REC.desacolaTodosOsRecursosDoProcesso(pr);
+		}
+	}
+	
+	private void clockTick() throws InterruptedException {
+		CLOCK++;
+		wait(1000);
+		verificaProcessoInicializandoAgora();
+	}
 }
+

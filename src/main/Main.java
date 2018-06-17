@@ -5,9 +5,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import gerenciador.ModuloSO;
 import models.ArquivoVO;
 import models.Constantes;
+import modulos.ModuloSO;
 import util.ManipuladorDeArquivos;
 import view.DispatcherWindow;
 
@@ -36,6 +36,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Main main = new Main();

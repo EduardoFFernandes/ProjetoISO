@@ -1,16 +1,16 @@
 package models;
 
 public class ProcessoVO {
-	private int tempoInicializacao;
+	private int tempoInicializacao;//em qual clock o processo vai inicializar
 	private int prioridade;
-	private int tempoProcessador;
-	private int blocosEmMemoriaRAM;
-	private int inicioProcessoRAM;
+	private int tempoProcessador;//quantos clocks o processo vai rodar
+	private int blocosEmMemoriaRAM;//quantidade de blocos em RAM
+	private int inicioProcessoRAM;//posicao do primeiro bloco na RAM
 	private int ReqCodImpressora;
 	private int reqScanner;
 	private int reqModem;
 	private int reqCodDisco;
-	private int PID; //quando o processo é iniciado o SO diz qual o ID do processo.
+	private int PID; //quando o SO é iniciado ,é gerado um PID.
 	
 	
 	

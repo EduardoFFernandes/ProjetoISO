@@ -1,4 +1,4 @@
-package gerenciador;
+package modulos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +14,8 @@ public class ModuloMemoria {
 	
 	ModuloMemoria(){
 		blocos = new int[TAMANH0_TOTAL_MEMORIA];
-		Arrays.fill(blocos,0);
 		processosEmMemoria = new ArrayList<>();
+		Arrays.fill(blocos,0);
 	}
 	
 	
