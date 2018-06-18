@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import models.ArquivoVO;
 import models.Constantes;
 import modulos.ModuloSO;
+import modulos.ModuloTelaPrincipal;
 import util.ManipuladorDeArquivos;
-import view.DispatcherWindow;
 
 /**
  * Classe Inicial do programa
@@ -18,7 +18,7 @@ import view.DispatcherWindow;
  * 
  * */
 public class Main {
-	private static DispatcherWindow telaPrincipal;
+	private static ModuloTelaPrincipal telaPrincipal;
 	private File arquivoDeProcessos = null;
 	private File arquivoEstruturaArquivos = null;
 
@@ -40,7 +40,7 @@ public class Main {
 			public void run() {
 				try {
 					Main main = new Main();
-					telaPrincipal = new DispatcherWindow(main);
+					telaPrincipal = new ModuloTelaPrincipal(main);
 					telaPrincipal.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,20 +56,20 @@ public class Main {
 
 	public void iniciarSO(){
 		if(arquivoDeProcessos == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS.getTexto(),DispatcherWindow.RED);
+			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS.getTexto(),ModuloTelaPrincipal.RED);
 			return;
 		}
 		if(arquivoEstruturaArquivos == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS.getTexto(),DispatcherWindow.RED);
+			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS.getTexto(),ModuloTelaPrincipal.RED);
 			return;
 		}
 		if(arquivoDeProcessos.equals(arquivoEstruturaArquivos)){
-			telaPrincipal.printaNoTerminal("Arquivos Iguais.",DispatcherWindow.RED);//TODO: retirar a string daqui.
+			telaPrincipal.printaNoTerminal("Arquivos Iguais.",ModuloTelaPrincipal.RED);//TODO: retirar a string daqui.
 			return;
 		}
-		telaPrincipal.printaNoTerminal("Iniciando SO...",DispatcherWindow.DARK_GREEN);//TODO: retirar a string daqui.
+		telaPrincipal.printaNoTerminal("Iniciando SO...",ModuloTelaPrincipal.DARK_GREEN);//TODO: retirar a string daqui.
 		
-		ModuloSO SO = new ModuloSO("SO",0, processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
+		ModuloSO SO = new ModuloSO(processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
 		soThread = new Thread(SO);
 		soThread.setDaemon(true);
 		soThread.start();
@@ -88,14 +88,14 @@ public class Main {
 					this.operacoesEstruturaArq = validados;
 					this.arquivosEmDisco = manipulador.getArquivosValidados();
 				}
-				telaPrincipal.printaNoTerminal(Constantes.arquivoValidado(aSerValidado.getName()), DispatcherWindow.DARK_GREEN);
+				telaPrincipal.printaNoTerminal(Constantes.arquivoValidado(aSerValidado.getName()), ModuloTelaPrincipal.DARK_GREEN);
 			}else{
 				invalidaArquivo(tipoArquivo);
-				telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), DispatcherWindow.RED);	
+				telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), ModuloTelaPrincipal.RED);	
 			}
 		} catch (Exception e) {
 			invalidaArquivo(tipoArquivo);
-			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), DispatcherWindow.RED);	
+			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), ModuloTelaPrincipal.RED);	
 		} 
 	}
 	public void invalidaArquivo(String tipoArquivo){

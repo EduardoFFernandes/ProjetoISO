@@ -1,6 +1,5 @@
 package modulos;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import models.ProcessoVO;

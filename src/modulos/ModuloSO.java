@@ -5,17 +5,15 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import models.ArquivoVO;
-import models.Gerenciador;
 import models.OperacaoNaEstruturaArquivosVO;
 import models.ProcessoVO;
-import view.DispatcherWindow;
 
-public class ModuloSO extends Gerenciador {
+public class ModuloSO implements Runnable {
 
 	private ArrayList<ProcessoVO> processos;
 	private ArrayList<OperacaoNaEstruturaArquivosVO> operacoesEstruturaArq;
 
-	private volatile DispatcherWindow telaPrincipal;
+	private volatile ModuloTelaPrincipal telaPrincipal;
 	private volatile ModuloCPU CPU0;
 	private ModuloDisco HD1;
 	private ModuloMemoria RAM;
@@ -28,16 +26,15 @@ public class ModuloSO extends Gerenciador {
 	Semaphore esperaCPU;
 
 	@SuppressWarnings("unchecked")
-	public ModuloSO(String nome, int uid, ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
-			ArrayList<ArquivoVO> arquivosEmDisco, DispatcherWindow telaPrincipal, int qtdBlocosDisco) {
-		super(nome, uid);
+	public ModuloSO(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
+			ArrayList<ArquivoVO> arquivosEmDisco, ModuloTelaPrincipal telaPrincipal, int qtdBlocosDisco) {
 		this.telaPrincipal = telaPrincipal;
 		this.processos = (ArrayList<ProcessoVO>) processos;
 		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
 		
-		HD1 = new ModuloDisco("HD1", 1, qtdBlocosDisco, this, arquivosEmDisco);
+		HD1 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
 		gerenciadorDeFilas = new ModuloProcessos();
-		CPU0 = new ModuloCPU("CPU0",1,esperaCPU);
+		CPU0 = new ModuloCPU("CPU0",1,esperaCPU,telaPrincipal);
 		RAM = new ModuloMemoria();
 		REC = new ModuloRecursos();
 		
@@ -66,6 +63,7 @@ public class ModuloSO extends Gerenciador {
 
 	public void filaProcessosLoop() throws InterruptedException {
 		ProcessoVO processoAtual = null;
+		verificaProcessoInicializandoAgora();
 		while ((processoAtual = gerenciadorDeFilas.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processoAtual == null) {
 				//TODO:printa que não existem processos no gerenciador de filas mas nem todos os processos foram inicializados
@@ -85,9 +83,11 @@ public class ModuloSO extends Gerenciador {
 					continue;
 				}
 			}
+			//TODO: printar na tela aqui o `dispatcher=>`
 			CPU0.setProcesso(processoAtual);
 			threadCPU = new Thread(CPU0);
 			threadCPU.start();
+			wait(100);
 			esperaCPU.acquire();
 			
 			clockTick();
@@ -132,11 +132,13 @@ public class ModuloSO extends Gerenciador {
 			gerenciadorDeFilas.removeProcesso(pr);
 			RAM.desalocaMemoria(pr);
 			REC.desacolaTodosOsRecursosDoProcesso(pr);
+			//TODO: printar na tela que o processo foi finalizado.
 		}
 	}
 	
 	private void clockTick() throws InterruptedException {
 		CLOCK++;
+		//TODO: printa clock
 		wait(1000);
 		verificaProcessoInicializandoAgora();
 	}

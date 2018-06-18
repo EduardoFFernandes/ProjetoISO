@@ -1,4 +1,4 @@
-package view;
+package modulos;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,7 +31,7 @@ import java.awt.Dimension;
  * 
  * @author tulio.matias		-	06/06/2018
  */
-public class DispatcherWindow extends JFrame implements ActionListener {
+public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 	
 	private Main mainListener;
 
@@ -59,7 +59,7 @@ public class DispatcherWindow extends JFrame implements ActionListener {
 	 * @throws BadLocationException
 	 * @see Jframe
 	 */
-	public DispatcherWindow(Main main) throws BadLocationException {
+	public ModuloTelaPrincipal(Main main) throws BadLocationException {
 		this.mainListener = main;
 		initialize();
 	}

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import models.ArquivoVO;
 import models.Constantes;
 import models.OperacaoNaEstruturaArquivosVO;
-import view.DispatcherWindow;
 
 public class ModuloDisco  {
 
@@ -14,7 +13,7 @@ public class ModuloDisco  {
 	private ModuloSO listenerSO;
 	private String[] blocos;
 
-	public ModuloDisco(String nome, int uid, int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<ArquivoVO> arquivos) {
+	public ModuloDisco(int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<ArquivoVO> arquivos) {
 		this.arquivos = arquivos;
 		this.qtdBlocosDisco = qtdBlocosDisco;
 		this.listenerSO = listenerSO;
@@ -117,7 +116,7 @@ public class ModuloDisco  {
 			} else {
 				// processo não é o que criou o arquivo e não é de tempo real
 				listenerSO.escreveNaTela(Constantes.DISCO_PROCESSO_SEM_PERMISSAO.getTexto() + op.getNomeArquivo(),
-						DispatcherWindow.RED);
+						ModuloTelaPrincipal.RED);
 				return false;
 			}
 
