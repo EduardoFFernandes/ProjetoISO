@@ -62,7 +62,7 @@ public class ManipuladorDeArquivos {
 	@SuppressWarnings("unchecked")
 	private boolean validaProcessos() throws IOException {
 		BufferedReader leitorBuffer = getBufferedReaderFromFile(aSerValidado);
-		int processId = 1;
+		int processId = 0;
 
 		String linha;
 		while ((linha = leitorBuffer.readLine()) != null) {

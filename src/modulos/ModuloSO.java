@@ -2,15 +2,16 @@ package modulos;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 import models.ArquivoVO;
+import models.Constantes;
 import models.OperacaoNaEstruturaArquivosVO;
 import models.ProcessoVO;
 
 public class ModuloSO implements Runnable {
 
 	private ArrayList<ProcessoVO> processos;
+	private ArrayList<ProcessoVO> processosIniciais;
 	private ArrayList<OperacaoNaEstruturaArquivosVO> operacoesEstruturaArq;
 
 	private volatile ModuloTelaPrincipal telaPrincipal;
@@ -21,26 +22,23 @@ public class ModuloSO implements Runnable {
 	private ModuloProcessos gerenciadorDeFilas;
 	
 	private int CLOCK;
-	
-	private Thread threadCPU;
-	Semaphore esperaCPU;
 
 	@SuppressWarnings("unchecked")
 	public ModuloSO(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
 			ArrayList<ArquivoVO> arquivosEmDisco, ModuloTelaPrincipal telaPrincipal, int qtdBlocosDisco) {
 		this.telaPrincipal = telaPrincipal;
 		this.processos = (ArrayList<ProcessoVO>) processos;
+		this.processosIniciais = (ArrayList<ProcessoVO>) processos;
 		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
 		
-		HD1 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
 		gerenciadorDeFilas = new ModuloProcessos();
-		CPU0 = new ModuloCPU("CPU0",1,esperaCPU,telaPrincipal);
+		HD1 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
+		CPU0 = new ModuloCPU("CPU0",1,telaPrincipal);
 		RAM = new ModuloMemoria();
 		REC = new ModuloRecursos();
 		
 		CLOCK = 0;
 
-		esperaCPU = new Semaphore(1);
 	}
 
 	@Override
@@ -53,10 +51,11 @@ public class ModuloSO implements Runnable {
 			// A thread do SO foi interrompida por algum motivo
 			e.printStackTrace();
 		}
+		
 		// Executa as operações de disco;
-		this.operacoesEstruturaArq.forEach(op -> {
-			HD1.executaOperacao(op);
-		});
+		for(int i = 0; i< this.operacoesEstruturaArq.size();i++) {
+			HD1.executaOperacao(operacoesEstruturaArq.get(i),i+1);
+		}
 		HD1.printSituacaoDisco();
 		
 	}
@@ -64,36 +63,40 @@ public class ModuloSO implements Runnable {
 	public void filaProcessosLoop() throws InterruptedException {
 		ProcessoVO processoAtual = null;
 		verificaProcessoInicializandoAgora();
+		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
 		while ((processoAtual = gerenciadorDeFilas.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processoAtual == null) {
-				//TODO:printa que não existem processos no gerenciador de filas mas nem todos os processos foram inicializados
+				telaPrincipal.printaNoTerminal(Constantes.SEM_PROC_EXEC.getTexto());
 				clockTick();
 				continue;
 			}
-			if(!RAM.isProcessoEmMemoria(processoAtual)){//Significa que é a primeira vez que processo roda no processador
+			if(!RAM.isProcessoEmMemoria(processoAtual)){
 				if(!RAM.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
-					//TODO:printa na tela que o processo não pode ser alocado por falta de RAM
+					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
+					telaPrincipal.printaNoTerminal(Constantes.faltaRAM(processoAtual.getPID()),ModuloTelaPrincipal.RED);
 					clockTick();
 					continue;
 				}
-				//aloca recursos
+			}
+			if(!processoAtual.isRecursosAlocados()) {
+				//se entrou aqui significa que o processo está em memoria mas não teve os seus recursos alocados ainda
 				if(!REC.alocaTodosOsRecursosParaProcesso(processoAtual)){
-					//TODO:printa na tela que o processo não pode ser alocado por falta de recursos
+					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
+					telaPrincipal.printaNoTerminal(Constantes.faltaRecursos(processoAtual.getPID()),ModuloTelaPrincipal.RED);
 					clockTick();
 					continue;
 				}
 			}
 			//TODO: printar na tela aqui o `dispatcher=>`
+			telaPrincipal.printaNoTerminal(Constantes.dispatcher(processoAtual));
+			telaPrincipal.printaNoTerminal(Constantes.executandoProc(processoAtual.getPID()));
 			CPU0.setProcesso(processoAtual);
-			threadCPU = new Thread(CPU0);
-			threadCPU.start();
-			wait(100);
-			esperaCPU.acquire();
+			CPU0.executaProcesso();
 			
-			clockTick();
 			processoAtual.diminuiTempoProcessador();		
 			// Se o processo terminar, libera os recursos
 			verificaContinuidadeDoProcesso(processoAtual);	
+			clockTick();
 		}
 	}
 
@@ -108,7 +111,7 @@ public class ModuloSO implements Runnable {
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
 		// verifica aqui se o processo é de tempo real
 
-		for (ProcessoVO processo : processos) {
+		for (ProcessoVO processo : processosIniciais) {
 			if (processo.getPID() == idProcesso) {
 				if (processo.getPrioridade() == 0)
 					return true;
@@ -117,29 +120,42 @@ public class ModuloSO implements Runnable {
 		}
 		return false;
 	}
-	
+	public boolean isProcessoValido(int PID) {
+		for (ProcessoVO processo : processosIniciais) {
+			if (processo.getPID() == PID) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	private void verificaProcessoInicializandoAgora() {
+		ArrayList<ProcessoVO> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
 				gerenciadorDeFilas.adicionaProcesso(pr);//adiciona o mesmo às filas de processo
-				processos.remove(pr);// remove o mesmo dos processos que nao foram inicializados
+				novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
 			}
 		});
+		processos = novaLista;
 	}
 	
 	private void verificaContinuidadeDoProcesso(ProcessoVO pr) {
-		if(pr.getTempoProcessador()<1) {
+		//se entrou aqui significa que o processo foi executado
+		if(pr.getTempoProcessador()<1) {// se o processo acabou
 			gerenciadorDeFilas.removeProcesso(pr);
 			RAM.desalocaMemoria(pr);
 			REC.desacolaTodosOsRecursosDoProcesso(pr);
-			//TODO: printar na tela que o processo foi finalizado.
+			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),ModuloTelaPrincipal.DARK_GREEN);
+		}else {
+			gerenciadorDeFilas.atualizaProcesso(pr);
 		}
 	}
 	
-	private void clockTick() throws InterruptedException {
+	synchronized private void clockTick() throws InterruptedException {
 		CLOCK++;
-		//TODO: printa clock
 		wait(1000);
+		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
 		verificaProcessoInicializandoAgora();
 	}
 }

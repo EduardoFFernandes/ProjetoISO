@@ -1,39 +1,24 @@
 package modulos;
 
-import java.util.concurrent.Semaphore;
-
 import models.ProcessoVO;
 
-public class ModuloCPU implements Runnable {
-
-	private Semaphore bloqueiaSO;
+public class ModuloCPU {
 	private ModuloTelaPrincipal tela;
 	private ProcessoVO processo;
 	
-	ModuloCPU(String nome,int uid,Semaphore bloqueiaSO,ModuloTelaPrincipal tela) {
-		this.bloqueiaSO = bloqueiaSO;
+	ModuloCPU(String nome,int uid,ModuloTelaPrincipal tela) {
 		this.tela = tela;
 	}
-
-	@Override
-	public void run() {
-		try {
-			bloqueiaSO.acquire();
-			tela.printaNoTerminal(processo.getPID()+ ": inst 1");
-			wait(300);
-			tela.printaNoTerminal(processo.getPID()+ ": inst 2");
-			wait(300);
-			tela.printaNoTerminal(processo.getPID()+ ": inst 3");
-			wait(300);
-			bloqueiaSO.release();
-			this.finalize();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	
+	synchronized public void executaProcesso() throws InterruptedException {
+		tela.printaNoTerminal("P"+processo.getPID()+ " STARTED");
+		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 1");
+		wait(300);
+		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 2");
+		wait(300);
+		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 3");
+		wait(400);
+		tela.printaNoTerminal("P"+processo.getPID()+ " return SIGINT");
 	}
 	
 	

@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 
 /**
  * Classe que implementa a tela de visualização do Dispacher
@@ -136,15 +137,24 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 	 * @param	texto	texto a ser escrito no terminal
 	 * @param	cor		cor a ser colocada no terminal
 	 * */
-	public void printaNoTerminal(String texto, Color cor){
-		try {
-			StyleConstants.setForeground(estiloTerminal, cor);
-			terminalView.insertString(terminalView.getLength(),texto+"\n", estiloTerminal);//TODO: retirar a string daqui.
-			validate();
-			scrollVertical.setValue(scrollVertical.getMaximum()+1);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
+	synchronized public void printaNoTerminal(String texto, Color cor){
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+				public void run() {
+					try {
+						StyleConstants.setForeground(estiloTerminal, cor);
+						terminalView.insertString(terminalView.getLength(),texto+Constantes.NEWLINE.getTexto(), estiloTerminal);
+						revalidate();
+						scrollVertical.setValue(scrollVertical.getMaximum()+1);
+						revalidate();
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		
+
 	}
 	
 	/**

@@ -11,6 +11,7 @@ public class ProcessoVO {
 	private int reqModem;
 	private int reqCodDisco;
 	private int PID; //quando o SO é iniciado ,é gerado um PID.
+	private boolean recursosAlocados; // indicador que os recursos do processo foram alocados
 	
 	
 	
@@ -29,6 +30,7 @@ public class ProcessoVO {
 		this.PID = PID;
 		
 		this.inicioProcessoRAM = -1;
+		this.recursosAlocados = false;
 	}
 	
 	public int getTempoInicializacao() {
@@ -68,6 +70,18 @@ public class ProcessoVO {
 
 	public void setInicioProcessoRAM(int inicioProcessoRAM) {
 		this.inicioProcessoRAM = inicioProcessoRAM;
+	}
+
+	public boolean isRecursosAlocados() {
+		return recursosAlocados;
+	}
+
+	public void setRecursosAlocados(boolean recursosAlocados) {
+		this.recursosAlocados = recursosAlocados;
+	}
+
+	public void setPrioridade(int prioridade) {
+		this.prioridade = prioridade;
 	}
 
 }

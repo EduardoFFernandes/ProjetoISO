@@ -39,6 +39,7 @@ public class ModuloDisco  {
 	public boolean createFile(OperacaoNaEstruturaArquivosVO op) {
 		boolean cabe, salvou = false;
 		int qtdBlocosOp = op.getQtdBlocos();
+		int blocoInicioArq = -1;
 		for (int i = 0; i < qtdBlocosDisco; i++) {
 			cabe = true;
 			if (i + qtdBlocosOp > qtdBlocosDisco) {
@@ -52,13 +53,20 @@ public class ModuloDisco  {
 					}
 				}
 				if (cabe) {
+					blocoInicioArq = i;
 					for (int y = 0; y < qtdBlocosOp; y++) {
-						blocos[i + y] = op.getNomeArquivo();
+						blocos[blocoInicioArq + y] = op.getNomeArquivo();
 					}
 					salvou = true;
 					break;
 				}
 			}
+		}
+		
+		if(salvou) {
+			listenerSO.escreveNaTela(Constantes.salvouArq(op,blocoInicioArq));
+		}else {
+			listenerSO.escreveNaTela(Constantes.naoSalvouArq(op));
 		}
 		return salvou;
 	}
@@ -92,37 +100,38 @@ public class ModuloDisco  {
 		listenerSO.escreveNaTela(sb.toString());
 	}
 
-	public boolean executaOperacao(OperacaoNaEstruturaArquivosVO op) {
-
+	public void executaOperacao(OperacaoNaEstruturaArquivosVO op, int opNum) {
+		listenerSO.escreveNaTela(Constantes.sysArqOp(opNum));
+		if(!listenerSO.isProcessoValido(op.getIdProcesso())) {
+			listenerSO.escreveNaTela(Constantes.N_EXISTE_PROC.getTexto());
+			return;
+		}
 		 if (op.getCodOperacao() == OperacaoNaEstruturaArquivosVO.OP_CRIAR) {
-//		if (op.getCodOperacao() == OperacaoNaEstruturaArquivosVO.OP_CRIAR) {
 			// operação de criar arquivo
-			return createFile(op);
+			 createFile(op);
 		} else {
 			// operação de excluir arquivo
 			ArquivoVO arq = procuraArquivoNoDisco(op.getNomeArquivo());
 			if (arq == null) {
 				// se não encontrou arquivo.
-				listenerSO.escreveNaTela("Arquivo: " + op.getNomeArquivo() + ", não encontrado.");
-				return false;
+				listenerSO.escreveNaTela(Constantes.arqNaoEncontrado(op.getNomeArquivo()));
 			}
 			// encontrou arquivo
 			if (op.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
 				// processo é o mesmo que criou o arquivo
 				deleteFile(arq);
+				listenerSO.escreveNaTela(Constantes.excluiuArq(op));
 			} else if (listenerSO.isProcessoTempoReal(op.getIdProcesso())) {
 				// processo não é o que criou o arquivo mas é de tempo real
 				deleteFile(arq);
+				listenerSO.escreveNaTela(Constantes.excluiuArq(op));
 			} else {
 				// processo não é o que criou o arquivo e não é de tempo real
-				listenerSO.escreveNaTela(Constantes.DISCO_PROCESSO_SEM_PERMISSAO.getTexto() + op.getNomeArquivo(),
+				listenerSO.escreveNaTela(Constantes.procSemPermissaoExcluirArq(op.getIdProcesso(),op.getNomeArquivo()),
 						ModuloTelaPrincipal.RED);
-				return false;
 			}
 
 		}
-
-		return false;
 	}
 
 	private ArquivoVO procuraArquivoNoDisco(String nome) {
