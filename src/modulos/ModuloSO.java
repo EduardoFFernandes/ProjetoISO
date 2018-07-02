@@ -7,6 +7,7 @@ import models.ArquivoVO;
 import models.Constantes;
 import models.OperacaoNaEstruturaArquivosVO;
 import models.ProcessoVO;
+import modulos.ModuloRecursos.RecursoReturn;
 
 public class ModuloSO implements Runnable {
 
@@ -85,7 +86,9 @@ public class ModuloSO implements Runnable {
 			}
 			if(!processoAtual.isRecursosAlocados()) {
 				//se entrou aqui significa que o processo está em memoria mas não teve os seus recursos alocados ainda
-				if(!REC.alocaTodosOsRecursosParaProcesso(processoAtual)){
+				RecursoReturn retorno;
+				if((retorno = REC.alocaTodosOsRecursosParaProcesso(processoAtual)) != RecursoReturn.OK){
+					gerenciadorDeFilas.atualizaProcessoBlocanteComRecurso(processoAtual, REC.getProcessoFromRecurso(retorno));
 					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRecursos(processoAtual.getPID()),ModuloTelaPrincipal.RED);
 					clockTick();
@@ -155,7 +158,7 @@ public class ModuloSO implements Runnable {
 			REC.desacolaTodosOsRecursosDoProcesso(pr);
 			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),ModuloTelaPrincipal.DARK_GREEN);
 		}else {
-			gerenciadorDeFilas.atualizaProcesso(pr);
+			gerenciadorDeFilas.diminuiPrioridadeProcesso(pr);
 		}
 	}
 	
