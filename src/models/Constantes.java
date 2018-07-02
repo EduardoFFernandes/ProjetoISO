@@ -79,7 +79,7 @@ public enum Constantes {
 		return PROC.texto+PID+" nao foi inicializado por falta de Recursos.";
 	}
 	public static String faltaEspacoGerenciadorDeProcessos(int PID) {
-		return PROC.texto+PID+" nao foi inicializado por espaço no gerenciador de processos.";
+		return PROC.texto+PID+" nao foi inicializado por falta espaço no gerenciador de processos.";
 	}
 	
 	public static String executandoProc(int PID) {

@@ -35,9 +35,9 @@ public class ModuloMemoria {
 				break;
 			}
 
-			if (blocos[i] == BLOCO_VAZIO) {// se o bloco que estamos avaliando está vazio//TODO COLOCAR bloco vazio
+			if (blocos[i] == BLOCO_VAZIO) {// se o bloco que estamos avaliando está vazio
 				for (int y = 0; y < qtdBlocosPro; y++) {
-					if (blocos[i + y] > 0) {// se o valor contido no bloco em questão for diferente de 0 então não cabe
+					if (blocos[i + y] > 0) {// se o valor contido no bloco em questão for diferente de BLOCO_VAZIO então não cabe
 						cabe = false;
 						break;
 					}

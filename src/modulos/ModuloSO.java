@@ -15,13 +15,18 @@ public class ModuloSO implements Runnable {
 	private ArrayList<OperacaoNaEstruturaArquivosVO> operacoesEstruturaArq;
 
 	private volatile ModuloTelaPrincipal telaPrincipal;
-	private volatile ModuloCPU CPU0;
-	private ModuloDisco HD1;
+	private ModuloCPU CPU0;
+	private ModuloDisco HD0;
 	private ModuloMemoria RAM;
 	private ModuloRecursos REC;
 	private ModuloProcessos gerenciadorDeFilas;
 	
+	/**
+	 * Para simplificação do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
+	 * o tempo inicial que o processo deve iniciar. Ou seja, o processo inicia assim que um quantum estiver para iniciar.
+	 * */
 	private int CLOCK;
+	private static int QUANTUM = 1000;//milisegundos
 
 	@SuppressWarnings("unchecked")
 	public ModuloSO(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
@@ -32,7 +37,7 @@ public class ModuloSO implements Runnable {
 		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
 		
 		gerenciadorDeFilas = new ModuloProcessos();
-		HD1 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
+		HD0 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
 		CPU0 = new ModuloCPU("CPU0",1,this);
 		RAM = new ModuloMemoria();
 		REC = new ModuloRecursos();
@@ -54,9 +59,9 @@ public class ModuloSO implements Runnable {
 		
 		// Executa as operações de disco;
 		for(int i = 0; i< this.operacoesEstruturaArq.size();i++) {
-			HD1.executaOperacao(operacoesEstruturaArq.get(i),i+1);
+			HD0.executaOperacao(operacoesEstruturaArq.get(i),i+1);
 		}
-		HD1.printSituacaoDisco();
+		HD0.printSituacaoDisco();
 		
 	}
 
@@ -87,7 +92,6 @@ public class ModuloSO implements Runnable {
 					continue;
 				}
 			}
-			//TODO: printar na tela aqui o `dispatcher=>`
 			telaPrincipal.printaNoTerminal(Constantes.dispatcher(processoAtual));
 			telaPrincipal.printaNoTerminal(Constantes.executandoProc(processoAtual.getPID()));
 			CPU0.setProcesso(processoAtual);
@@ -157,7 +161,7 @@ public class ModuloSO implements Runnable {
 	
 	synchronized private void clockTick() throws InterruptedException {
 		CLOCK++;
-		wait(1000);
+		wait(QUANTUM);
 		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
 		verificaProcessoInicializandoAgora();
 	}

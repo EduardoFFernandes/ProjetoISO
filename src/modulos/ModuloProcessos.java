@@ -84,7 +84,7 @@ public class ModuloProcessos {
 		}
 	}
 	
-	//somente processos de usuario entram nesse metodo
+
 	public void atualizaProcesso(ProcessoVO pr) {
 		if(pr.getPrioridade()==0) {//move o processo para o final da fila
 			filaTempoReal.remove(pr);
@@ -102,7 +102,8 @@ public class ModuloProcessos {
 			filaProcessosUsuarioPrioridade3.add(pr);
 		}
 	}
-	
+
+	//TODO verificar se o processo esta realmente indo para o final da fila
 	public void moveParaFinalDaFila(ProcessoVO pr) {
 		if(pr.getPrioridade()==0) {//move o processo para o final da fila
 			filaTempoReal.remove(pr);

@@ -9,12 +9,12 @@ import models.OperacaoNaEstruturaArquivosVO;
 public class ModuloDisco  {
 
 	private int qtdBlocosDisco;
-	private ArrayList<ArquivoVO> arquivos;
+	private ArrayList<ArquivoVO> iNodes;
 	private ModuloSO listenerSO;
 	private String[] blocos;
 
 	public ModuloDisco(int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<ArquivoVO> arquivos) {
-		this.arquivos = arquivos;
+		this.iNodes = arquivos;
 		this.qtdBlocosDisco = qtdBlocosDisco;
 		this.listenerSO = listenerSO;
 		blocos = new String[qtdBlocosDisco];
@@ -23,7 +23,7 @@ public class ModuloDisco  {
 
 
 	private void processaArquivos() {
-		for (ArquivoVO arquivo : arquivos) {
+		for (ArquivoVO arquivo : iNodes) {
 			int i;
 			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
 				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
@@ -135,7 +135,7 @@ public class ModuloDisco  {
 	}
 
 	private ArquivoVO procuraArquivoNoDisco(String nome) {
-		for (ArquivoVO arquivo : arquivos) {
+		for (ArquivoVO arquivo : iNodes) {
 			if (arquivo.getNomeArquivo().equals(nome)) {
 				return arquivo;
 			}
