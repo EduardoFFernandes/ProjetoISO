@@ -34,6 +34,12 @@ public class Main {
 	
 	private Thread soThread;
 
+	
+	/**
+	 * Função inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
+	 * 
+	 * @param	args	argumentos inciais do programa
+	 * */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -49,11 +55,19 @@ public class Main {
 		});
 	}
 	
-	
+	/**
+	 * Destrutor da tela, não utilizada.
+	 * 
+	 * */
 	public void closeWindow(){
 		telaPrincipal.dispatchEvent(new WindowEvent(telaPrincipal, WindowEvent.WINDOW_CLOSING));
 	}
 
+	/**
+	 * Função que verifica se os arquivos já foram selecionados. Caso verdadeiro, inicia uma Thread contendo o moduloSO, que é responsável
+	 * por iniciar os outros módulos e executar os comandos passados pelos arquivos de input
+	 * 
+	 * */
 	public void iniciarSO(){
 		if(arquivoDeProcessos == null){
 			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS.getTexto(),ModuloTelaPrincipal.RED);
@@ -64,16 +78,25 @@ public class Main {
 			return;
 		}
 		if(arquivoDeProcessos.equals(arquivoEstruturaArquivos)){
-			telaPrincipal.printaNoTerminal("Arquivos Iguais.",ModuloTelaPrincipal.RED);//TODO: retirar a string daqui.
+			telaPrincipal.printaNoTerminal(Constantes.ARQUIVO_IGUAIS.getTexto(),ModuloTelaPrincipal.RED);
 			return;
 		}
-		telaPrincipal.printaNoTerminal("Iniciando SO...",ModuloTelaPrincipal.DARK_GREEN);//TODO: retirar a string daqui.
+		telaPrincipal.printaNoTerminal(Constantes.INICIANDO_SO.getTexto(),ModuloTelaPrincipal.DARK_GREEN);
 		
 		ModuloSO SO = new ModuloSO(processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
 		soThread = new Thread(SO);
 		soThread.setDaemon(true);
 		soThread.start();
 	}
+	
+	
+	/**
+	 * Função Callback da telaPrincipal. Recebe um File que será manipulado, populando uma das estruturas de array caso o mesmo seja válido
+	 * se não printa na tela que o arquivo é invalido.
+	 * 
+	 * @param	aSerValidado	arquivo que será validado pelo manipulador de arquivos
+	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
+	 * */
 	
 	public void validaArquivo(File aSerValidado,String tipoArquivo){
 		manipulador = new ManipuladorDeArquivos(aSerValidado,tipoArquivo);
@@ -98,6 +121,13 @@ public class Main {
 			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), ModuloTelaPrincipal.RED);	
 		} 
 	}
+	
+	
+	/**
+	 * Função para invalidar qualquer uma das seleções de arquivo.
+	 * 
+	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
+	 * */
 	public void invalidaArquivo(String tipoArquivo){
 		if(tipoArquivo.equals(ARQ_PROCESSOS)){				
 			this.arquivoDeProcessos = null;

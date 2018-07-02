@@ -45,17 +45,28 @@ public class ModuloProcessos {
 	public boolean adicionaProcesso(ProcessoVO pr) {
 		
 		if(pr.getPrioridade()==0) {
-			filaTempoReal.add(pr);
-			return true;
+			if(filaTempoReal.size()<1000) {
+				filaTempoReal.add(pr);				
+				return true;
+			}
+			return false;
 		}else if(pr.getPrioridade()==1) {
-			filaProcessosUsuarioPrioridade1.add(pr);
-			return true;
+			if(filaProcessosUsuarioPrioridade1.size()<1000) {				
+				filaProcessosUsuarioPrioridade1.add(pr);
+				return true;				
+			}
+			return false;
 		}else if(pr.getPrioridade()==2) {
-			filaProcessosUsuarioPrioridade2.add(pr);
-			return true;
+			if(filaProcessosUsuarioPrioridade2.size()<1000) {
+				filaProcessosUsuarioPrioridade2.add(pr);
+				return true;				
+			}
+			return false;
 		}else if(pr.getPrioridade()==3) {
-			filaProcessosUsuarioPrioridade3.add(pr);
-			return true;
+			if(filaProcessosUsuarioPrioridade3.size()<1000) {				
+				filaProcessosUsuarioPrioridade3.add(pr);
+				return true;
+			}
 		}
 		
 		return false;

@@ -8,6 +8,7 @@ package models;
 public enum Constantes {
 
 	TELA_PRINCIPAL_TITULO("Pseudo SO"),
+	INICIANDO_SO("Iniciando SO..."),
 	
 	FC_SELECIONAR("Selecionar"),
 	FC_SELECIONAR_CANCELADO("Selecionar arquivo, cancelado."),
@@ -15,6 +16,7 @@ public enum Constantes {
 	ARQUIVO_SELECIONADO("Arquivo: "),
 	ARQUIVO_VALIDO(" validado com sucesso."),
 	ARQUIVO_NAOVALIDO(" não é válido."),
+	ARQUIVO_IGUAIS("Arquivos Iguais."),
 	
 	BOTAO_TXT_ADICIONAR_PROCESSO("<html>Adicionar<br/>Processos</html>"),
 	BOTAO_TXT_ADICIONAR_ARQUIVOS("<html>Adicionar<br/>Arquivos</html>"),
@@ -75,6 +77,9 @@ public enum Constantes {
 	
 	public static String faltaRecursos(int PID) {
 		return PROC.texto+PID+" nao foi inicializado por falta de Recursos.";
+	}
+	public static String faltaEspacoGerenciadorDeProcessos(int PID) {
+		return PROC.texto+PID+" nao foi inicializado por espaço no gerenciador de processos.";
 	}
 	
 	public static String executandoProc(int PID) {

@@ -3,22 +3,22 @@ package modulos;
 import models.ProcessoVO;
 
 public class ModuloCPU {
-	private ModuloTelaPrincipal tela;
+	private ModuloSO listenerSO;
 	private ProcessoVO processo;
 	
-	ModuloCPU(String nome,int uid,ModuloTelaPrincipal tela) {
-		this.tela = tela;
+	ModuloCPU(String nome,int uid,ModuloSO listenerSO) {
+		this.listenerSO = listenerSO;
 	}
 	
 	synchronized public void executaProcesso() throws InterruptedException {
-		tela.printaNoTerminal("P"+processo.getPID()+ " STARTED");
-		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 1");
+		listenerSO.escreveNaTela("P"+processo.getPID()+ " STARTED");
+		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 1");
 		wait(300);
-		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 2");
+		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 2");
 		wait(300);
-		tela.printaNoTerminal("P"+processo.getPID()+ " instruction 3");
+		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 3");
 		wait(400);
-		tela.printaNoTerminal("P"+processo.getPID()+ " return SIGINT");
+		listenerSO.escreveNaTela("P"+processo.getPID()+ " return SIGINT");
 	}
 	
 	

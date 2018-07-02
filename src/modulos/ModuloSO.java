@@ -33,7 +33,7 @@ public class ModuloSO implements Runnable {
 		
 		gerenciadorDeFilas = new ModuloProcessos();
 		HD1 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
-		CPU0 = new ModuloCPU("CPU0",1,telaPrincipal);
+		CPU0 = new ModuloCPU("CPU0",1,this);
 		RAM = new ModuloMemoria();
 		REC = new ModuloRecursos();
 		
@@ -74,7 +74,7 @@ public class ModuloSO implements Runnable {
 				if(!RAM.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
 					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRAM(processoAtual.getPID()),ModuloTelaPrincipal.RED);
-					clockTick();
+//					clockTick();
 					continue;
 				}
 			}
@@ -133,8 +133,11 @@ public class ModuloSO implements Runnable {
 		ArrayList<ProcessoVO> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				gerenciadorDeFilas.adicionaProcesso(pr);//adiciona o mesmo às filas de processo
-				novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
+				if(gerenciadorDeFilas.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
+					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
+				}else {//se não conseguiu adicionar, printa na tela
+					telaPrincipal.printaNoTerminal(Constantes.faltaEspacoGerenciadorDeProcessos(pr.getPID()),ModuloTelaPrincipal.RED);
+				}
 			}
 		});
 		processos = novaLista;
