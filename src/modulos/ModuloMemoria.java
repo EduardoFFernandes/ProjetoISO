@@ -57,8 +57,8 @@ public class ModuloMemoria {
 	}
 
 	public void desalocaMemoria(ProcessoVO processo) {
-		int inicio = processo.getInicioProcessoRAM();
-		gravaNaRAM(inicio, inicio + processo.getBlocosEmMemoriaRAM(), BLOCO_VAZIO);
+		gravaNaRAM(processo.getInicioProcessoRAM(),processo.getBlocosEmMemoriaRAM(), BLOCO_VAZIO);
+		processo.setInicioProcessoRAM(BLOCO_VAZIO);
 		processosEmMemoria.remove(processo);
 
 	}
