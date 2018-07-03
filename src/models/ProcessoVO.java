@@ -12,6 +12,7 @@ public class ProcessoVO {
 	private int reqCodDisco;
 	private int PID; //quando o SO é iniciado ,é gerado um PID.
 	private boolean recursosAlocados; // indicador que os recursos do processo foram alocados
+	private boolean possuiRecursoBlocante;
 	
 	
 	
@@ -31,6 +32,7 @@ public class ProcessoVO {
 		
 		this.inicioProcessoRAM = -1;
 		this.recursosAlocados = false;
+		this.possuiRecursoBlocante = false;
 	}
 	
 	public int getTempoInicializacao() {
@@ -84,4 +86,13 @@ public class ProcessoVO {
 		this.prioridade = prioridade;
 	}
 
+	public boolean isPossuiRecursoBlocante() {
+		return possuiRecursoBlocante;
+	}
+
+	public void setPossuiRecursoBlocante(boolean possuiRecursoBlocante) {
+		this.possuiRecursoBlocante = possuiRecursoBlocante;
+	}
+
+	
 }

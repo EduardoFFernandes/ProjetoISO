@@ -1,12 +1,13 @@
 package modulos;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import models.ProcessoVO;
-import modulos.ModuloRecursos.RecursoReturn;
 
 public class ModuloProcessos {
+	ArrayList<ProcessoVO> processosIniciais;
 
 	LinkedList<ProcessoVO> filaProcessosProntos;
 
@@ -16,7 +17,8 @@ public class ModuloProcessos {
 	LinkedList<ProcessoVO> filaProcessosUsuarioPrioridade2;
 	LinkedList<ProcessoVO> filaProcessosUsuarioPrioridade3;
 
-	public ModuloProcessos() {
+	public ModuloProcessos(ArrayList<ProcessoVO> processosIniciais) {
+		this.processosIniciais = processosIniciais;
 		filaProcessosUsuarioPrioridade1 = new LinkedList<ProcessoVO>();
 		filaProcessosUsuarioPrioridade2 = new LinkedList<ProcessoVO>();
 		filaProcessosUsuarioPrioridade3 = new LinkedList<ProcessoVO>();
@@ -83,6 +85,9 @@ public class ModuloProcessos {
 	}
 
 	public void diminuiPrioridadeProcesso(ProcessoVO pr) {
+		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, não mudar ele de fila.
+			return;
+		}
 		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
 			filaTempoReal.remove(pr);
 			filaTempoReal.add(pr);
@@ -115,7 +120,6 @@ public class ModuloProcessos {
 		}
 	}
 
-	// TODO verificar se o processo esta realmente indo para o final da fila
 	public void moveParaFinalDaFila(ProcessoVO pr) {
 		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
 			filaTempoReal.removeFirst();
@@ -134,7 +138,7 @@ public class ModuloProcessos {
 
 	public void atualizaProcessoBlocanteComRecurso(ProcessoVO processoBloqueado, int processoId) {
 		ProcessoVO processoBlocante = null;
-		for (ProcessoVO pr : filaProcessosProntos) {
+		for (ProcessoVO pr : processosIniciais) {
 			if (pr.getPID() == processoId) {
 				processoBlocante = pr;
 				break;
@@ -144,36 +148,21 @@ public class ModuloProcessos {
 			return;
 		}
 
+		processoBlocante.setPossuiRecursoBlocante(true);
 		switch (processoBloqueado.getPrioridade()) {
 		case 1:
-			removeDaFilaAtual(processoBlocante);
-			filaProcessosUsuarioPrioridade1.add(processoBloqueado);
+			removeProcesso(processoBlocante);
+			filaProcessosUsuarioPrioridade1.addFirst(processoBlocante);
+			processoBlocante.setPrioridade(processoBloqueado.getPrioridade());
 			break;
 		case 2:
-			removeDaFilaAtual(processoBlocante);
-			filaProcessosUsuarioPrioridade2.add(processoBloqueado);
+			removeProcesso(processoBlocante);
+			filaProcessosUsuarioPrioridade2.addFirst(processoBlocante);
+			processoBlocante.setPrioridade(processoBloqueado.getPrioridade());
 			break;
 		default:
 			break;
 		}
 	}
-
-	private void removeDaFilaAtual(ProcessoVO pr) {
-		switch (pr.getPrioridade()) {
-		case 0:
-			filaTempoReal.remove(pr);
-			break;
-		case 1:
-			filaProcessosUsuarioPrioridade1.remove(pr);
-			break;
-		case 2:
-			filaProcessosUsuarioPrioridade2.remove(pr);
-			break;
-		case 3:
-			filaProcessosUsuarioPrioridade3.remove(pr);
-			break;
-		default:
-			break;
-		}
-	}
+	
 }

@@ -44,7 +44,7 @@ public class ModuloMemoria {
 				}
 				if (cabe) {// se cabe significa que encontrou um espaço grande o suficiente para colocar o
 							// processo
-					gravaNaRAM(i, qtdBlocosPro, processo.getPID());
+					gravaNaRAM(i, qtdBlocosPro, processo.getPID()); 
 					processo.setInicioProcessoRAM(i);
 					processosEmMemoria.add(processo);
 					salvou = true;
@@ -63,7 +63,8 @@ public class ModuloMemoria {
 
 	}
 
-	private void gravaNaRAM(int inicio, int fim, int dado) {
+	private void gravaNaRAM(int inicio, int tam, int dado) {
+		int fim = inicio+tam;
 		for (int y = inicio; y < fim; y++) {
 			blocos[y] = dado;
 		}

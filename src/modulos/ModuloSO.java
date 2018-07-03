@@ -37,7 +37,7 @@ public class ModuloSO implements Runnable {
 		this.processosIniciais = (ArrayList<ProcessoVO>) processos;
 		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
 		
-		gerenciadorDeFilas = new ModuloProcessos();
+		gerenciadorDeFilas = new ModuloProcessos(processosIniciais);
 		HD0 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
 		CPU0 = new ModuloCPU("CPU0",1,this);
 		RAM = new ModuloMemoria();
@@ -80,7 +80,6 @@ public class ModuloSO implements Runnable {
 				if(!RAM.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
 					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRAM(processoAtual.getPID()),ModuloTelaPrincipal.RED);
-//					clockTick();
 					continue;
 				}
 			}
@@ -88,10 +87,12 @@ public class ModuloSO implements Runnable {
 				//se entrou aqui significa que o processo está em memoria mas não teve os seus recursos alocados ainda
 				RecursoReturn retorno;
 				if((retorno = REC.alocaTodosOsRecursosParaProcesso(processoAtual)) != RecursoReturn.OK){
-					gerenciadorDeFilas.atualizaProcessoBlocanteComRecurso(processoAtual, REC.getProcessoFromRecurso(retorno));
+					//se não conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
+					//bloqueado
+					gerenciadorDeFilas.atualizaProcessoBlocanteComRecurso(processoAtual, REC.getProcessoFromRecursoError(retorno));
+					//move o processo atual para o final da fila
 					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRecursos(processoAtual.getPID()),ModuloTelaPrincipal.RED);
-					clockTick();
 					continue;
 				}
 			}
