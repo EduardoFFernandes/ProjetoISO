@@ -1,6 +1,6 @@
 package models;
 
-public class ArquivoVO {
+public class Arquivo {
 
 	private String nomeArquivo;
 	private int posPrimeiroBloco;
@@ -9,7 +9,7 @@ public class ArquivoVO {
 	
 	public static final int ARQUIVO_PADRAO = -1;
 	
-	public ArquivoVO(String nomeArquivo, int posPrimeiroBloco, int qtdBlocosArq, int idProcessoCriouArquivo) {
+	public Arquivo(String nomeArquivo, int posPrimeiroBloco, int qtdBlocosArq, int idProcessoCriouArquivo) {
 		this.nomeArquivo = nomeArquivo;
 		this.posPrimeiroBloco = posPrimeiroBloco;
 		this.qtdBlocosArq = qtdBlocosArq;

@@ -1,12 +1,12 @@
 package modulos;
 
-import models.ProcessoVO;
+import models.Processo;
 
 public class ModuloRecursos {
 	private int scanner;
 	private int modem;
 	private int impressoras[];
-	private int[] satas;
+	private int[] discoRigido;
 	
 	private int RECURSO_LIVRE = -1;
 
@@ -16,15 +16,15 @@ public class ModuloRecursos {
 		this.impressoras = new int[2];
 		impressoras[0] = RECURSO_LIVRE;
 		impressoras[1] = RECURSO_LIVRE;
-		this.satas = new int[2];
-		satas[0] = RECURSO_LIVRE;
-		satas[1] = RECURSO_LIVRE;
+		this.discoRigido = new int[2];
+		discoRigido[0] = RECURSO_LIVRE;
+		discoRigido[1] = RECURSO_LIVRE;
 	}
 	public enum RecursoReturn{
-		ERR_MODEM,ERR_SCANNER,ERR_IMP1,ERR_IMP2,ERR_SATA1,ERR_SATA2,OK,ERR
+		ERR_MODEM,ERR_SCANNER,ERR_IMP1,ERR_IMP2,ERR_DISCORIGIDO1,ERR_DISCORIGIDO2,OK,ERR
 	}
 	
-	public RecursoReturn alocaTodosOsRecursosParaProcesso(ProcessoVO pr) {
+	public RecursoReturn alocaTodosOsRecursosParaProcesso(Processo pr) {
 		if (pr.getReqModem() > 0) {
 			if (modem == RECURSO_LIVRE) {
 				modem = pr.getPID();// modem alocado para o processoID
@@ -56,25 +56,25 @@ public class ModuloRecursos {
 			}
 		}
 		if (pr.getReqCodDisco() == 1) {
-			if (satas[0] == RECURSO_LIVRE) {
-				satas[0] = pr.getPID();// sata 0 alocado para o processoID
+			if (discoRigido[0] == RECURSO_LIVRE) {
+				discoRigido[0] = pr.getPID();// sata 0 alocado para o processoID
 			} else {
 				desacolaTodosOsRecursosDoProcesso(pr);
-				return RecursoReturn.ERR_SATA1;
+				return RecursoReturn.ERR_DISCORIGIDO1;
 			}
 		} else if (pr.getReqCodDisco() == 2) {
-			if (satas[1] == RECURSO_LIVRE) {
-				satas[1] = pr.getPID();// sata 1 alocado para o processoID
+			if (discoRigido[1] == RECURSO_LIVRE) {
+				discoRigido[1] = pr.getPID();// sata 1 alocado para o processoID
 			} else {
 				desacolaTodosOsRecursosDoProcesso(pr);
-				return RecursoReturn.ERR_SATA2;
+				return RecursoReturn.ERR_DISCORIGIDO2;
 			}
 		}
 		pr.setRecursosAlocados(true);
 		return RecursoReturn.OK;
 	}
 
-	public boolean desacolaTodosOsRecursosDoProcesso(ProcessoVO pr) {
+	public boolean desacolaTodosOsRecursosDoProcesso(Processo pr) {
 		if (pr.getReqModem() > 0 && modem == pr.getPID()) {
 			modem = RECURSO_LIVRE;// desaloca
 		}
@@ -89,10 +89,10 @@ public class ModuloRecursos {
 			impressoras[1] = RECURSO_LIVRE;// desaloca
 		}
 
-		if (pr.getReqCodDisco() == 1 && satas[0] == pr.getPID()) {
-			satas[0] = RECURSO_LIVRE;// desaloca
-		} else if (pr.getReqCodDisco() == 2 && satas[1] == pr.getPID()) {
-			satas[1] = RECURSO_LIVRE;// desaloca
+		if (pr.getReqCodDisco() == 1 && discoRigido[0] == pr.getPID()) {
+			discoRigido[0] = RECURSO_LIVRE;// desaloca
+		} else if (pr.getReqCodDisco() == 2 && discoRigido[1] == pr.getPID()) {
+			discoRigido[1] = RECURSO_LIVRE;// desaloca
 		}
 
 		pr.setRecursosAlocados(false);
@@ -110,10 +110,10 @@ public class ModuloRecursos {
 			return impressoras[0];
 		case ERR_IMP2:
 			return impressoras[1];
-		case ERR_SATA1:
-			return satas[0];
-		case ERR_SATA2:
-			return satas[0];
+		case ERR_DISCORIGIDO1:
+			return discoRigido[0];
+		case ERR_DISCORIGIDO2:
+			return discoRigido[1];
 		default:
 			break;
 		}

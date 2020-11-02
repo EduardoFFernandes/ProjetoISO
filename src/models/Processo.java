@@ -1,6 +1,6 @@
 package models;
 
-public class ProcessoVO {
+public class Processo {
 	private int tempoInicializacao;//em qual clock o processo vai inicializar
 	private int prioridade;
 	private int tempoProcessador;//quantos clocks o processo vai rodar
@@ -17,7 +17,7 @@ public class ProcessoVO {
 	
 	
 	
-	public ProcessoVO(int tempoInicializacao, int prioridade, int tempoProcessador, int blocosEmMemoriaRAM,
+	public Processo(int tempoInicializacao, int prioridade, int tempoProcessador, int blocosEmMemoriaRAM,
 			int reqCodImpressora, int reqScanner, int reqModem, int reqCodDisco,int PID) {
 
 		this.tempoInicializacao = tempoInicializacao;

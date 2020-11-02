@@ -4,29 +4,29 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import models.ProcessoVO;
+import models.Processo;
 
 public class ModuloProcessos {
-	ArrayList<ProcessoVO> processosIniciais;
+	ArrayList<Processo> processosIniciais;
 
-	LinkedList<ProcessoVO> filaProcessosProntos;
+	LinkedList<Processo> filaProcessosProntos;
 
-	LinkedList<ProcessoVO> filaTempoReal;
+	LinkedList<Processo> filaTempoReal;
 
-	LinkedList<ProcessoVO> filaProcessosUsuarioPrioridade1;
-	LinkedList<ProcessoVO> filaProcessosUsuarioPrioridade2;
-	LinkedList<ProcessoVO> filaProcessosUsuarioPrioridade3;
+	LinkedList<Processo> filaProcessosUsuarioPrioridade1;
+	LinkedList<Processo> filaProcessosUsuarioPrioridade2;
+	LinkedList<Processo> filaProcessosUsuarioPrioridade3;
 
-	public ModuloProcessos(ArrayList<ProcessoVO> processosIniciais) {
+	public ModuloProcessos(ArrayList<Processo> processosIniciais) {
 		this.processosIniciais = processosIniciais;
-		filaProcessosUsuarioPrioridade1 = new LinkedList<ProcessoVO>();
-		filaProcessosUsuarioPrioridade2 = new LinkedList<ProcessoVO>();
-		filaProcessosUsuarioPrioridade3 = new LinkedList<ProcessoVO>();
+		filaProcessosUsuarioPrioridade1 = new LinkedList<Processo>();
+		filaProcessosUsuarioPrioridade2 = new LinkedList<Processo>();
+		filaProcessosUsuarioPrioridade3 = new LinkedList<Processo>();
 
-		filaTempoReal = new LinkedList<ProcessoVO>();
+		filaTempoReal = new LinkedList<Processo>();
 	}
 
-	public ProcessoVO pegaProximoProcesso() {
+	public Processo pegaProximoProcesso() {
 		filaProcessosProntos = new LinkedList<>();
 		filaProcessosProntos.addAll(filaTempoReal);
 		filaProcessosProntos.addAll(filaProcessosUsuarioPrioridade1);
@@ -41,7 +41,7 @@ public class ModuloProcessos {
 
 	}
 
-	public boolean adicionaProcesso(ProcessoVO pr) {
+	public boolean adicionaProcesso(Processo pr) {
 
 		if (pr.getPrioridade() == 0) {
 			if (filaTempoReal.size() < 1000) {
@@ -71,7 +71,7 @@ public class ModuloProcessos {
 		return false;
 	}
 
-	public void removeProcesso(ProcessoVO pr) {
+	public void removeProcesso(Processo pr) {
 
 		if (pr.getPrioridade() == 0) {
 			filaTempoReal.remove(pr);
@@ -84,7 +84,7 @@ public class ModuloProcessos {
 		}
 	}
 
-	public void diminuiPrioridadeProcesso(ProcessoVO pr) {
+	public void diminuiPrioridadeProcesso(Processo pr) {
 		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, não mudar ele de fila.
 			return;
 		}
@@ -106,7 +106,7 @@ public class ModuloProcessos {
 		}
 	}
 
-	public void aumentaPrioridadeProcesso(ProcessoVO pr) {
+	public void aumentaPrioridadeProcesso(Processo pr) {
 		if (pr.getPrioridade() == 0 || pr.getPrioridade() == 1) {
 			return;
 		} else if (pr.getPrioridade() == 2) {
@@ -120,7 +120,7 @@ public class ModuloProcessos {
 		}
 	}
 
-	public void moveParaFinalDaFila(ProcessoVO pr) {
+	public void moveParaFinalDaFila(Processo pr) {
 		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
 			filaTempoReal.removeFirst();
 			filaTempoReal.addLast(pr);
@@ -136,9 +136,9 @@ public class ModuloProcessos {
 		}
 	}
 
-	public void atualizaProcessoBlocanteComRecurso(ProcessoVO processoBloqueado, int processoId) {
-		ProcessoVO processoBlocante = null;
-		for (ProcessoVO pr : processosIniciais) {
+	public void atualizaProcessoBlocanteComRecurso(Processo processoBloqueado, int processoId) {
+		Processo processoBlocante = null;
+		for (Processo pr : processosIniciais) {
 			if (pr.getPID() == processoId) {
 				processoBlocante = pr;
 				break;

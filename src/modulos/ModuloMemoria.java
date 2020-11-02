@@ -3,14 +3,14 @@ package modulos;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import models.ProcessoVO;
+import models.Processo;
 
 public class ModuloMemoria {
 	private final int TAMANH0_TOTAL_MEMORIA = 1024;
 	private final int INICIO_BLOCO_MEM_USUARIO = 64;
 	private final int BLOCO_VAZIO = -1;
 	private int[] blocos;
-	private ArrayList<ProcessoVO> processosEmMemoria;
+	private ArrayList<Processo> processosEmMemoria;
 	
 
 	ModuloMemoria() {
@@ -19,7 +19,7 @@ public class ModuloMemoria {
 		Arrays.fill(blocos, BLOCO_VAZIO);
 	}
 
-	public boolean alocaMemoria(boolean isProcessoTempoReal, ProcessoVO processo) {
+	public boolean alocaMemoria(boolean isProcessoTempoReal, Processo processo) {
 		int inicioBlocos = INICIO_BLOCO_MEM_USUARIO;
 		int fimBlocos = TAMANH0_TOTAL_MEMORIA;
 		boolean cabe, salvou = false;
@@ -56,7 +56,7 @@ public class ModuloMemoria {
 		return salvou;
 	}
 
-	public void desalocaMemoria(ProcessoVO processo) {
+	public void desalocaMemoria(Processo processo) {
 		gravaNaRAM(processo.getInicioProcessoRAM(),processo.getBlocosEmMemoriaRAM(), BLOCO_VAZIO);
 		processo.setInicioProcessoRAM(BLOCO_VAZIO);
 		processosEmMemoria.remove(processo);
@@ -70,7 +70,7 @@ public class ModuloMemoria {
 		}
 	}
 
-	public boolean isProcessoEmMemoria(ProcessoVO pr) {
+	public boolean isProcessoEmMemoria(Processo pr) {
 		if (processosEmMemoria.contains(pr)) {
 			return true;
 		}

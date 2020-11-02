@@ -3,24 +3,24 @@ package modulos;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import models.ArquivoVO;
-import models.Constantes;
-import models.OperacaoNaEstruturaArquivosVO;
-import models.ProcessoVO;
+import models.Arquivo;
+import models.Operacao;
+import models.Processo;
 import modulos.ModuloRecursos.RecursoReturn;
+import util.Constantes;
 
 public class ModuloSO implements Runnable {
 
-	private ArrayList<ProcessoVO> processos;
-	private ArrayList<ProcessoVO> processosIniciais;
-	private ArrayList<OperacaoNaEstruturaArquivosVO> operacoesEstruturaArq;
+	private ArrayList<Processo> processos;
+	private ArrayList<Processo> processosIniciais;
+	private ArrayList<Operacao> operacoesEstruturaArq;
 
-	private volatile ModuloTelaPrincipal telaPrincipal;
-	private ModuloCPU CPU0;
-	private ModuloDisco HD0;
-	private ModuloMemoria RAM;
-	private ModuloRecursos REC;
-	private ModuloProcessos gerenciadorDeFilas;
+	private ModuloTelaPrincipal telaPrincipal;
+	private ModuloCPU processador;
+	private ModuloDisco discoRigido;
+	private ModuloMemoria memoriaPrincipal;
+	private ModuloRecursos recursos;
+	private ModuloProcessos gerenciadorDeProcessos;
 	
 	/**
 	 * Para simplificação do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
@@ -31,17 +31,17 @@ public class ModuloSO implements Runnable {
 
 	@SuppressWarnings("unchecked")
 	public ModuloSO(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
-			ArrayList<ArquivoVO> arquivosEmDisco, ModuloTelaPrincipal telaPrincipal, int qtdBlocosDisco) {
+			ArrayList<Arquivo> arquivosEmDisco, ModuloTelaPrincipal telaPrincipal, int qtdBlocosDisco) {
 		this.telaPrincipal = telaPrincipal;
-		this.processos = (ArrayList<ProcessoVO>) processos;
-		this.processosIniciais = (ArrayList<ProcessoVO>) processos;
-		this.operacoesEstruturaArq = (ArrayList<OperacaoNaEstruturaArquivosVO>) operacoesEstruturaArq;
+		this.processos = (ArrayList<Processo>) processos;
+		this.processosIniciais = (ArrayList<Processo>) processos;
+		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoesEstruturaArq;
 		
-		gerenciadorDeFilas = new ModuloProcessos(processosIniciais);
-		HD0 = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
-		CPU0 = new ModuloCPU("CPU0",1,this);
-		RAM = new ModuloMemoria();
-		REC = new ModuloRecursos();
+		gerenciadorDeProcessos = new ModuloProcessos(processosIniciais);
+		discoRigido = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
+		processador = new ModuloCPU(this);
+		memoriaPrincipal = new ModuloMemoria();
+		recursos = new ModuloRecursos();
 		
 		CLOCK = 0;
 
@@ -59,26 +59,27 @@ public class ModuloSO implements Runnable {
 		}
 		
 		// Executa as operações de disco;
+		this.escreveNaTela(Constantes.sistemaDeArquivos());
 		for(int i = 0; i< this.operacoesEstruturaArq.size();i++) {
-			HD0.executaOperacao(operacoesEstruturaArq.get(i),i+1);
+			discoRigido.executaOperacao(operacoesEstruturaArq.get(i),i+1);
 		}
-		HD0.printSituacaoDisco();
+		discoRigido.printSituacaoDisco();
 		
 	}
 
 	public void filaProcessosLoop() throws InterruptedException {
-		ProcessoVO processoAtual = null;
+		Processo processoAtual = null;
 		verificaProcessoInicializandoAgora();
 		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
-		while ((processoAtual = gerenciadorDeFilas.pegaProximoProcesso()) != null || !processos.isEmpty()) {
+		while ((processoAtual = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processoAtual == null) {
-				telaPrincipal.printaNoTerminal(Constantes.SEM_PROC_EXEC.getTexto());
+				telaPrincipal.printaNoTerminal(Constantes.SEM_PROCESSO_EXECUTAR.getTexto());
 				clockTick();
 				continue;
 			}
-			if(!RAM.isProcessoEmMemoria(processoAtual)){
-				if(!RAM.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
-					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
+			if(!memoriaPrincipal.isProcessoEmMemoria(processoAtual)){
+				if(!memoriaPrincipal.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
+					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRAM(processoAtual.getPID()),ModuloTelaPrincipal.RED);
 					continue;
 				}
@@ -86,20 +87,20 @@ public class ModuloSO implements Runnable {
 			if(!processoAtual.isRecursosAlocados()) {
 				//se entrou aqui significa que o processo está em memoria mas não teve os seus recursos alocados ainda
 				RecursoReturn retorno;
-				if((retorno = REC.alocaTodosOsRecursosParaProcesso(processoAtual)) != RecursoReturn.OK){
+				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processoAtual)) != RecursoReturn.OK){
 					//se não conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
 					//bloqueado
-					gerenciadorDeFilas.atualizaProcessoBlocanteComRecurso(processoAtual, REC.getProcessoFromRecursoError(retorno));
+					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processoAtual, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
-					gerenciadorDeFilas.moveParaFinalDaFila(processoAtual);
+					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
 					telaPrincipal.printaNoTerminal(Constantes.faltaRecursos(processoAtual.getPID()),ModuloTelaPrincipal.RED);
 					continue;
 				}
 			}
 			telaPrincipal.printaNoTerminal(Constantes.dispatcher(processoAtual));
 			telaPrincipal.printaNoTerminal(Constantes.executandoProc(processoAtual.getPID()));
-			CPU0.setProcesso(processoAtual);
-			CPU0.executaProcesso();
+			processador.setProcesso(processoAtual);
+			processador.executaProcesso();
 			
 			processoAtual.diminuiTempoProcessador();		
 			// Se o processo terminar, libera os recursos
@@ -119,7 +120,7 @@ public class ModuloSO implements Runnable {
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
 		// verifica aqui se o processo é de tempo real
 
-		for (ProcessoVO processo : processosIniciais) {
+		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == idProcesso) {
 				if (processo.getPrioridade() == 0)
 					return true;
@@ -129,7 +130,7 @@ public class ModuloSO implements Runnable {
 		return false;
 	}
 	public boolean isProcessoValido(int PID) {
-		for (ProcessoVO processo : processosIniciais) {
+		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == PID) {
 				return true;
 			}
@@ -138,10 +139,10 @@ public class ModuloSO implements Runnable {
 		return false;
 	}
 	private void verificaProcessoInicializandoAgora() {
-		ArrayList<ProcessoVO> novaLista = new ArrayList<>(processos);
+		ArrayList<Processo> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				if(gerenciadorDeFilas.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
+				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
 				}else {//se não conseguiu adicionar, printa na tela
 					telaPrincipal.printaNoTerminal(Constantes.faltaEspacoGerenciadorDeProcessos(pr.getPID()),ModuloTelaPrincipal.RED);
@@ -151,15 +152,15 @@ public class ModuloSO implements Runnable {
 		processos = novaLista;
 	}
 	
-	private void verificaContinuidadeDoProcesso(ProcessoVO pr) {
+	private void verificaContinuidadeDoProcesso(Processo pr) {
 		//se entrou aqui significa que o processo foi executado
 		if(pr.getTempoProcessador()<1) {// se o processo acabou
-			gerenciadorDeFilas.removeProcesso(pr);
-			RAM.desalocaMemoria(pr);
-			REC.desacolaTodosOsRecursosDoProcesso(pr);
+			gerenciadorDeProcessos.removeProcesso(pr);
+			memoriaPrincipal.desalocaMemoria(pr);
+			recursos.desacolaTodosOsRecursosDoProcesso(pr);
 			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),ModuloTelaPrincipal.DARK_GREEN);
 		}else {
-			gerenciadorDeFilas.diminuiPrioridadeProcesso(pr);
+			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
 		}
 	}
 	

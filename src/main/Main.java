@@ -5,10 +5,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import models.ArquivoVO;
-import models.Constantes;
+import models.Arquivo;
 import modulos.ModuloSO;
 import modulos.ModuloTelaPrincipal;
+import util.Constantes;
 import util.ManipuladorDeArquivos;
 
 /**
@@ -24,7 +24,7 @@ public class Main {
 
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoesEstruturaArq;
-	private ArrayList<ArquivoVO> arquivosEmDisco;
+	private ArrayList<Arquivo> arquivosEmDisco;
 	
 	private ManipuladorDeArquivos manipulador;
 	

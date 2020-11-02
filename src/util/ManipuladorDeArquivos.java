@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import main.Main;
-import models.ArquivoVO;
-import models.OperacaoNaEstruturaArquivosVO;
-import models.ProcessoVO;
+import models.Arquivo;
+import models.Operacao;
+import models.Processo;
 
 public class ManipuladorDeArquivos {
 
@@ -18,7 +18,7 @@ public class ManipuladorDeArquivos {
 	private File aSerValidado;
 	@SuppressWarnings("rawtypes")
 	private ArrayList objetosValidados;
-	private ArrayList<ArquivoVO> arquivosValidados;
+	private ArrayList<Arquivo> arquivosValidados;
 	private int qtdBlocosDisco;
 	private int qtdArqEmDisco;
 	private boolean fileValidated;
@@ -45,11 +45,11 @@ public class ManipuladorDeArquivos {
 	public boolean validaArquivo() throws IOException {
 
 		if (tipoArquivo.equals(Main.ARQ_PROCESSOS)) {
-			objetosValidados = new ArrayList<ProcessoVO>();
+			objetosValidados = new ArrayList<Processo>();
 			return validaProcessos();
 		} else {
-			arquivosValidados = new ArrayList<ArquivoVO>();
-			objetosValidados = new ArrayList<OperacaoNaEstruturaArquivosVO>();
+			arquivosValidados = new ArrayList<Arquivo>();
+			objetosValidados = new ArrayList<Operacao>();
 			return validaEstruturaArquivos();
 		}
 
@@ -78,7 +78,7 @@ public class ManipuladorDeArquivos {
 					return false;
 				}
 			}
-			ProcessoVO processo = new ProcessoVO(getInt(valores[0]), getInt(valores[1]), getInt(valores[2]),
+			Processo processo = new Processo(getInt(valores[0]), getInt(valores[1]), getInt(valores[2]),
 					getInt(valores[3]), getInt(valores[4]), getInt(valores[5]), getInt(valores[6]), getInt(valores[7]), processId);
 			objetosValidados.add(processo);
 			processId++;
@@ -113,12 +113,12 @@ public class ManipuladorDeArquivos {
 			if(!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2]) ){
 				return false;
 			}
-			ArquivoVO arquivo = new ArquivoVO(valores[0], getInt(valores[1]), getInt(valores[2]), ArquivoVO.ARQUIVO_PADRAO);
+			Arquivo arquivo = new Arquivo(valores[0], getInt(valores[1]), getInt(valores[2]), Arquivo.ARQUIVO_PADRAO);
 			arquivosValidados.add(arquivo);
 		}
 
 		while ((linha = leitorBuffer.readLine()) != null) {
-			OperacaoNaEstruturaArquivosVO operacao = null;
+			Operacao operacao = null;
 			String[] valores = linha.split(", ");
 			if(!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2])){
 				return false;
@@ -127,10 +127,10 @@ public class ManipuladorDeArquivos {
 				if(!isValidString(valores[3]) ){
 					return false;
 				}
-				operacao = new OperacaoNaEstruturaArquivosVO(getInt(valores[0]), getInt(valores[1]), valores[2]);
+				operacao = new Operacao(getInt(valores[0]), getInt(valores[1]), valores[2]);
 				operacao.setQtdBlocos(getInt(valores[3]));
 			}else{
-				operacao = new OperacaoNaEstruturaArquivosVO(getInt(valores[0]), getInt(valores[1]), valores[2]);
+				operacao = new Operacao(getInt(valores[0]), getInt(valores[1]), valores[2]);
 			}
 			objetosValidados.add(operacao);
 		}
@@ -151,7 +151,7 @@ public class ManipuladorDeArquivos {
 	 * 
 	 * @return	Array com os ArquivosVO validados, null se o arquivo é inválido
 	 * */
-	public ArrayList<ArquivoVO> getArquivosValidados(){
+	public ArrayList<Arquivo> getArquivosValidados(){
 		return arquivosValidados;
 	}
 	/**

@@ -1,29 +1,32 @@
 package modulos;
 
-import models.ProcessoVO;
+import models.Processo;
 
 public class ModuloCPU {
 	private ModuloSO listenerSO;
-	private ProcessoVO processo;
+	private Processo processo;
 	
-	ModuloCPU(String nome,int uid,ModuloSO listenerSO) {
+	private static String PROCESSO = "Processo ";
+	private static String INSTRUCAO =  " Instrução ";
+	
+	ModuloCPU(ModuloSO listenerSO) {
 		this.listenerSO = listenerSO;
 	}
 	
 	synchronized public void executaProcesso() throws InterruptedException {
-		listenerSO.escreveNaTela("P"+processo.getPID()+ " STARTED");
-		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 1");
-		wait(300);
-		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 2");
-		wait(300);
-		listenerSO.escreveNaTela("P"+processo.getPID()+ " instruction 3");
+		listenerSO.escreveNaTela(PROCESSO + processo.getPID()+ " Inicio");
+		
+		for(int i=1; i<=3; i++) {
+			listenerSO.escreveNaTela(PROCESSO + processo.getPID()+ INSTRUCAO + i);
+			wait(300);
+		}
 		wait(400);
-		listenerSO.escreveNaTela("P"+processo.getPID()+ " return SIGINT");
+		listenerSO.escreveNaTela(PROCESSO + processo.getPID()+ " return SIGINT");
 	}
 	
 	
-	public void setProcesso(ProcessoVO p){
-		this.processo = p ;
+	public void setProcesso(Processo processo){
+		this.processo = processo ;
 		
 	}
 }

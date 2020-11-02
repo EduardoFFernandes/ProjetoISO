@@ -2,18 +2,18 @@ package modulos;
 
 import java.util.ArrayList;
 
-import models.ArquivoVO;
-import models.Constantes;
-import models.OperacaoNaEstruturaArquivosVO;
+import models.Arquivo;
+import models.Operacao;
+import util.Constantes;
 
 public class ModuloDisco  {
 
 	private int qtdBlocosDisco;
-	private ArrayList<ArquivoVO> iNodes;
+	private ArrayList<Arquivo> iNodes;
 	private ModuloSO listenerSO;
 	private String[] blocos;
 
-	public ModuloDisco(int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<ArquivoVO> arquivos) {
+	public ModuloDisco(int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<Arquivo> arquivos) {
 		this.iNodes = arquivos;
 		this.qtdBlocosDisco = qtdBlocosDisco;
 		this.listenerSO = listenerSO;
@@ -23,7 +23,7 @@ public class ModuloDisco  {
 
 
 	private void processaArquivos() {
-		for (ArquivoVO arquivo : iNodes) {
+		for (Arquivo arquivo : iNodes) {
 			int i;
 			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
 				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
@@ -36,7 +36,7 @@ public class ModuloDisco  {
 		}
 	}
 
-	public boolean createFile(OperacaoNaEstruturaArquivosVO op) {
+	public boolean createFile(Operacao op) {
 		boolean cabe, salvou = false;
 		int qtdBlocosOp = op.getQtdBlocos();
 		int blocoInicioArq = -1;
@@ -71,7 +71,7 @@ public class ModuloDisco  {
 		return salvou;
 	}
 
-	public boolean deleteFile(ArquivoVO arquivo) {
+	public boolean deleteFile(Arquivo arquivo) {
 		for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
 			blocos[arquivo.getPosPrimeiroBloco() + i] = "0";
 		}
@@ -100,18 +100,18 @@ public class ModuloDisco  {
 		listenerSO.escreveNaTela(sb.toString());
 	}
 
-	public void executaOperacao(OperacaoNaEstruturaArquivosVO op, int opNum) {
-		listenerSO.escreveNaTela(Constantes.sysArqOp(opNum));
+	public void executaOperacao(Operacao op, int opNum) {
+		listenerSO.escreveNaTela(Constantes.operacoesDoSistema(opNum));
 		if(!listenerSO.isProcessoValido(op.getIdProcesso())) {
-			listenerSO.escreveNaTela(Constantes.N_EXISTE_PROC.getTexto());
+			listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO.getTexto());
 			return;
 		}
-		 if (op.getCodOperacao() == OperacaoNaEstruturaArquivosVO.OP_CRIAR) {
+		 if (op.getCodOperacao() == Operacao.OP_CRIAR) {
 			// operação de criar arquivo
 			 createFile(op);
 		} else {
 			// operação de excluir arquivo
-			ArquivoVO arq = procuraArquivoNoDisco(op.getNomeArquivo());
+			Arquivo arq = procuraArquivoNoDisco(op.getNomeArquivo());
 			if (arq == null) {
 				// se não encontrou arquivo.
 				listenerSO.escreveNaTela(Constantes.arqNaoEncontrado(op.getNomeArquivo()));
@@ -134,8 +134,8 @@ public class ModuloDisco  {
 		}
 	}
 
-	private ArquivoVO procuraArquivoNoDisco(String nome) {
-		for (ArquivoVO arquivo : iNodes) {
+	private Arquivo procuraArquivoNoDisco(String nome) {
+		for (Arquivo arquivo : iNodes) {
 			if (arquivo.getNomeArquivo().equals(nome)) {
 				return arquivo;
 			}

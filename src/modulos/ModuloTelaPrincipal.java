@@ -19,7 +19,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 import main.Main;
-import models.Constantes;
+import util.Constantes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -104,7 +104,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 		painelBotoes.add(botaoAddProcesso);
 		painelBotoes.add(botaoAddArquivo);
 		painelBotoes.add(botaoIniciarSO);
-		setMinimumSize(new Dimension(350, 200));
+		setMinimumSize(new Dimension(500, 300));
 		this.pack();
 
 	}
@@ -123,7 +123,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 				mainListener.validaArquivo(resposta,sourceName);
 			}else{
 				mainListener.invalidaArquivo(sourceName);
-				printaNoTerminal(Constantes.FC_SELECIONAR_CANCELADO.getTexto(),RED);
+				printaNoTerminal(Constantes.SELECIONAR_CANCELADO.getTexto(),RED);
 			}		
 		}else{
 			mainListener.iniciarSO();		
@@ -176,7 +176,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 		selecionador = new JFileChooser();
 	    FileNameExtensionFilter filtro = new FileNameExtensionFilter(null,"txt");//TODO: retirar a string daqui.
 	    selecionador.setFileFilter(filtro);
-		int retorno = selecionador.showDialog(botao, Constantes.FC_SELECIONAR.getTexto());
+		int retorno = selecionador.showDialog(botao, Constantes.SELECIONAR.getTexto());
 		
         if (retorno == JFileChooser.APPROVE_OPTION) {
             return selecionador.getSelectedFile();

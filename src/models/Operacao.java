@@ -1,6 +1,6 @@
 package models;
 
-public class OperacaoNaEstruturaArquivosVO {
+public class Operacao {
 	private String nomeArquivo;
 	private int idProcesso;
 	private int codOperacao;
@@ -9,7 +9,7 @@ public class OperacaoNaEstruturaArquivosVO {
 	public static final int OP_EXCLUIR = 1;
 	public static final int OP_CRIAR = 0;
 	
-	public OperacaoNaEstruturaArquivosVO(int idProcesso, int codOperacao,String nomeArquivo) {
+	public Operacao(int idProcesso, int codOperacao,String nomeArquivo) {
 		this.idProcesso = idProcesso;
 		this.codOperacao = codOperacao;
 		this.nomeArquivo = nomeArquivo;
