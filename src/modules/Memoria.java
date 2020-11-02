@@ -1,11 +1,11 @@
-package modulos;
+package modules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import models.Processo;
 
-public class ModuloMemoria {
+public class Memoria {
 	private final int TAMANH0_TOTAL_MEMORIA = 1024;
 	private final int INICIO_BLOCO_MEM_USUARIO = 64;
 	private final int BLOCO_VAZIO = -1;
@@ -13,7 +13,7 @@ public class ModuloMemoria {
 	private ArrayList<Processo> processosEmMemoria;
 	
 
-	ModuloMemoria() {
+	Memoria() {
 		blocos = new int[TAMANH0_TOTAL_MEMORIA];
 		processosEmMemoria = new ArrayList<>();
 		Arrays.fill(blocos, BLOCO_VAZIO);

@@ -1,8 +1,8 @@
-package modulos;
+package modules;
 
 import models.Processo;
 
-public class ModuloRecursos {
+public class Recursos {
 	private int scanner;
 	private int modem;
 	private int impressoras[];
@@ -10,7 +10,7 @@ public class ModuloRecursos {
 	
 	private int RECURSO_LIVRE = -1;
 
-	public ModuloRecursos() {
+	public Recursos() {
 		this.scanner = RECURSO_LIVRE;
 		this.modem = RECURSO_LIVRE;
 		this.impressoras = new int[2];

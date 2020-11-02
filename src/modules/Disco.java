@@ -1,4 +1,4 @@
-package modulos;
+package modules;
 
 import java.util.ArrayList;
 
@@ -6,14 +6,14 @@ import models.Arquivo;
 import models.Operacao;
 import util.Constantes;
 
-public class ModuloDisco  {
+public class Disco  {
 
 	private int qtdBlocosDisco;
 	private ArrayList<Arquivo> iNodes;
-	private ModuloSO listenerSO;
+	private GerenciadorDeFilas listenerSO;
 	private String[] blocos;
 
-	public ModuloDisco(int qtdBlocosDisco, ModuloSO listenerSO, ArrayList<Arquivo> arquivos) {
+	public Disco(int qtdBlocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
 		this.iNodes = arquivos;
 		this.qtdBlocosDisco = qtdBlocosDisco;
 		this.listenerSO = listenerSO;
@@ -84,16 +84,16 @@ public class ModuloDisco  {
 		StringBuilder sb = new StringBuilder();
 		int printaNaTelaComQuebraDeLinha;
 
-		sb.append(Constantes.NEWLINE.getTexto());
-		sb.append(Constantes.DISCO_MAPA_OCUPACAO.getTexto());
-		sb.append(Constantes.NEWLINE.getTexto());
+		sb.append(Constantes.NEWLINE);
+		sb.append(Constantes.DISCO_MAPA_OCUPACAO);
+		sb.append(Constantes.NEWLINE);
 
 		for (int i = 0; i < qtdBlocosDisco; i++) {
 			printaNaTelaComQuebraDeLinha = i % 10;
 			if (printaNaTelaComQuebraDeLinha != 0) {
 				sb.append("| " + blocos[i] + " |");
 			} else {
-				sb.append(Constantes.NEWLINE.getTexto());
+				sb.append(Constantes.NEWLINE);
 				sb.append("| " + blocos[i] + " |");
 			}
 		}
@@ -103,7 +103,7 @@ public class ModuloDisco  {
 	public void executaOperacao(Operacao op, int opNum) {
 		listenerSO.escreveNaTela(Constantes.operacoesDoSistema(opNum));
 		if(!listenerSO.isProcessoValido(op.getIdProcesso())) {
-			listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO.getTexto());
+			listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO);
 			return;
 		}
 		 if (op.getCodOperacao() == Operacao.OP_CRIAR) {
@@ -128,7 +128,7 @@ public class ModuloDisco  {
 			} else {
 				// processo não é o que criou o arquivo e não é de tempo real
 				listenerSO.escreveNaTela(Constantes.procSemPermissaoExcluirArq(op.getIdProcesso(),op.getNomeArquivo()),
-						ModuloTelaPrincipal.RED);
+						Interface.RED);
 			}
 
 		}

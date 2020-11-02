@@ -1,15 +1,15 @@
-package modulos;
+package modules;
 
 import models.Processo;
 
-public class ModuloCPU {
-	private ModuloSO listenerSO;
+public class Processador {
+	private GerenciadorDeFilas listenerSO;
 	private Processo processo;
 	
 	private static String PROCESSO = "Processo ";
 	private static String INSTRUCAO =  " Instrução ";
 	
-	ModuloCPU(ModuloSO listenerSO) {
+	Processador(GerenciadorDeFilas listenerSO) {
 		this.listenerSO = listenerSO;
 	}
 	

@@ -1,4 +1,4 @@
-package modulos;
+package modules;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 import models.Processo;
 
-public class ModuloProcessos {
+public class Processos {
 	ArrayList<Processo> processosIniciais;
 
 	LinkedList<Processo> filaProcessosProntos;
@@ -17,7 +17,7 @@ public class ModuloProcessos {
 	LinkedList<Processo> filaProcessosUsuarioPrioridade2;
 	LinkedList<Processo> filaProcessosUsuarioPrioridade3;
 
-	public ModuloProcessos(ArrayList<Processo> processosIniciais) {
+	public Processos(ArrayList<Processo> processosIniciais) {
 		this.processosIniciais = processosIniciais;
 		filaProcessosUsuarioPrioridade1 = new LinkedList<Processo>();
 		filaProcessosUsuarioPrioridade2 = new LinkedList<Processo>();

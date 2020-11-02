@@ -1,4 +1,4 @@
-package modulos;
+package modules;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -6,21 +6,21 @@ import java.util.ArrayList;
 import models.Arquivo;
 import models.Operacao;
 import models.Processo;
-import modulos.ModuloRecursos.RecursoReturn;
+import modules.Recursos.RecursoReturn;
 import util.Constantes;
 
-public class ModuloSO implements Runnable {
+public class GerenciadorDeFilas implements Runnable {
 
 	private ArrayList<Processo> processos;
 	private ArrayList<Processo> processosIniciais;
 	private ArrayList<Operacao> operacoesEstruturaArq;
 
-	private ModuloTelaPrincipal telaPrincipal;
-	private ModuloCPU processador;
-	private ModuloDisco discoRigido;
-	private ModuloMemoria memoriaPrincipal;
-	private ModuloRecursos recursos;
-	private ModuloProcessos gerenciadorDeProcessos;
+	private Interface telaPrincipal;
+	private Processador processador;
+	private Disco discoRigido;
+	private Memoria memoriaPrincipal;
+	private Recursos recursos;
+	private Processos gerenciadorDeProcessos;
 	
 	/**
 	 * Para simplificação do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
@@ -30,18 +30,18 @@ public class ModuloSO implements Runnable {
 	private static int QUANTUM = 1000;//milisegundos
 
 	@SuppressWarnings("unchecked")
-	public ModuloSO(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
-			ArrayList<Arquivo> arquivosEmDisco, ModuloTelaPrincipal telaPrincipal, int qtdBlocosDisco) {
+	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
+			ArrayList<Arquivo> arquivosEmDisco, Interface telaPrincipal, int qtdBlocosDisco) {
 		this.telaPrincipal = telaPrincipal;
 		this.processos = (ArrayList<Processo>) processos;
 		this.processosIniciais = (ArrayList<Processo>) processos;
 		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoesEstruturaArq;
 		
-		gerenciadorDeProcessos = new ModuloProcessos(processosIniciais);
-		discoRigido = new ModuloDisco(qtdBlocosDisco, this, arquivosEmDisco);
-		processador = new ModuloCPU(this);
-		memoriaPrincipal = new ModuloMemoria();
-		recursos = new ModuloRecursos();
+		gerenciadorDeProcessos = new Processos(processosIniciais);
+		discoRigido = new Disco(qtdBlocosDisco, this, arquivosEmDisco);
+		processador = new Processador(this);
+		memoriaPrincipal = new Memoria();
+		recursos = new Recursos();
 		
 		CLOCK = 0;
 
@@ -70,17 +70,17 @@ public class ModuloSO implements Runnable {
 	public void filaProcessosLoop() throws InterruptedException {
 		Processo processoAtual = null;
 		verificaProcessoInicializandoAgora();
-		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
+		telaPrincipal.printaNoTerminal(Constantes.clock(CLOCK));
 		while ((processoAtual = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processoAtual == null) {
-				telaPrincipal.printaNoTerminal(Constantes.SEM_PROCESSO_EXECUTAR.getTexto());
+				telaPrincipal.printaNoTerminal(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
 				continue;
 			}
 			if(!memoriaPrincipal.isProcessoEmMemoria(processoAtual)){
 				if(!memoriaPrincipal.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
 					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.printaNoTerminal(Constantes.faltaRAM(processoAtual.getPID()),ModuloTelaPrincipal.RED);
+					telaPrincipal.printaNoTerminal(Constantes.erroMemoria(processoAtual.getPID()),Interface.RED);
 					continue;
 				}
 			}
@@ -93,7 +93,7 @@ public class ModuloSO implements Runnable {
 					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processoAtual, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
 					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.printaNoTerminal(Constantes.faltaRecursos(processoAtual.getPID()),ModuloTelaPrincipal.RED);
+					telaPrincipal.printaNoTerminal(Constantes.erroRecursos(processoAtual.getPID()),Interface.RED);
 					continue;
 				}
 			}
@@ -145,7 +145,7 @@ public class ModuloSO implements Runnable {
 				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
 				}else {//se não conseguiu adicionar, printa na tela
-					telaPrincipal.printaNoTerminal(Constantes.faltaEspacoGerenciadorDeProcessos(pr.getPID()),ModuloTelaPrincipal.RED);
+					telaPrincipal.printaNoTerminal(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
 				}
 			}
 		});
@@ -158,7 +158,7 @@ public class ModuloSO implements Runnable {
 			gerenciadorDeProcessos.removeProcesso(pr);
 			memoriaPrincipal.desalocaMemoria(pr);
 			recursos.desacolaTodosOsRecursosDoProcesso(pr);
-			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),ModuloTelaPrincipal.DARK_GREEN);
+			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
 		}else {
 			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
 		}
@@ -167,7 +167,7 @@ public class ModuloSO implements Runnable {
 	synchronized private void clockTick() throws InterruptedException {
 		CLOCK++;
 		wait(QUANTUM);
-		telaPrincipal.printaNoTerminal(Constantes.printaClock(CLOCK));
+		telaPrincipal.printaNoTerminal(Constantes.clock(CLOCK));
 		verificaProcessoInicializandoAgora();
 	}
 }

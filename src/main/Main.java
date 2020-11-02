@@ -1,36 +1,29 @@
 package main;
 
 import java.awt.EventQueue;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
 import models.Arquivo;
-import modulos.ModuloSO;
-import modulos.ModuloTelaPrincipal;
+import modules.GerenciadorDeFilas;
+import modules.Interface;
 import util.Constantes;
 import util.ManipuladorDeArquivos;
 
-/**
- * Classe Inicial do programa
- * 
- * @author tulio.matias		-	06/06/2018
- * 
- * */
 public class Main {
-	private static ModuloTelaPrincipal telaPrincipal;
+	private static Interface telaPrincipal;
 	private File arquivoDeProcessos = null;
-	private File arquivoEstruturaArquivos = null;
+	private File arquivoDeOperacao = null;
 
 	private ArrayList<?> processos;
-	private ArrayList<?> operacoesEstruturaArq;
+	private ArrayList<?> operacoes;
 	private ArrayList<Arquivo> arquivosEmDisco;
 	
 	private ManipuladorDeArquivos manipulador;
 	
 	public static final String ARQ_PROCESSOS = "Processos";
-	public static final String ARQ_ESTRUTURA_ARQUIVOS = "Arquivos";
-	public static final String INICIAR_SO = "iniciarSO";
+	public static final String ARQ_OPERACAO = "Arquivos";
+	public static final String INICIAR = "Iniciar";
 	
 	private Thread soThread;
 
@@ -46,7 +39,7 @@ public class Main {
 			public void run() {
 				try {
 					Main main = new Main();
-					telaPrincipal = new ModuloTelaPrincipal(main);
+					telaPrincipal = new Interface(main);
 					telaPrincipal.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,34 +49,26 @@ public class Main {
 	}
 	
 	/**
-	 * Destrutor da tela, não utilizada.
-	 * 
-	 * */
-	public void closeWindow(){
-		telaPrincipal.dispatchEvent(new WindowEvent(telaPrincipal, WindowEvent.WINDOW_CLOSING));
-	}
-
-	/**
 	 * Função que verifica se os arquivos já foram selecionados. Caso verdadeiro, inicia uma Thread contendo o moduloSO, que é responsável
 	 * por iniciar os outros módulos e executar os comandos passados pelos arquivos de input
 	 * 
 	 * */
-	public void iniciarSO(){
+	public void iniciar(){
 		if(arquivoDeProcessos == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS.getTexto(),ModuloTelaPrincipal.RED);
+			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS,Interface.RED);
 			return;
 		}
-		if(arquivoEstruturaArquivos == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS.getTexto(),ModuloTelaPrincipal.RED);
+		if(arquivoDeOperacao == null){
+			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS,Interface.RED);
 			return;
 		}
-		if(arquivoDeProcessos.equals(arquivoEstruturaArquivos)){
-			telaPrincipal.printaNoTerminal(Constantes.ARQUIVO_IGUAIS.getTexto(),ModuloTelaPrincipal.RED);
+		if(arquivoDeProcessos.equals(arquivoDeOperacao)){
+			telaPrincipal.printaNoTerminal(Constantes.ARQUIVO_IGUAIS,Interface.RED);
 			return;
 		}
-		telaPrincipal.printaNoTerminal(Constantes.INICIANDO_SO.getTexto(),ModuloTelaPrincipal.DARK_GREEN);
+		telaPrincipal.printaNoTerminal(Constantes.INICIANDO_SO,Interface.DARK_GREEN);
 		
-		ModuloSO SO = new ModuloSO(processos, operacoesEstruturaArq, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
+		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
 		soThread = new Thread(SO);
 		soThread.setDaemon(true);
 		soThread.start();
@@ -107,18 +92,18 @@ public class Main {
 					this.arquivoDeProcessos = aSerValidado;
 					this.processos = validados;
 				}else{
-					this.arquivoEstruturaArquivos = aSerValidado;
-					this.operacoesEstruturaArq = validados;
+					this.arquivoDeOperacao = aSerValidado;
+					this.operacoes = validados;
 					this.arquivosEmDisco = manipulador.getArquivosValidados();
 				}
-				telaPrincipal.printaNoTerminal(Constantes.arquivoValidado(aSerValidado.getName()), ModuloTelaPrincipal.DARK_GREEN);
+				telaPrincipal.printaNoTerminal(Constantes.arquivoValidado(aSerValidado.getName()), Interface.DARK_GREEN);
 			}else{
 				invalidaArquivo(tipoArquivo);
-				telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), ModuloTelaPrincipal.RED);	
+				telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
 			}
 		} catch (Exception e) {
 			invalidaArquivo(tipoArquivo);
-			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), ModuloTelaPrincipal.RED);	
+			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
 		} 
 	}
 	
@@ -133,8 +118,8 @@ public class Main {
 			this.arquivoDeProcessos = null;
 			this.processos = null;
 		}else{
-			this.arquivoEstruturaArquivos = null;
-			this.operacoesEstruturaArq = null;
+			this.arquivoDeOperacao = null;
+			this.operacoes = null;
 			this.arquivosEmDisco = null;
 		}
 	}

@@ -15,24 +15,24 @@ import models.Processo;
 public class ManipuladorDeArquivos {
 
 	private String tipoArquivo;
-	private File aSerValidado;
+	private File arquivo;
 	@SuppressWarnings("rawtypes")
 	private ArrayList objetosValidados;
 	private ArrayList<Arquivo> arquivosValidados;
 	private int qtdBlocosDisco;
 	private int qtdArqEmDisco;
-	private boolean fileValidated;
+	private boolean isValidado;
 	/**
 	 * Construtor, recebe o arquivo e o tipo do mesmo.
 	 * 
-	 * @param	aSerValidado	arquivo que será utilizado para obter as informações.
+	 * @param	arquivo	arquivo que será utilizado para obter as informações.
 	 * @param	tipoArquivo		tipo do Arquivo, definido na Main
 	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrário
 	 * */
-	public ManipuladorDeArquivos(File aSerValidado, String tipoArquivo) {
+	public ManipuladorDeArquivos(File arquivo, String tipoArquivo) {
 		this.tipoArquivo = tipoArquivo;
-		this.aSerValidado = aSerValidado;
-		this.fileValidated = false;
+		this.arquivo = arquivo;
+		this.isValidado = false;
 	}
 	/**
 	 * Dado as informações recebidas no construtor, valida o arquivo e constroi 
@@ -61,7 +61,7 @@ public class ManipuladorDeArquivos {
 	 * */
 	@SuppressWarnings("unchecked")
 	private boolean validaProcessos() throws IOException {
-		BufferedReader leitorBuffer = getBufferedReaderFromFile(aSerValidado);
+		BufferedReader leitorBuffer = getBufferedReaderFromFile(arquivo);
 		int processId = 0;
 
 		String linha;
@@ -85,8 +85,8 @@ public class ManipuladorDeArquivos {
 		}
 
 		leitorBuffer.close();
-		fileValidated = true;
-		return fileValidated;
+		isValidado = true;
+		return isValidado;
 	}
 	/**
 	 * Valida especificamente o arquivo de estrutura de arquivos.
@@ -95,7 +95,7 @@ public class ManipuladorDeArquivos {
 	 * */
 	@SuppressWarnings("unchecked")
 	private boolean validaEstruturaArquivos() throws IOException {
-		BufferedReader leitorBuffer = getBufferedReaderFromFile(aSerValidado);
+		BufferedReader leitorBuffer = getBufferedReaderFromFile(arquivo);
 		String linha;
 
 		linha = leitorBuffer.readLine();// quantidade total de blocos no disco
@@ -135,8 +135,8 @@ public class ManipuladorDeArquivos {
 			objetosValidados.add(operacao);
 		}
 		
-		fileValidated = true;
-		return fileValidated;
+		isValidado = true;
+		return isValidado;
 	}
 	/**
 	 * Retorna os objetos validados pelo método validaArquivo
@@ -160,7 +160,7 @@ public class ManipuladorDeArquivos {
 	 * @return	true se é valido, false caso contrário.
 	 * */
 	public boolean isFileValidated(){
-		return fileValidated;
+		return isValidado;
 	}
 	/**
 	 * Retorna a quantidade de blocos que o disco possui.
@@ -169,7 +169,7 @@ public class ManipuladorDeArquivos {
 	 * 			se não, -1.
 	 * */
 	public int getQtdBlocosDisco(){
-		if(fileValidated && tipoArquivo == Main.ARQ_ESTRUTURA_ARQUIVOS){
+		if(isValidado && tipoArquivo == Main.ARQ_OPERACAO){
 			return qtdBlocosDisco;
 		}
 		return -1;
@@ -181,7 +181,7 @@ public class ManipuladorDeArquivos {
 	 * 			se não, -1.
 	 * */
 	public int getQtdArqEmDisco(){
-		if(fileValidated && tipoArquivo == Main.ARQ_ESTRUTURA_ARQUIVOS){
+		if(isValidado && tipoArquivo == Main.ARQ_OPERACAO){
 			return qtdArqEmDisco;
 		}
 		return -1;

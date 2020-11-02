@@ -1,4 +1,4 @@
-package modulos;
+package modules;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -26,13 +26,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 /**
  * Classe que implementa a tela de visualização do Dispacher
  * 
  * @author tulio.matias		-	06/06/2018
  */
-public class ModuloTelaPrincipal extends JFrame implements ActionListener {
+public class Interface extends JFrame implements ActionListener {
 	
 	private Main mainListener;
 
@@ -60,7 +61,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 	 * @throws BadLocationException
 	 * @see Jframe
 	 */
-	public ModuloTelaPrincipal(Main main) throws BadLocationException {
+	public Interface(Main main) throws BadLocationException {
 		this.mainListener = main;
 		initialize();
 	}
@@ -78,33 +79,34 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 		painelBotoes = new JPanel();
 		contextoDeEstilo = new StyleContext();
 		Dimension btnTamanho = new Dimension(100, 40);
-		botaoAddProcesso = new JButton(Constantes.BOTAO_TXT_ADICIONAR_PROCESSO.getTexto());
-		botaoAddArquivo = new JButton(Constantes.BOTAO_TXT_ADICIONAR_ARQUIVOS.getTexto());
-		botaoIniciarSO = new JButton(Constantes.BOTAO_TXT_INICIAR_SO.getTexto());
+		botaoAddProcesso = new JButton(Constantes.BOTAO_ADICIONAR_PROCESSO);
+		botaoAddArquivo = new JButton(Constantes.BOTAO_ADICIONAR_ARQUIVOS);
+		botaoIniciarSO = new JButton(Constantes.BOTAO_INICIAR);
 		// cria o estilo do terminal
 		estiloTerminal = contextoDeEstilo.addStyle("estiloTerminal", null);
 
 		painelTerminal.setEditable(false);
-
+		
 		botaoAddProcesso.addActionListener(this);
 		botaoAddProcesso.setActionCommand(Main.ARQ_PROCESSOS);
 		botaoAddArquivo.addActionListener(this);
-		botaoAddArquivo.setActionCommand(Main.ARQ_ESTRUTURA_ARQUIVOS);
+		botaoAddArquivo.setActionCommand(Main.ARQ_OPERACAO);
 		botaoIniciarSO.addActionListener(this);
-		botaoIniciarSO.setActionCommand(Main.INICIAR_SO);
+		botaoIniciarSO.setActionCommand(Main.INICIAR);
 		botaoAddProcesso.setPreferredSize(btnTamanho);
 		botaoAddArquivo.setPreferredSize(btnTamanho);
 		botaoIniciarSO.setPreferredSize(btnTamanho);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(Constantes.TELA_PRINCIPAL_TITULO.getTexto());
+		setTitle(Constantes.TELA_PRINCIPAL_TITULO);
 		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
 		getContentPane().add(painelBotoes, BorderLayout.NORTH);
 		painelBotoes.add(botaoAddProcesso);
 		painelBotoes.add(botaoAddArquivo);
 		painelBotoes.add(botaoIniciarSO);
 		setMinimumSize(new Dimension(500, 300));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("java.png")));
 		this.pack();
 
 	}
@@ -116,17 +118,31 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 	 * */
 	@Override
 	public void actionPerformed(ActionEvent source) {
+//		public static final String ARQ_PROCESSOS = "Processos";
+//		public static final String ARQ_OPERACAO = "Arquivos";
+//		public static final String INICIAR = "Iniciar";
 		String sourceName = source.getActionCommand();
-		if(!sourceName.equals(Main.INICIAR_SO)){
+		switch (source.getActionCommand()) {
+		case Main.ARQ_PROCESSOS:
+			mainListener.valida
+			break;
+		case Main.ARQ_OPERACAO:
+			break;
+		case Main.INICIAR:
+			break;
+		default:
+			break;
+		}
+		if(!sourceName.equals(Main.INICIAR)){
 			File resposta = selecionaArquivo((JButton) source.getSource());
 			if(resposta != null){	
 				mainListener.validaArquivo(resposta,sourceName);
 			}else{
 				mainListener.invalidaArquivo(sourceName);
-				printaNoTerminal(Constantes.SELECIONAR_CANCELADO.getTexto(),RED);
+				printaNoTerminal(Constantes.SELECIONAR_CANCELADO,RED);
 			}		
 		}else{
-			mainListener.iniciarSO();		
+			mainListener.iniciar();		
 		}
 	}
 
@@ -144,7 +160,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 				public void run() {
 					try {
 						StyleConstants.setForeground(estiloTerminal, cor);
-						terminalView.insertString(terminalView.getLength(),texto+Constantes.NEWLINE.getTexto(), estiloTerminal);
+						terminalView.insertString(terminalView.getLength(),texto+Constantes.NEWLINE, estiloTerminal);
 						revalidate();
 						scrollVertical.setValue(scrollVertical.getMaximum()+1);
 						revalidate();
@@ -176,7 +192,7 @@ public class ModuloTelaPrincipal extends JFrame implements ActionListener {
 		selecionador = new JFileChooser();
 	    FileNameExtensionFilter filtro = new FileNameExtensionFilter(null,"txt");//TODO: retirar a string daqui.
 	    selecionador.setFileFilter(filtro);
-		int retorno = selecionador.showDialog(botao, Constantes.SELECIONAR.getTexto());
+		int retorno = selecionador.showDialog(botao, Constantes.SELECIONAR);
 		
         if (retorno == JFileChooser.APPROVE_OPTION) {
             return selecionador.getSelectedFile();
