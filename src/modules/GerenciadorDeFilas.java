@@ -16,30 +16,28 @@ public class GerenciadorDeFilas implements Runnable {
 	private ArrayList<Operacao> operacoesEstruturaArq;
 
 	private Interface telaPrincipal;
-	private Processador processador;
 	private Disco discoRigido;
 	private Memoria memoriaPrincipal;
 	private Recursos recursos;
 	private Processos gerenciadorDeProcessos;
 	
 	/**
-	 * Para simplificação do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
+	 * Para simplificaï¿½ï¿½o do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
 	 * o tempo inicial que o processo deve iniciar. Ou seja, o processo inicia assim que um quantum estiver para iniciar.
 	 * */
 	private int CLOCK;
 	private static int QUANTUM = 1000;//milisegundos
 
 	@SuppressWarnings("unchecked")
-	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoesEstruturaArq,
+	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes,
 			ArrayList<Arquivo> arquivosEmDisco, Interface telaPrincipal, int qtdBlocosDisco) {
 		this.telaPrincipal = telaPrincipal;
 		this.processos = (ArrayList<Processo>) processos;
 		this.processosIniciais = (ArrayList<Processo>) processos;
-		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoesEstruturaArq;
+		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoes;
 		
 		gerenciadorDeProcessos = new Processos(processosIniciais);
 		discoRigido = new Disco(qtdBlocosDisco, this, arquivosEmDisco);
-		processador = new Processador(this);
 		memoriaPrincipal = new Memoria();
 		recursos = new Recursos();
 		
@@ -50,15 +48,15 @@ public class GerenciadorDeFilas implements Runnable {
 	@Override
 	public void run() {
 
-		// inicia o processador -> loop até a fila de processos acabar
+		// inicia o processador -> loop atï¿½ a fila de processos acabar
 		try {
-			filaProcessosLoop();
+			fila();
 		} catch (InterruptedException e) {
 			// A thread do SO foi interrompida por algum motivo
 			e.printStackTrace();
 		}
 		
-		// Executa as operações de disco;
+		// Executa as operaï¿½ï¿½es de disco;
 		this.escreveNaTela(Constantes.sistemaDeArquivos());
 		for(int i = 0; i< this.operacoesEstruturaArq.size();i++) {
 			discoRigido.executaOperacao(operacoesEstruturaArq.get(i),i+1);
@@ -67,48 +65,46 @@ public class GerenciadorDeFilas implements Runnable {
 		
 	}
 
-	public void filaProcessosLoop() throws InterruptedException {
-		Processo processoAtual = null;
+	public void fila() throws InterruptedException {
+		Processo processo = null;
 		verificaProcessoInicializandoAgora();
 		telaPrincipal.logMessage(Constantes.clock(CLOCK));
-		while ((processoAtual = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
-			if(processoAtual == null) {
+		while ((processo = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
+			if(processo == null) {
 				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
 				continue;
 			}
-			if(!memoriaPrincipal.isProcessoEmMemoria(processoAtual)){
-				if(!memoriaPrincipal.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
-					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.logMessage(Constantes.erroMemoria(processoAtual.getPID()),Interface.RED);
+			if(!memoriaPrincipal.isProcessoEmMemoria(processo)){
+				if(!memoriaPrincipal.alocaMemoria(processo.getPrioridade()==0, processo)){
+					gerenciadorDeProcessos.moveParaFinalDaFila(processo);
+					telaPrincipal.logMessage(Constantes.erroMemoria(processo.getPID()),Interface.RED);
 					continue;
 				}
 			}
-			if(!processoAtual.isRecursosAlocados()) {
-				//se entrou aqui significa que o processo está em memoria mas não teve os seus recursos alocados ainda
+			if(!processo.isRecursosAlocados()) {
+				//se entrou aqui significa que o processo estï¿½ em memoria mas nï¿½o teve os seus recursos alocados ainda
 				RecursoReturn retorno;
-				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processoAtual)) != RecursoReturn.OK){
-					//se não conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
+				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processo)) != RecursoReturn.OK){
+					//se nï¿½o conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
 					//bloqueado
-					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processoAtual, recursos.getProcessoFromRecursoError(retorno));
+					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processo, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
-					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()),Interface.RED);
+					gerenciadorDeProcessos.moveParaFinalDaFila(processo);
+					telaPrincipal.logMessage(Constantes.erroRecursos(processo.getPID()),Interface.RED);
 					continue;
 				}
 			}
-			telaPrincipal.logMessage(Constantes.dispatcher(processoAtual));
-			telaPrincipal.logMessage(Constantes.executandoProc(processoAtual.getPID()));
-			processador.setProcesso(processoAtual);
-			processador.executaProcesso();
-			
-			processoAtual.diminuiTempoProcessador();		
+			telaPrincipal.logMessage(Constantes.dispatcher(processo));
+			telaPrincipal.logMessage(Constantes.executandoProc(processo.getPID()));
+			printDispatcher(processo);
+			processo.diminuiTempoProcessador();		
 			// Se o processo terminar, libera os recursos
-			verificaContinuidadeDoProcesso(processoAtual);	
+			verificaContinuidadeDoProcesso(processo);	
 			clockTick();
 		}
 	}
-
+	
 	synchronized public void escreveNaTela(String toPrint, Color cor) {
 		telaPrincipal.logMessage(toPrint, cor);
 	}
@@ -118,7 +114,7 @@ public class GerenciadorDeFilas implements Runnable {
 	}
 
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
-		// verifica aqui se o processo é de tempo real
+		// verifica aqui se o processo ï¿½ de tempo real
 
 		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == idProcesso) {
@@ -142,9 +138,9 @@ public class GerenciadorDeFilas implements Runnable {
 		ArrayList<Processo> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
+				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo ï¿½s filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
-				}else {//se não conseguiu adicionar, printa na tela
+				}else {//se nï¿½o conseguiu adicionar, printa na tela
 					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
 				}
 			}
@@ -169,6 +165,15 @@ public class GerenciadorDeFilas implements Runnable {
 		wait(QUANTUM);
 		telaPrincipal.logMessage(Constantes.clock(CLOCK));
 		verificaProcessoInicializandoAgora();
+	}
+	
+	synchronized public void printDispatcher(Processo processo) throws InterruptedException {
+		escreveNaTela(Constantes.PROCESSO + processo.getPID()+ Constantes.INICIO);
+		for(int i=1; i<=3; i++) {
+			escreveNaTela(Constantes.PROCESSO + processo.getPID()+ Constantes.INSTRUCAO + i);
+		}
+		wait(300);
+		escreveNaTela(Constantes.PROCESSO + processo.getPID()+ Constantes.RETURN_SIGINT);
 	}
 }
 

@@ -6,6 +6,10 @@ import java.util.NoSuchElementException;
 
 import models.Processo;
 
+/**
+ *	Classes e estruturas de dados relativas ao processo. Basicamente,
+ *  mantém informações específicas do processo.
+ */
 public class Processos {
 	ArrayList<Processo> processosIniciais;
 
@@ -85,7 +89,7 @@ public class Processos {
 	}
 
 	public void diminuiPrioridadeProcesso(Processo pr) {
-		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, n�o mudar ele de fila.
+		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, n�o mudar ele de fila.
 			return;
 		}
 		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
@@ -164,5 +168,7 @@ public class Processos {
 			break;
 		}
 	}
+	
+	
 	
 }

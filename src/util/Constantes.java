@@ -35,6 +35,10 @@ public class Constantes {
 	public static String NEWLINE = "\n";
 	public static String VIRGULA = ", ";
 	
+	public static String INSTRUCAO =  " Instru��o ";
+	public static String RETURN_SIGINT = " return SIGINT";
+	public static String INICIO = " Inicio";
+	
 	public static String arquivoValidado(String nomeArquivo){
 		StringBuilder sb = new StringBuilder();
 		sb.append(ARQUIVO_SELECIONADO);
