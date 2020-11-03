@@ -70,17 +70,17 @@ public class GerenciadorDeFilas implements Runnable {
 	public void filaProcessosLoop() throws InterruptedException {
 		Processo processoAtual = null;
 		verificaProcessoInicializandoAgora();
-		telaPrincipal.printaNoTerminal(Constantes.clock(CLOCK));
+		telaPrincipal.logMessage(Constantes.clock(CLOCK));
 		while ((processoAtual = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processoAtual == null) {
-				telaPrincipal.printaNoTerminal(Constantes.SEM_PROCESSO_EXECUTAR);
+				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
 				continue;
 			}
 			if(!memoriaPrincipal.isProcessoEmMemoria(processoAtual)){
 				if(!memoriaPrincipal.alocaMemoria(processoAtual.getPrioridade()==0, processoAtual)){
 					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.printaNoTerminal(Constantes.erroMemoria(processoAtual.getPID()),Interface.RED);
+					telaPrincipal.logMessage(Constantes.erroMemoria(processoAtual.getPID()),Interface.RED);
 					continue;
 				}
 			}
@@ -93,12 +93,12 @@ public class GerenciadorDeFilas implements Runnable {
 					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processoAtual, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
 					gerenciadorDeProcessos.moveParaFinalDaFila(processoAtual);
-					telaPrincipal.printaNoTerminal(Constantes.erroRecursos(processoAtual.getPID()),Interface.RED);
+					telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()),Interface.RED);
 					continue;
 				}
 			}
-			telaPrincipal.printaNoTerminal(Constantes.dispatcher(processoAtual));
-			telaPrincipal.printaNoTerminal(Constantes.executandoProc(processoAtual.getPID()));
+			telaPrincipal.logMessage(Constantes.dispatcher(processoAtual));
+			telaPrincipal.logMessage(Constantes.executandoProc(processoAtual.getPID()));
 			processador.setProcesso(processoAtual);
 			processador.executaProcesso();
 			
@@ -110,11 +110,11 @@ public class GerenciadorDeFilas implements Runnable {
 	}
 
 	synchronized public void escreveNaTela(String toPrint, Color cor) {
-		telaPrincipal.printaNoTerminal(toPrint, cor);
+		telaPrincipal.logMessage(toPrint, cor);
 	}
 
 	synchronized public void escreveNaTela(String toPrint) {
-		telaPrincipal.printaNoTerminal(toPrint);
+		telaPrincipal.logMessage(toPrint);
 	}
 
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
@@ -145,7 +145,7 @@ public class GerenciadorDeFilas implements Runnable {
 				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
 				}else {//se não conseguiu adicionar, printa na tela
-					telaPrincipal.printaNoTerminal(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
+					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
 				}
 			}
 		});
@@ -158,7 +158,7 @@ public class GerenciadorDeFilas implements Runnable {
 			gerenciadorDeProcessos.removeProcesso(pr);
 			memoriaPrincipal.desalocaMemoria(pr);
 			recursos.desacolaTodosOsRecursosDoProcesso(pr);
-			telaPrincipal.printaNoTerminal(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
+			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
 		}else {
 			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
 		}
@@ -167,7 +167,7 @@ public class GerenciadorDeFilas implements Runnable {
 	synchronized private void clockTick() throws InterruptedException {
 		CLOCK++;
 		wait(QUANTUM);
-		telaPrincipal.printaNoTerminal(Constantes.clock(CLOCK));
+		telaPrincipal.logMessage(Constantes.clock(CLOCK));
 		verificaProcessoInicializandoAgora();
 	}
 }

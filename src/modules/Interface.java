@@ -1,13 +1,20 @@
 package modules;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JPanel;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -21,17 +28,9 @@ import javax.swing.text.StyleContext;
 import main.Main;
 import util.Constantes;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Toolkit;
-
 /**
- * Classe que implementa a tela de visualização do Dispacher
+ * Interface do sistema e controlador dos botões e terminal.
  * 
- * @author tulio.matias		-	06/06/2018
  */
 public class Interface extends JFrame implements ActionListener {
 	
@@ -42,12 +41,11 @@ public class Interface extends JFrame implements ActionListener {
 	private JTextPane painelTerminal;
 	private JScrollPane scrollTerminal;
 	private JScrollBar scrollVertical;
-	private JPanel painelBotoes;
 	private JFileChooser selecionador;
-
-	private JButton botaoAddProcesso;
-	private JButton botaoAddArquivo;
-	private JButton botaoIniciarSO;
+	
+	JMenuBar menuBar = new JMenuBar(); 
+	JMenu menu = new JMenu("Menu");
+	JMenuItem itemAddProcesso, itemAddArquivo, iniciar;
 
 	private StyleContext contextoDeEstilo;
 	private Style estiloTerminal;
@@ -72,42 +70,46 @@ public class Interface extends JFrame implements ActionListener {
 	 * @throws BadLocationException
 	 */
 	private void initialize() throws BadLocationException {
+		
+		// TERMINAL
 		terminalView = new DefaultStyledDocument();
 		painelTerminal = new JTextPane(terminalView);
 		scrollTerminal = new JScrollPane(painelTerminal);
 		scrollVertical = scrollTerminal.getVerticalScrollBar();
-		painelBotoes = new JPanel();
-		contextoDeEstilo = new StyleContext();
-		Dimension btnTamanho = new Dimension(100, 40);
-		botaoAddProcesso = new JButton(Constantes.BOTAO_ADICIONAR_PROCESSO);
-		botaoAddArquivo = new JButton(Constantes.BOTAO_ADICIONAR_ARQUIVOS);
-		botaoIniciarSO = new JButton(Constantes.BOTAO_INICIAR);
-		// cria o estilo do terminal
-		estiloTerminal = contextoDeEstilo.addStyle("estiloTerminal", null);
-
-		painelTerminal.setEditable(false);
 		
-		botaoAddProcesso.addActionListener(this);
-		botaoAddProcesso.setActionCommand(Main.ARQ_PROCESSOS);
-		botaoAddArquivo.addActionListener(this);
-		botaoAddArquivo.setActionCommand(Main.ARQ_OPERACAO);
-		botaoIniciarSO.addActionListener(this);
-		botaoIniciarSO.setActionCommand(Main.INICIAR);
-		botaoAddProcesso.setPreferredSize(btnTamanho);
-		botaoAddArquivo.setPreferredSize(btnTamanho);
-		botaoIniciarSO.setPreferredSize(btnTamanho);
+		// MENU
+		iniciar = new JMenuItem(Main.INICIAR); 
+		iniciar.addActionListener(this);
+		iniciar.setActionCommand(Main.INICIAR);
+		menu.add(iniciar);
+		
+		itemAddProcesso = new JMenuItem(Main.ARQ_PROCESSOS);  
+		itemAddProcesso.addActionListener(this);
+		itemAddProcesso.setActionCommand(Main.ARQ_PROCESSOS);
+		menu.add(itemAddProcesso); 
+		
+		itemAddArquivo = new JMenuItem(Main.ARQ_OPERACAO); 
+		itemAddArquivo.addActionListener(this);
+		itemAddArquivo.setActionCommand(Main.ARQ_OPERACAO);
+        menu.add(itemAddArquivo);
+        menuBar.add(menu);
+		
+		contextoDeEstilo = new StyleContext();
+		estiloTerminal = contextoDeEstilo.addStyle("estiloTerminal", null);
+		
+		painelTerminal.setEditable(false);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
-
+		
+		// JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle(Constantes.TELA_PRINCIPAL_TITULO);
-		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
-		getContentPane().add(painelBotoes, BorderLayout.NORTH);
-		painelBotoes.add(botaoAddProcesso);
-		painelBotoes.add(botaoAddArquivo);
-		painelBotoes.add(botaoIniciarSO);
+		setJMenuBar(menuBar);
+		getContentPane().add(scrollTerminal, BorderLayout.SOUTH);
 		setMinimumSize(new Dimension(500, 300));
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("java.png")));
-		this.pack();
+		
+		// ICONE
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("java.png")));
+		pack();
 
 	}
 
@@ -118,31 +120,30 @@ public class Interface extends JFrame implements ActionListener {
 	 * */
 	@Override
 	public void actionPerformed(ActionEvent source) {
-//		public static final String ARQ_PROCESSOS = "Processos";
-//		public static final String ARQ_OPERACAO = "Arquivos";
-//		public static final String INICIAR = "Iniciar";
-		String sourceName = source.getActionCommand();
 		switch (source.getActionCommand()) {
 		case Main.ARQ_PROCESSOS:
-			mainListener.valida
+			File processo = selecionaArquivo((JMenuItem) source.getSource());
+			if(processo != null){
+				mainListener.validaArquivo(processo,source.getActionCommand());
+			} else {
+				mainListener.invalidaArquivo(source.getActionCommand());
+				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
+			}
 			break;
 		case Main.ARQ_OPERACAO:
+			File arquivo = selecionaArquivo((JMenuItem) source.getSource());
+			if(arquivo != null){
+				mainListener.validaArquivo(arquivo,source.getActionCommand());
+			} else {
+				mainListener.invalidaArquivo(source.getActionCommand());
+				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
+			}
 			break;
 		case Main.INICIAR:
+			mainListener.iniciar();
 			break;
 		default:
 			break;
-		}
-		if(!sourceName.equals(Main.INICIAR)){
-			File resposta = selecionaArquivo((JButton) source.getSource());
-			if(resposta != null){	
-				mainListener.validaArquivo(resposta,sourceName);
-			}else{
-				mainListener.invalidaArquivo(sourceName);
-				printaNoTerminal(Constantes.SELECIONAR_CANCELADO,RED);
-			}		
-		}else{
-			mainListener.iniciar();		
 		}
 	}
 
@@ -153,7 +154,7 @@ public class Interface extends JFrame implements ActionListener {
 	 * @param	texto	texto a ser escrito no terminal
 	 * @param	cor		cor a ser colocada no terminal
 	 * */
-	synchronized public void printaNoTerminal(String texto, Color cor){
+	synchronized public void logMessage(String texto, Color cor){
 		EventQueue.invokeLater(new Runnable() {
 			
 			@Override
@@ -169,8 +170,6 @@ public class Interface extends JFrame implements ActionListener {
 					}
 				}
 			});
-		
-
 	}
 	
 	/**
@@ -178,8 +177,8 @@ public class Interface extends JFrame implements ActionListener {
 	 * 
 	 * @param	texto	texto a ser escrito no terminal
 	 * */
-	public void printaNoTerminal(String texto){
-		printaNoTerminal(texto,Color.BLACK);
+	public void logMessage(String texto){
+		logMessage(texto,Color.BLACK);
 	}
 	
 	/**

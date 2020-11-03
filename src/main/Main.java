@@ -55,18 +55,18 @@ public class Main {
 	 * */
 	public void iniciar(){
 		if(arquivoDeProcessos == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS,Interface.RED);
+			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS,Interface.RED);
 			return;
 		}
 		if(arquivoDeOperacao == null){
-			telaPrincipal.printaNoTerminal(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS,Interface.RED);
+			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS,Interface.RED);
 			return;
 		}
 		if(arquivoDeProcessos.equals(arquivoDeOperacao)){
-			telaPrincipal.printaNoTerminal(Constantes.ARQUIVO_IGUAIS,Interface.RED);
+			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS,Interface.RED);
 			return;
 		}
-		telaPrincipal.printaNoTerminal(Constantes.INICIANDO_SO,Interface.DARK_GREEN);
+		telaPrincipal.logMessage(Constantes.INICIANDO_SO,Interface.DARK_GREEN);
 		
 		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
 		soThread = new Thread(SO);
@@ -96,14 +96,14 @@ public class Main {
 					this.operacoes = validados;
 					this.arquivosEmDisco = manipulador.getArquivosValidados();
 				}
-				telaPrincipal.printaNoTerminal(Constantes.arquivoValidado(aSerValidado.getName()), Interface.DARK_GREEN);
+				telaPrincipal.logMessage(Constantes.arquivoValidado(aSerValidado.getName()), Interface.DARK_GREEN);
 			}else{
 				invalidaArquivo(tipoArquivo);
-				telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
+				telaPrincipal.logMessage(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
 			}
 		} catch (Exception e) {
 			invalidaArquivo(tipoArquivo);
-			telaPrincipal.printaNoTerminal(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
+			telaPrincipal.logMessage(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
 		} 
 	}
 	
