@@ -29,7 +29,7 @@ import main.Main;
 import util.Constantes;
 
 /**
- * Interface do sistema e controlador dos botões e terminal.
+ * Interface do sistema e controlador dos botï¿½es e terminal.
  * 
  */
 public class Interface extends JFrame implements ActionListener {
@@ -37,6 +37,7 @@ public class Interface extends JFrame implements ActionListener {
 	private Main mainListener;
 
 	private static final long serialVersionUID = 1L;
+	private String icone = "java.png";
 	private DefaultStyledDocument terminalView;
 	private JTextPane painelTerminal;
 	private JScrollPane scrollTerminal;
@@ -65,7 +66,7 @@ public class Interface extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Inicializa o conteúdo da tela
+	 * Inicializa o conteï¿½do da tela
 	 * 
 	 * @throws BadLocationException
 	 */
@@ -95,27 +96,28 @@ public class Interface extends JFrame implements ActionListener {
         menuBar.add(menu);
 		
 		contextoDeEstilo = new StyleContext();
-		estiloTerminal = contextoDeEstilo.addStyle("estiloTerminal", null);
+		estiloTerminal = contextoDeEstilo.addStyle("a", null);
 		
 		painelTerminal.setEditable(false);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
 		
 		// JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(Constantes.TELA_PRINCIPAL_TITULO);
+		setTitle(Constantes.TITULO);
 		setJMenuBar(menuBar);
-		getContentPane().add(scrollTerminal, BorderLayout.SOUTH);
+		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
 		setMinimumSize(new Dimension(500, 300));
 		
 		// ICONE
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("java.png")));
+		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
 		pack();
 
 	}
 
 	
 	/**
-	 *  Método para verificar qual botão foi pressionado
+	 *  Mï¿½todo para verificar qual botï¿½o foi pressionado
 	 * @see ActionEvent
 	 * */
 	@Override
@@ -173,7 +175,7 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Escreve no terminal a String recebida com a cor padrão
+	 * Escreve no terminal a String recebida com a cor padrï¿½o
 	 * 
 	 * @param	texto	texto a ser escrito no terminal
 	 * */
@@ -182,10 +184,10 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensão txt.
+	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensï¿½o txt.
 	 * 
 	 * @param	botao	botao clicado na tela
-	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrário
+	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrï¿½rio
 	 * */
 	public File selecionaArquivo(Component botao){
 		selecionador = new JFileChooser();

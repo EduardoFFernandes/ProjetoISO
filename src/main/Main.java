@@ -29,7 +29,7 @@ public class Main {
 
 	
 	/**
-	 * Função inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
+	 * Funï¿½ï¿½o inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
 	 * 
 	 * @param	args	argumentos inciais do programa
 	 * */
@@ -49,8 +49,8 @@ public class Main {
 	}
 	
 	/**
-	 * Função que verifica se os arquivos já foram selecionados. Caso verdadeiro, inicia uma Thread contendo o moduloSO, que é responsável
-	 * por iniciar os outros módulos e executar os comandos passados pelos arquivos de input
+	 * Funï¿½ï¿½o que verifica se os arquivos jï¿½ foram selecionados. Caso verdadeiro, inicia uma Thread contendo o moduloSO, que ï¿½ responsï¿½vel
+	 * por iniciar os outros mï¿½dulos e executar os comandos passados pelos arquivos de input
 	 * 
 	 * */
 	public void iniciar(){
@@ -66,7 +66,7 @@ public class Main {
 			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS,Interface.RED);
 			return;
 		}
-		telaPrincipal.logMessage(Constantes.INICIANDO_SO,Interface.DARK_GREEN);
+		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.DARK_GREEN);
 		
 		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
 		soThread = new Thread(SO);
@@ -76,10 +76,10 @@ public class Main {
 	
 	
 	/**
-	 * Função Callback da telaPrincipal. Recebe um File que será manipulado, populando uma das estruturas de array caso o mesmo seja válido
-	 * se não printa na tela que o arquivo é invalido.
+	 * Funï¿½ï¿½o Callback da telaPrincipal. Recebe um File que serï¿½ manipulado, populando uma das estruturas de array caso o mesmo seja vï¿½lido
+	 * se nï¿½o printa na tela que o arquivo ï¿½ invalido.
 	 * 
-	 * @param	aSerValidado	arquivo que será validado pelo manipulador de arquivos
+	 * @param	aSerValidado	arquivo que serï¿½ validado pelo manipulador de arquivos
 	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
 	 * */
 	
@@ -109,7 +109,7 @@ public class Main {
 	
 	
 	/**
-	 * Função para invalidar qualquer uma das seleções de arquivo.
+	 * Funï¿½ï¿½o para invalidar qualquer uma das seleï¿½ï¿½es de arquivo.
 	 * 
 	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
 	 * */
