@@ -10,7 +10,7 @@ public class Processo {
 	private int reqScanner;
 	private int reqModem;
 	private int reqCodDisco;
-	private int PID; //quando o SO é iniciado ,é gerado um PID.
+	private int PID; //quando o SO e iniciado ,e gerado um PID.
 	private boolean recursosAlocados; // indicador que os recursos do processo foram alocados
 	private boolean possuiRecursoBlocante;
 	

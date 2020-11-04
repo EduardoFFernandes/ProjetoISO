@@ -21,17 +21,15 @@ public class Main {
 	
 	private ManipuladorDeArquivos manipulador;
 	
-	public static final String ARQ_PROCESSOS = "Processos";
-	public static final String ARQ_OPERACAO = "Arquivos";
+	public static final String PROCESSOS = "Processos";
+	public static final String ARQUIVOS = "Arquivos";
 	public static final String INICIAR = "Iniciar";
 	
-	private Thread soThread;
-
+	private Thread thread;
 	
 	/**
-	 * Fun��o inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
-	 * 
-	 * @param	args	argumentos inciais do programa
+	 * Funcao inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
+	 * @author Dudu
 	 * */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -49,8 +47,8 @@ public class Main {
 	}
 	
 	/**
-	 * Fun��o que verifica se os arquivos j� foram selecionados. Caso verdadeiro, inicia uma Thread contendo o moduloSO, que � respons�vel
-	 * por iniciar os outros m�dulos e executar os comandos passados pelos arquivos de input
+	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema Operacional.
+	 * @author Dudu
 	 * 
 	 * */
 	public void iniciar(){
@@ -66,62 +64,55 @@ public class Main {
 			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS,Interface.RED);
 			return;
 		}
-		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.DARK_GREEN);
+		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.GREEN);
 		
 		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
-		soThread = new Thread(SO);
-		soThread.setDaemon(true);
-		soThread.start();
+		thread = new Thread(SO);
+		thread.setDaemon(true);
+		thread.start();
 	}
 	
-	
 	/**
-	 * Fun��o Callback da telaPrincipal. Recebe um File que ser� manipulado, populando uma das estruturas de array caso o mesmo seja v�lido
-	 * se n�o printa na tela que o arquivo � invalido.
-	 * 
-	 * @param	aSerValidado	arquivo que ser� validado pelo manipulador de arquivos
-	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
+	 * Funcao que valida os arquivos selecionados.
+	 * @author Dudu
 	 * */
-	
-	public void validaArquivo(File aSerValidado,String tipoArquivo){
-		manipulador = new ManipuladorDeArquivos(aSerValidado,tipoArquivo);
+	public void valida(File arquivo, String tipoArquivo){
+		manipulador = new ManipuladorDeArquivos(arquivo,tipoArquivo);
 		try {
-			if(aSerValidado.exists() && manipulador.validaArquivo()){
+			if(arquivo.exists() && manipulador.validaArquivo()){
 				ArrayList<?> validados = manipulador.getObjetosValidados();
-				if(tipoArquivo.equals(ARQ_PROCESSOS)){				
-					this.arquivoDeProcessos = aSerValidado;
+				if(tipoArquivo.equals(PROCESSOS)){				
+					this.arquivoDeProcessos = arquivo;
 					this.processos = validados;
 				}else{
-					this.arquivoDeOperacao = aSerValidado;
+					this.arquivoDeOperacao = arquivo;
 					this.operacoes = validados;
 					this.arquivosEmDisco = manipulador.getArquivosValidados();
 				}
-				telaPrincipal.logMessage(Constantes.arquivoValidado(aSerValidado.getName()), Interface.DARK_GREEN);
+				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
 			}else{
-				invalidaArquivo(tipoArquivo);
-				telaPrincipal.logMessage(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
+				invalida(tipoArquivo);
+				telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);	
 			}
 		} catch (Exception e) {
-			invalidaArquivo(tipoArquivo);
-			telaPrincipal.logMessage(Constantes.arquivoNaoValido(aSerValidado.getName()), Interface.RED);	
+			invalida(tipoArquivo);
+			telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);	
 		} 
 	}
 	
-	
 	/**
-	 * Fun��o para invalidar qualquer uma das sele��es de arquivo.
-	 * 
-	 * @param	tipoArquivo		tipo do Arquivo, definido pelas static strings
+	 * Funcao que trata arquivos invalidos, setando nulo as variaveis da Classe Main.
+	 * @author Dudu
 	 * */
-	public void invalidaArquivo(String tipoArquivo){
-		if(tipoArquivo.equals(ARQ_PROCESSOS)){				
+	public void invalida (String tipoArquivo){
+		if(tipoArquivo == PROCESSOS) {				
 			this.arquivoDeProcessos = null;
 			this.processos = null;
-		}else{
-			this.arquivoDeOperacao = null;
-			this.operacoes = null;
-			this.arquivosEmDisco = null;
-		}
+			return;
+		} 
+		this.arquivoDeOperacao = null;
+		this.operacoes = null;
+		this.arquivosEmDisco = null;
+		
 	}
-	
 }

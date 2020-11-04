@@ -107,26 +107,26 @@ public class Disco  {
 			return;
 		}
 		 if (op.getCodOperacao() == Operacao.OP_CRIAR) {
-			// operação de criar arquivo
+			// operacao de criar arquivo
 			 createFile(op);
 		} else {
-			// operação de excluir arquivo
+			// operacao de excluir arquivo
 			Arquivo arq = procuraArquivoNoDisco(op.getNomeArquivo());
 			if (arq == null) {
-				// se não encontrou arquivo.
+				// se nao encontrou arquivo.
 				listenerSO.escreveNaTela(Constantes.arqNaoEncontrado(op.getNomeArquivo()));
 			}
 			// encontrou arquivo
 			if (op.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
-				// processo é o mesmo que criou o arquivo
+				// processo e o mesmo que criou o arquivo
 				deleteFile(arq);
 				listenerSO.escreveNaTela(Constantes.excluiuArq(op));
 			} else if (listenerSO.isProcessoTempoReal(op.getIdProcesso())) {
-				// processo não é o que criou o arquivo mas é de tempo real
+				// processo nao e o que criou o arquivo mas e de tempo real
 				deleteFile(arq);
 				listenerSO.escreveNaTela(Constantes.excluiuArq(op));
 			} else {
-				// processo não é o que criou o arquivo e não é de tempo real
+				// processo nao e o que criou o arquivo e nao e de tempo real
 				listenerSO.escreveNaTela(Constantes.procSemPermissaoExcluirArq(op.getIdProcesso(),op.getNomeArquivo()),
 						Interface.RED);
 			}
