@@ -66,7 +66,7 @@ public class Interface extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Inicializa o conteúdo da tela
+	 * Inicializa o conteï¿½do da tela
 	 * 
 	 * @throws BadLocationException
 	 */
@@ -182,7 +182,7 @@ public class Interface extends JFrame implements ActionListener {
 	 * @param	texto	texto a ser escrito no terminal
 	 * */
 	public void logMessage(String texto){
-		logMessage(texto,Color.BLACK);
+		logMessage(texto,Color.WHITE);
 	}
 	
 	/**

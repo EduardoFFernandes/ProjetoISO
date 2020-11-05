@@ -69,7 +69,8 @@ public class GerenciadorDeFilas implements Runnable {
 		Processo processo = null;
 		verificaProcessoInicializandoAgora();
 		telaPrincipal.logMessage(Constantes.clock(CLOCK));
-		while ((processo = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
+		processo = gerenciadorDeProcessos.pegaProximoProcesso();
+		while (processo != null || !processos.isEmpty()) {
 			if(processo == null) {
 				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
@@ -83,15 +84,10 @@ public class GerenciadorDeFilas implements Runnable {
 				}
 			}
 			if(!processo.isRecursosAlocados()) {
-				//se entrou aqui significa que o processo estao em memoria mas nao teve os seus recursos alocados ainda
+				//se entrou aqui significa que o processo esta em memoria mas nao teve os seus recursos alocados ainda
 				RecursoReturn retorno;
-<<<<<<< HEAD
 				if((retorno = recursos.alocaRecurso(processo)) != RecursoReturn.OK){
-					//se nï¿½o conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
-=======
-				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processo)) != RecursoReturn.OK){
 					//se nao conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 					//bloqueado
 					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processo, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
@@ -143,7 +139,7 @@ public class GerenciadorDeFilas implements Runnable {
 		ArrayList<Processo> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
+				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo as filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
 				}else {//se nao conseguiu adicionar, printa na tela
 					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
@@ -158,13 +154,8 @@ public class GerenciadorDeFilas implements Runnable {
 		if(pr.getTempoProcessador()<1) {// se o processo acabou
 			gerenciadorDeProcessos.removeProcesso(pr);
 			memoriaPrincipal.desalocaMemoria(pr);
-<<<<<<< HEAD
 			recursos.desalocaRecursos(pr);
-			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
-=======
-			recursos.desacolaTodosOsRecursosDoProcesso(pr);
 			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.GREEN);
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 		}else {
 			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
 		}
