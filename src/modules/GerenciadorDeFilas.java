@@ -22,7 +22,7 @@ public class GerenciadorDeFilas implements Runnable {
 	private Processos gerenciadorDeProcessos;
 	
 	/**
-	 * Para simplificaï¿½ï¿½o do problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
+	 * Para simplificar o problema: o clock aqui significa tanto a quantidade de quantums ocorridos quanto
 	 * o tempo inicial que o processo deve iniciar. Ou seja, o processo inicia assim que um quantum estiver para iniciar.
 	 * */
 	private int CLOCK;
@@ -48,7 +48,7 @@ public class GerenciadorDeFilas implements Runnable {
 	@Override
 	public void run() {
 
-		// inicia o processador -> loop atï¿½ a fila de processos acabar
+		// inicia o processador -> loop ate a fila de processos acabar
 		try {
 			fila();
 		} catch (InterruptedException e) {
@@ -56,7 +56,7 @@ public class GerenciadorDeFilas implements Runnable {
 			e.printStackTrace();
 		}
 		
-		// Executa as operaï¿½ï¿½es de disco;
+		// Executa as operacoes de disco;
 		this.escreveNaTela(Constantes.sistemaDeArquivos());
 		for(int i = 0; i< this.operacoesEstruturaArq.size();i++) {
 			discoRigido.executaOperacao(operacoesEstruturaArq.get(i),i+1);
@@ -83,10 +83,15 @@ public class GerenciadorDeFilas implements Runnable {
 				}
 			}
 			if(!processo.isRecursosAlocados()) {
-				//se entrou aqui significa que o processo estï¿½ em memoria mas nï¿½o teve os seus recursos alocados ainda
+				//se entrou aqui significa que o processo estao em memoria mas nao teve os seus recursos alocados ainda
 				RecursoReturn retorno;
+<<<<<<< HEAD
 				if((retorno = recursos.alocaRecurso(processo)) != RecursoReturn.OK){
 					//se nï¿½o conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
+=======
+				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processo)) != RecursoReturn.OK){
+					//se nao conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 					//bloqueado
 					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processo, recursos.getProcessoFromRecursoError(retorno));
 					//move o processo atual para o final da fila
@@ -114,7 +119,7 @@ public class GerenciadorDeFilas implements Runnable {
 	}
 
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
-		// verifica aqui se o processo ï¿½ de tempo real
+		// verifica aqui se o processo e de tempo real
 
 		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == idProcesso) {
@@ -138,9 +143,9 @@ public class GerenciadorDeFilas implements Runnable {
 		ArrayList<Processo> novaLista = new ArrayList<>(processos);
 		processos.forEach((pr)->{
 			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo ï¿½s filas de processo
+				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo às filas de processo
 					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
-				}else {//se nï¿½o conseguiu adicionar, printa na tela
+				}else {//se nao conseguiu adicionar, printa na tela
 					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
 				}
 			}
@@ -153,8 +158,13 @@ public class GerenciadorDeFilas implements Runnable {
 		if(pr.getTempoProcessador()<1) {// se o processo acabou
 			gerenciadorDeProcessos.removeProcesso(pr);
 			memoriaPrincipal.desalocaMemoria(pr);
+<<<<<<< HEAD
 			recursos.desalocaRecursos(pr);
 			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
+=======
+			recursos.desacolaTodosOsRecursosDoProcesso(pr);
+			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.GREEN);
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 		}else {
 			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
 		}

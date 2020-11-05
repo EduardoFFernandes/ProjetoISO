@@ -8,7 +8,7 @@ import models.Processo;
 
 /**
  *	Classes e estruturas de dados relativas ao processo. Basicamente,
- *  mant√©m informa√ß√µes espec√≠ficas do processo.
+ *  manta©m informaaßaµes especa≠ficas do processo.
  */
 public class Processos {
 	ArrayList<Processo> processosIniciais;
@@ -89,7 +89,7 @@ public class Processos {
 	}
 
 	public void diminuiPrioridadeProcesso(Processo pr) {
-		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, nÔøΩo mudar ele de fila.
+		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, nao mudar ele de fila.
 			return;
 		}
 		if (pr.getPrioridade() == 0) {// move o processo para o final da fila

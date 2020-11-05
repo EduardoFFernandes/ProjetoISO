@@ -25,9 +25,9 @@ public class ManipuladorDeArquivos {
 	/**
 	 * Construtor, recebe o arquivo e o tipo do mesmo.
 	 * 
-	 * @param	arquivo	arquivo que será utilizado para obter as informações.
+	 * @param	arquivo	arquivo que sera utilizado para obter as informacoes.
 	 * @param	tipoArquivo		tipo do Arquivo, definido na Main
-	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrário
+	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrario
 	 * */
 	public ManipuladorDeArquivos(File arquivo, String tipoArquivo) {
 		this.tipoArquivo = tipoArquivo;
@@ -35,16 +35,16 @@ public class ManipuladorDeArquivos {
 		this.isValidado = false;
 	}
 	/**
-	 * Dado as informações recebidas no construtor, valida o arquivo e constroi 
+	 * Dado as informacoes recebidas no construtor, valida o arquivo e constroi 
 	 * as estruturas de dados a partir do mesmo
 	 * 
 	 * 
-	 * @return	Se o arquivo selecionado é valido ou não.
+	 * @return	Se o arquivo selecionado e valido ou nao.
 	 
 	 * */
 	public boolean validaArquivo() throws IOException {
 
-		if (tipoArquivo.equals(Main.ARQ_PROCESSOS)) {
+		if (tipoArquivo.equals(Main.PROCESSOS)) {
 			objetosValidados = new ArrayList<Processo>();
 			return validaProcessos();
 		} else {
@@ -57,7 +57,7 @@ public class ManipuladorDeArquivos {
 	/**
 	 * Valida especificamente arquivos de processos.
 	 * 
-	 * @return	Se o arquivo de processo é valido ou não.
+	 * @return	Se o arquivo de processo e valido ou nao.
 	 * */
 	@SuppressWarnings("unchecked")
 	private boolean validaProcessos() throws IOException {
@@ -91,7 +91,7 @@ public class ManipuladorDeArquivos {
 	/**
 	 * Valida especificamente o arquivo de estrutura de arquivos.
 	 * 
-	 * @return	Se o arquivo de estruturas é valido ou não.
+	 * @return	Se o arquivo de estruturas e valido ou nao.
 	 * */
 	@SuppressWarnings("unchecked")
 	private boolean validaEstruturaArquivos() throws IOException {
@@ -123,7 +123,7 @@ public class ManipuladorDeArquivos {
 			if(!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2])){
 				return false;
 			}
-			if(valores.length == 4){//operação de adição de arquivos
+			if(valores.length == 4){//operacao de adicao de arquivos
 				if(!isValidString(valores[3]) ){
 					return false;
 				}
@@ -139,25 +139,25 @@ public class ManipuladorDeArquivos {
 		return isValidado;
 	}
 	/**
-	 * Retorna os objetos validados pelo método validaArquivo
+	 * Retorna os objetos validados pelo metodo validaArquivo
 	 * 
-	 * @return	Array com os objetos validados, null se o arquivo é inválido
+	 * @return	Array com os objetos validados, null se o arquivo e invalido
 	 * */
 	public ArrayList<?> getObjetosValidados(){
 		return objetosValidados;
 	}	
 	/**
-	 * Retorna os objetos validados pelo método validaArquivo
+	 * Retorna os objetos validados pelo metodo validaArquivo
 	 * 
-	 * @return	Array com os ArquivosVO validados, null se o arquivo é inválido
+	 * @return	Array com os ArquivosVO validados, null se o arquivo e invalido
 	 * */
 	public ArrayList<Arquivo> getArquivosValidados(){
 		return arquivosValidados;
 	}
 	/**
-	 * Verifica se o arquivo enviado é valido.
+	 * Verifica se o arquivo enviado e valido.
 	 * 
-	 * @return	true se é valido, false caso contrário.
+	 * @return	true se e valido, false caso contrario.
 	 * */
 	public boolean isFileValidated(){
 		return isValidado;
@@ -166,10 +166,10 @@ public class ManipuladorDeArquivos {
 	 * Retorna a quantidade de blocos que o disco possui.
 	 * 
 	 * @return	qtdBlocosDisco se o arquivo foi validado e o arquivo enviado for do tipo Estrutura_Arquivos
-	 * 			se não, -1.
+	 * 			se nao, -1.
 	 * */
 	public int getQtdBlocosDisco(){
-		if(isValidado && tipoArquivo == Main.ARQ_OPERACAO){
+		if(isValidado && tipoArquivo == Main.ARQUIVOS){
 			return qtdBlocosDisco;
 		}
 		return -1;
@@ -178,10 +178,10 @@ public class ManipuladorDeArquivos {
 	 * Retorna a quantidade de arquivos em disco.
 	 * 
 	 * @return	qtdArqEmDisco se o arquivo foi validado e o arquivo enviado for do tipo Estrutura_Arquivos
-	 * 			se não, -1.
+	 * 			se nao, -1.
 	 * */
 	public int getQtdArqEmDisco(){
-		if(isValidado && tipoArquivo == Main.ARQ_OPERACAO){
+		if(isValidado && tipoArquivo == Main.ARQUIVOS){
 			return qtdArqEmDisco;
 		}
 		return -1;
@@ -196,10 +196,10 @@ public class ManipuladorDeArquivos {
 		return Integer.parseInt(s);
 	}
 	/**
-	 * Verifica se a string s não é nulla e se ela não é vazia
+	 * Verifica se a string s nao e nulla e se ela nao e vazia
 	 * 
 	 * @param	s	string a ser verificada
-	 * @return	true se a string é valida, false caso contrário.
+	 * @return	true se a string e valida, false caso contrario.
 	 * */
 	private boolean isValidString(String s){
 		if(s == null || s .equals("")){
@@ -211,8 +211,8 @@ public class ManipuladorDeArquivos {
 	 * Recebe um arquivo e retorna um BufferedReader para o mesmo
 	 * 
 	 * @param	s	arquivo a ser manuseado.
-	 * @return	BufferedReader do arquivo enviado para a função.
-	 * @throws FileNotFoundException caso não consiga abrir o arquivo.
+	 * @return	BufferedReader do arquivo enviado para a funcao.
+	 * @throws FileNotFoundException caso nao consiga abrir o arquivo.
 	 * */
 	private BufferedReader getBufferedReaderFromFile(File s) throws FileNotFoundException {
 		FileReader fileReader = null;

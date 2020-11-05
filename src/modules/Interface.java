@@ -29,7 +29,7 @@ import main.Main;
 import util.Constantes;
 
 /**
- * Interface do sistema e controlador dos botï¿½es e terminal.
+ * Interface do sistema e terminal.
  * 
  */
 public class Interface extends JFrame implements ActionListener {
@@ -52,7 +52,7 @@ public class Interface extends JFrame implements ActionListener {
 	private Style estiloTerminal;
 
 	
-	public final static Color DARK_GREEN = new Color(0, 153,0);
+	public final static Color GREEN = new Color(51,169,54);
 	public final static Color RED = Color.RED;
 	/**
 	 * Inicia a tela e recebe o listener da main
@@ -66,7 +66,7 @@ public class Interface extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Inicializa o conteï¿½do da tela
+	 * Inicializa o conteúdo da tela
 	 * 
 	 * @throws BadLocationException
 	 */
@@ -84,14 +84,14 @@ public class Interface extends JFrame implements ActionListener {
 		iniciar.setActionCommand(Main.INICIAR);
 		menu.add(iniciar);
 		
-		itemAddProcesso = new JMenuItem(Main.ARQ_PROCESSOS);  
+		itemAddProcesso = new JMenuItem(Main.PROCESSOS);  
 		itemAddProcesso.addActionListener(this);
-		itemAddProcesso.setActionCommand(Main.ARQ_PROCESSOS);
+		itemAddProcesso.setActionCommand(Main.PROCESSOS);
 		menu.add(itemAddProcesso); 
 		
-		itemAddArquivo = new JMenuItem(Main.ARQ_OPERACAO); 
+		itemAddArquivo = new JMenuItem(Main.ARQUIVOS); 
 		itemAddArquivo.addActionListener(this);
-		itemAddArquivo.setActionCommand(Main.ARQ_OPERACAO);
+		itemAddArquivo.setActionCommand(Main.ARQUIVOS);
         menu.add(itemAddArquivo);
         menuBar.add(menu);
 		
@@ -100,6 +100,7 @@ public class Interface extends JFrame implements ActionListener {
 		
 		painelTerminal.setEditable(false);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
+		painelTerminal.setBackground(Color.black);
 		
 		// JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -107,6 +108,7 @@ public class Interface extends JFrame implements ActionListener {
 		setJMenuBar(menuBar);
 		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
 		setMinimumSize(new Dimension(500, 300));
+		setDefaultLookAndFeelDecorated(true);
 		
 		// ICONE
 		
@@ -117,27 +119,27 @@ public class Interface extends JFrame implements ActionListener {
 
 	
 	/**
-	 *  Mï¿½todo para verificar qual botï¿½o foi pressionado
+	 *  Metodo para verificar qual botao foi pressionado
 	 * @see ActionEvent
 	 * */
 	@Override
 	public void actionPerformed(ActionEvent source) {
 		switch (source.getActionCommand()) {
-		case Main.ARQ_PROCESSOS:
+		case Main.PROCESSOS:
 			File processo = selecionaArquivo((JMenuItem) source.getSource());
 			if(processo != null){
-				mainListener.validaArquivo(processo,source.getActionCommand());
+				mainListener.valida(processo,source.getActionCommand());
 			} else {
-				mainListener.invalidaArquivo(source.getActionCommand());
+				mainListener.invalida(source.getActionCommand());
 				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
 			}
 			break;
-		case Main.ARQ_OPERACAO:
+		case Main.ARQUIVOS:
 			File arquivo = selecionaArquivo((JMenuItem) source.getSource());
 			if(arquivo != null){
-				mainListener.validaArquivo(arquivo,source.getActionCommand());
+				mainListener.valida(arquivo,source.getActionCommand());
 			} else {
-				mainListener.invalidaArquivo(source.getActionCommand());
+				mainListener.invalida(source.getActionCommand());
 				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
 			}
 			break;
@@ -175,7 +177,7 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Escreve no terminal a String recebida com a cor padrï¿½o
+	 * Escreve no terminal a String recebida com a cor padrao
 	 * 
 	 * @param	texto	texto a ser escrito no terminal
 	 * */
@@ -184,10 +186,10 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensï¿½o txt.
+	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensao txt.
 	 * 
 	 * @param	botao	botao clicado na tela
-	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrï¿½rio
+	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrario
 	 * */
 	public File selecionaArquivo(Component botao){
 		selecionador = new JFileChooser();

@@ -31,18 +31,18 @@ public class Memoria {
 
 		for (int i = inicioBlocos; i < fimBlocos; i++) {
 			cabe = true;
-			if (i + qtdBlocosPro > fimBlocos) {// TODO verificar aqui se o que foi colocado está certo
+			if (i + qtdBlocosPro > fimBlocos) {// TODO verificar aqui se o que foi colocado esta certo
 				break;
 			}
 
-			if (blocos[i] == BLOCO_VAZIO) {// se o bloco que estamos avaliando está vazio
+			if (blocos[i] == BLOCO_VAZIO) {// se o bloco que estamos avaliando esta vazio
 				for (int y = 0; y < qtdBlocosPro; y++) {
-					if (blocos[i + y] > 0) {// se o valor contido no bloco em questão for diferente de BLOCO_VAZIO então não cabe
+					if (blocos[i + y] > 0) {// se o valor contido no bloco em questao for diferente de BLOCO_VAZIO entao nao cabe
 						cabe = false;
 						break;
 					}
 				}
-				if (cabe) {// se cabe significa que encontrou um espaço grande o suficiente para colocar o
+				if (cabe) {// se cabe significa que encontrou um espaco grande o suficiente para colocar o
 							// processo
 					gravaNaRAM(i, qtdBlocosPro, processo.getPID()); 
 					processo.setInicioProcessoRAM(i);

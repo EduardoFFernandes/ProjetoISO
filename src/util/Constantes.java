@@ -20,22 +20,22 @@ public class Constantes {
 	public static String BOTAO_ADICIONAR_ARQUIVOS = "<html>Adicionar<br/>Arquivos</html>";
 	public static String BOTAO_INICIAR = "<html>Iniciar</html>";
 	
-	public static String NAO_SELECIONADO_ARQ_PROCESSOS = "Nï¿½o foi selecionado um arquivo de Processos.";
-	public static String NAO_SELECIONADO_ARQ_ARQUIVOS = "Nï¿½o foi selecionado um arquivo da Estrutura de Arquivos.";
+	public static String NAO_SELECIONADO_ARQ_PROCESSOS = "Nao foi selecionado um arquivo de Processos.";
+	public static String NAO_SELECIONADO_ARQ_ARQUIVOS = "Nao foi selecionado um arquivo da Estrutura de Arquivos.";
 	
-	public static String DISCO_PROCESSO_SEM_PERMISSAO = " nï¿½o possui permissï¿½o para excluir o arquivo: ";
-	public static String DISCO_MAPA_OCUPACAO = "Mapa de ocupaï¿½ï¿½o do disco: ";
+	public static String DISCO_PROCESSO_SEM_PERMISSAO = " Nao possui permissao para excluir o arquivo: ";
+	public static String DISCO_MAPA_OCUPACAO = "Mapa de ocupacoes do disco: ";
 	
 	public static String PROCESSO = "Processo ";
 	public static String SEM_PROCESSO_EXECUTAR = "Sem processos a executar";
-	public static String NAO_EXISTE_PROCESSO = "Nï¿½o existe o processo.";
+	public static String NAO_EXISTE_PROCESSO = "Nao existe o processo.";
 	
 	public static String SYS_ARQ = "Sistema de arquivos =>";
 	
 	public static String NEWLINE = "\n";
 	public static String VIRGULA = ", ";
 	
-	public static String INSTRUCAO =  " Instruï¿½ï¿½o ";
+	public static String INSTRUCAO =  " Instrucao ";
 	public static String RETURN_SIGINT = " return SIGINT";
 	public static String INICIO = " Inicio";
 	
@@ -70,10 +70,10 @@ public class Constantes {
 		return PROCESSO + procId + DISCO_PROCESSO_SEM_PERMISSAO + arq;
 	}
 	public static String arqNaoEncontrado(String arq) {
-		return "Arquivo: " + arq + ", nï¿½o encontrado.";
+		return "Arquivo: " + arq + ", Nao encontrado.";
 	}
 	public static String operacoesDoSistema(int op) {
-		return "Operaï¿½ï¿½o " + op +" =>";
+		return "Operacao " + op +" =>";
 	}
 	public static String sistemaDeArquivos() {
 		return NEWLINE + SYS_ARQ + NEWLINE;
@@ -96,7 +96,7 @@ public class Constantes {
 			sb.append(" e " + String.valueOf(inicio+op.getQtdBlocos() - 1));
 		} else {
 			sb.append(inicio);
-			sb.append(" atï¿½ ");
+			sb.append(" ate ");
 			sb.append(inicio + op.getQtdBlocos() - 1);
 		}
 		sb.append(")");
@@ -104,7 +104,7 @@ public class Constantes {
 		return sb.toString();
 	}
 	public static String naoSalvouArq(Operacao op) {
-		return PROCESSO + op.getIdProcesso() + " nï¿½o pode criar o arquivo "+op.getNomeArquivo()+" (falta de espaï¿½o)";
+		return PROCESSO + op.getIdProcesso() + " Nao pode criar o arquivo "+op.getNomeArquivo()+" (falta de espaco)";
 	}
 	public static String excluiuArq(Operacao op) {
 		return PROCESSO + op.getIdProcesso() + " deletou o arquivo "+op.getNomeArquivo();
@@ -130,20 +130,20 @@ public class Constantes {
 		sb.append(NEWLINE);
 		sb.append("   modems: ").append(pr.getReqModem());
 		sb.append(NEWLINE);
-		sb.append("   disco rï¿½gido: ").append(pr.getReqCodDisco());
+		sb.append("   disco rigido: ").append(pr.getReqCodDisco());
 		sb.append(NEWLINE);
 		
 		return sb.toString();
 	}
 	//ERROS//
 	public static String erroMemoria(int PID) {
-		return PROCESSO + PID + " nao foi inicializado por falta de Memï¿½ria Principal.";
+		return PROCESSO + PID + " nao foi inicializado por falta de Memória Principal.";
 	}
 	
 	public static String erroRecursos(int PID) {
 		return PROCESSO + PID + " nao foi inicializado por falta de Recursos.";
 	}
 	public static String erroEspacoGerenciadorDeProcessos(int PID) {
-		return PROCESSO + PID + " nao foi inicializado por falta espaï¿½o no gerenciador de processos.";
+		return PROCESSO + PID + " nao foi inicializado por falta espaco no gerenciador de processos.";
 	}
 }
