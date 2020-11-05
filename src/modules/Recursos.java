@@ -21,10 +21,17 @@ public class Recursos {
 		discoRigido[1] = RECURSO_LIVRE;
 	}
 	public enum RecursoReturn{
-		ERR_MODEM,ERR_SCANNER,ERR_IMP1,ERR_IMP2,ERR_DISCORIGIDO1,ERR_DISCORIGIDO2,OK,ERR
+		ERR_MODEM,
+		ERR_SCANNER,
+		ERR_IMP1,
+		ERR_IMP2,
+		ERR_DISCORIGIDO1,
+		ERR_DISCORIGIDO2,
+		OK,
+		ERR
 	}
 	
-	public RecursoReturn alocaTodosOsRecursosParaProcesso(Processo pr) {
+	public RecursoReturn alocaRecurso(Processo pr) {
 		if (pr.getReqModem() > 0) {
 			if (modem == RECURSO_LIVRE) {
 				modem = pr.getPID();// modem alocado para o processoID
@@ -36,7 +43,7 @@ public class Recursos {
 			if (scanner == RECURSO_LIVRE) {
 				scanner = pr.getPID();// scanner alocado para o processoID
 			} else {
-				desacolaTodosOsRecursosDoProcesso(pr);
+				desalocaRecursos(pr);
 				return RecursoReturn.ERR_SCANNER;
 			}
 		}
@@ -44,14 +51,14 @@ public class Recursos {
 			if (impressoras[0] == RECURSO_LIVRE) {
 				impressoras[0] = pr.getPID();// impressora 0 alocada para o processoID
 			} else {
-				desacolaTodosOsRecursosDoProcesso(pr);
+				desalocaRecursos(pr);
 				return RecursoReturn.ERR_IMP1;
 			}
 		} else if (pr.getReqCodImpressora() == 2) {
 			if (impressoras[1] == RECURSO_LIVRE) {
 				impressoras[1] = pr.getPID();// impressora 1 alocada para o processoID
 			} else {
-				desacolaTodosOsRecursosDoProcesso(pr);
+				desalocaRecursos(pr);
 				return RecursoReturn.ERR_IMP2;
 			}
 		}
@@ -59,14 +66,14 @@ public class Recursos {
 			if (discoRigido[0] == RECURSO_LIVRE) {
 				discoRigido[0] = pr.getPID();// sata 0 alocado para o processoID
 			} else {
-				desacolaTodosOsRecursosDoProcesso(pr);
+				desalocaRecursos(pr);
 				return RecursoReturn.ERR_DISCORIGIDO1;
 			}
 		} else if (pr.getReqCodDisco() == 2) {
 			if (discoRigido[1] == RECURSO_LIVRE) {
 				discoRigido[1] = pr.getPID();// sata 1 alocado para o processoID
 			} else {
-				desacolaTodosOsRecursosDoProcesso(pr);
+				desalocaRecursos(pr);
 				return RecursoReturn.ERR_DISCORIGIDO2;
 			}
 		}
@@ -74,7 +81,7 @@ public class Recursos {
 		return RecursoReturn.OK;
 	}
 
-	public boolean desacolaTodosOsRecursosDoProcesso(Processo pr) {
+	public boolean desalocaRecursos(Processo pr) {
 		if (pr.getReqModem() > 0 && modem == pr.getPID()) {
 			modem = RECURSO_LIVRE;// desaloca
 		}

@@ -85,7 +85,7 @@ public class GerenciadorDeFilas implements Runnable {
 			if(!processo.isRecursosAlocados()) {
 				//se entrou aqui significa que o processo est� em memoria mas n�o teve os seus recursos alocados ainda
 				RecursoReturn retorno;
-				if((retorno = recursos.alocaTodosOsRecursosParaProcesso(processo)) != RecursoReturn.OK){
+				if((retorno = recursos.alocaRecurso(processo)) != RecursoReturn.OK){
 					//se n�o conseguiu alocar os recursos, marca o processo com o recursos que ele bloqueia outro processo, e o coloca na fila do processo
 					//bloqueado
 					gerenciadorDeProcessos.atualizaProcessoBlocanteComRecurso(processo, recursos.getProcessoFromRecursoError(retorno));
@@ -153,7 +153,7 @@ public class GerenciadorDeFilas implements Runnable {
 		if(pr.getTempoProcessador()<1) {// se o processo acabou
 			gerenciadorDeProcessos.removeProcesso(pr);
 			memoriaPrincipal.desalocaMemoria(pr);
-			recursos.desacolaTodosOsRecursosDoProcesso(pr);
+			recursos.desalocaRecursos(pr);
 			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.DARK_GREEN);
 		}else {
 			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
