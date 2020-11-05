@@ -14,18 +14,15 @@ public class Main {
 	private static Interface telaPrincipal;
 	private File arquivoDeProcessos = null;
 	private File arquivoDeOperacao = null;
-
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoes;
 	private ArrayList<Arquivo> arquivosEmDisco;
-	
 	private ManipuladorDeArquivos manipulador;
 	
 	public static final String PROCESSOS = "Processos";
 	public static final String ARQUIVOS = "Arquivos";
 	public static final String INICIAR = "Iniciar";
 	
-	private Thread thread;
 	
 	/**
 	 * Funcao inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
@@ -67,9 +64,10 @@ public class Main {
 		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.GREEN);
 		
 		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
-		thread = new Thread(SO);
-		thread.setDaemon(true);
-		thread.start();
+		SO.start();
+//		thread = new Thread(SO);
+//		thread.setDaemon(true);
+//		thread.start();
 	}
 	
 	/**

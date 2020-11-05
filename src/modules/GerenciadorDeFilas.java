@@ -9,7 +9,7 @@ import models.Processo;
 import modules.Recursos.RecursoReturn;
 import util.Constantes;
 
-public class GerenciadorDeFilas implements Runnable {
+public class GerenciadorDeFilas extends Thread{
 
 	private ArrayList<Processo> processos;
 	private ArrayList<Processo> processosIniciais;
@@ -26,21 +26,22 @@ public class GerenciadorDeFilas implements Runnable {
 	 * o tempo inicial que o processo deve iniciar. Ou seja, o processo inicia assim que um quantum estiver para iniciar.
 	 * */
 	private int CLOCK;
-	private static int QUANTUM = 1000;//milisegundos
+	private static int QUANTUM = 1000; //milisegundos
 
 	@SuppressWarnings("unchecked")
 	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes,
 			ArrayList<Arquivo> arquivosEmDisco, Interface telaPrincipal, int qtdBlocosDisco) {
+		
 		this.telaPrincipal = telaPrincipal;
 		this.processos = (ArrayList<Processo>) processos;
 		this.processosIniciais = (ArrayList<Processo>) processos;
 		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoes;
+		this.setDaemon(true);
 		
 		gerenciadorDeProcessos = new Processos(processosIniciais);
 		discoRigido = new Disco(qtdBlocosDisco, this, arquivosEmDisco);
 		memoriaPrincipal = new Memoria();
 		recursos = new Recursos();
-		
 		CLOCK = 0;
 
 	}
@@ -69,8 +70,7 @@ public class GerenciadorDeFilas implements Runnable {
 		Processo processo = null;
 		verificaProcessoInicializandoAgora();
 		telaPrincipal.logMessage(Constantes.clock(CLOCK));
-		processo = gerenciadorDeProcessos.pegaProximoProcesso();
-		while (processo != null || !processos.isEmpty()) {
+		while ((processo = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
 			if(processo == null) {
 				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
@@ -137,27 +137,27 @@ public class GerenciadorDeFilas implements Runnable {
 	}
 	private void verificaProcessoInicializandoAgora() {
 		ArrayList<Processo> novaLista = new ArrayList<>(processos);
-		processos.forEach((pr)->{
-			if(pr.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
-				if(gerenciadorDeProcessos.adicionaProcesso(pr)) {//tenta adicionar o mesmo as filas de processo
-					novaLista.remove(pr);// remove o mesmo dos processos que nao foram inicializados
+		processos.forEach((processo)->{
+			if(processo.getTempoInicializacao()==CLOCK) {//se o processo vai iniciar agora
+				if(gerenciadorDeProcessos.adicionaProcesso(processo)) {//tenta adicionar o mesmo as filas de processo
+					novaLista.remove(processo);// remove o mesmo dos processos que nao foram inicializados
 				}else {//se nao conseguiu adicionar, printa na tela
-					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(pr.getPID()),Interface.RED);
+					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(processo.getPID()),Interface.RED);
 				}
 			}
 		});
 		processos = novaLista;
 	}
 	
-	private void verificaContinuidadeDoProcesso(Processo pr) {
+	private void verificaContinuidadeDoProcesso(Processo processo) {
 		//se entrou aqui significa que o processo foi executado
-		if(pr.getTempoProcessador()<1) {// se o processo acabou
-			gerenciadorDeProcessos.removeProcesso(pr);
-			memoriaPrincipal.desalocaMemoria(pr);
-			recursos.desalocaRecursos(pr);
-			telaPrincipal.logMessage(Constantes.procFinalizado(pr.getPID()),Interface.GREEN);
+		if(processo.getTempoProcessador()<1) {// se o processo acabou
+			gerenciadorDeProcessos.removeProcesso(processo);
+			memoriaPrincipal.desalocaMemoria(processo);
+			recursos.desalocaRecursos(processo);
+			telaPrincipal.logMessage(Constantes.procFinalizado(processo.getPID()),Interface.GREEN);
 		}else {
-			gerenciadorDeProcessos.diminuiPrioridadeProcesso(pr);
+			gerenciadorDeProcessos.diminuiPrioridadeProcesso(processo);
 		}
 	}
 	

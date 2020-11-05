@@ -8,6 +8,8 @@ public class Constantes {
 	public static String TITULO = "Trabalho ISO";
 	public static String INICIANDO = "Iniciando...";
 	
+	public static String MENU = "Menu";
+	
 	public static String SELECIONAR = "Selecionar";
 	public static String SELECIONAR_CANCELADO = "Selecionar arquivo, cancelado.";
 	
@@ -137,7 +139,7 @@ public class Constantes {
 	}
 	//ERROS//
 	public static String erroMemoria(int PID) {
-		return PROCESSO + PID + " nao foi inicializado por falta de Memória Principal.";
+		return PROCESSO + PID + " nao foi inicializado por falta de Memï¿½ria Principal.";
 	}
 	
 	public static String erroRecursos(int PID) {

@@ -33,10 +33,10 @@ import util.Constantes;
  * 
  */
 public class Interface extends JFrame implements ActionListener {
-	
-	private Main mainListener;
 
 	private static final long serialVersionUID = 1L;
+	
+	private Main mainListener;
 	private String icone = "java.png";
 	private DefaultStyledDocument terminalView;
 	private JTextPane painelTerminal;
@@ -45,20 +45,18 @@ public class Interface extends JFrame implements ActionListener {
 	private JFileChooser selecionador;
 	
 	JMenuBar menuBar = new JMenuBar(); 
-	JMenu menu = new JMenu("Menu");
+	JMenu menu = new JMenu(Constantes.MENU);
 	JMenuItem itemAddProcesso, itemAddArquivo, iniciar;
 
 	private StyleContext contextoDeEstilo;
 	private Style estiloTerminal;
-
 	
 	public final static Color GREEN = new Color(51,169,54);
 	public final static Color RED = Color.RED;
+	
 	/**
-	 * Inicia a tela e recebe o listener da main
-	 * @param main 
-	 * @throws BadLocationException
-	 * @see Jframe
+	 * Atribui o objeto Main e os parametros para a Interface.
+	 * @author eduardofreire
 	 */
 	public Interface(Main main) throws BadLocationException {
 		this.mainListener = main;
@@ -66,9 +64,8 @@ public class Interface extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Inicializa o conte�do da tela
-	 * 
-	 * @throws BadLocationException
+	 * Atribui os valores da Interface do sistema.
+	 * @author eduardofreire
 	 */
 	private void initialize() throws BadLocationException {
 		
@@ -96,7 +93,7 @@ public class Interface extends JFrame implements ActionListener {
         menuBar.add(menu);
 		
 		contextoDeEstilo = new StyleContext();
-		estiloTerminal = contextoDeEstilo.addStyle("a", null);
+		estiloTerminal = contextoDeEstilo.addStyle(null, null);
 		
 		painelTerminal.setEditable(false);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
@@ -119,9 +116,10 @@ public class Interface extends JFrame implements ActionListener {
 
 	
 	/**
-	 *  Metodo para verificar qual botao foi pressionado
-	 * @see ActionEvent
-	 * */
+	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com os eventos dentro da interface,
+	 * e aqui que e tratado a questão de selecionar os arquivos e iniciar o Pseudo SO.
+	 * @author eduardofreire
+	 */
 	@Override
 	public void actionPerformed(ActionEvent source) {
 		switch (source.getActionCommand()) {
@@ -151,13 +149,10 @@ public class Interface extends JFrame implements ActionListener {
 		}
 	}
 
-
 	/**
-	 * Escreve no terminal a String recebida com a cor selecionada
-	 * 
-	 * @param	texto	texto a ser escrito no terminal
-	 * @param	cor		cor a ser colocada no terminal
-	 * */
+	 * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
+	 * @author eduardofreire
+	 */
 	synchronized public void logMessage(String texto, Color cor){
 		EventQueue.invokeLater(new Runnable() {
 			
@@ -177,10 +172,9 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Escreve no terminal a String recebida com a cor padrao
 	 * 
-	 * @param	texto	texto a ser escrito no terminal
-	 * */
+	 * @author eduardofreire
+	 */
 	public void logMessage(String texto){
 		logMessage(texto,Color.WHITE);
 	}
