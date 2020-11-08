@@ -112,34 +112,34 @@ public class Constantes {
 		return PROCESSO + op.getIdProcesso() + " deletou o arquivo "+op.getNomeArquivo();
 	}
 	
-	public static String dispatcher(Processo pr) {
+	public static String dispatcher(Processo processo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Dispatcher =>");
 		sb.append(NEWLINE);
-		sb.append("   PID: ").append(pr.getPID());
+		sb.append("   PID: ").append(processo.getPID());
 		sb.append(NEWLINE);
-		sb.append("   offset: ").append(pr.getInicioProcessoRAM());
+		sb.append("   offset: ").append(processo.getInicioProcessoMemoria());
 		sb.append(NEWLINE);
-		sb.append("   blocos: ").append(pr.getBlocosEmMemoriaRAM());
+		sb.append("   blocos: ").append(processo.getBlocosMemoria());
 		sb.append(NEWLINE);
-		sb.append("   prioridade: ").append(pr.getPrioridade());
+		sb.append("   prioridade: ").append(processo.getPrioridade());
 		sb.append(NEWLINE);
-		sb.append("   tempo de processador: ").append(pr.getTempoProcessador());
+		sb.append("   tempo de processador: ").append(processo.getTempoProcessador());
 		sb.append(NEWLINE);
-		sb.append("   impressoras: ").append(pr.getReqCodImpressora());
+		sb.append("   impressoras: ").append(processo.getImpressora());
 		sb.append(NEWLINE);
-		sb.append("   scanners: ").append(pr.getReqScanner());
+		sb.append("   scanners: ").append(processo.getScanner());
 		sb.append(NEWLINE);
-		sb.append("   modems: ").append(pr.getReqModem());
+		sb.append("   modems: ").append(processo.getModem());
 		sb.append(NEWLINE);
-		sb.append("   disco rigido: ").append(pr.getReqCodDisco());
+		sb.append("   disco rigido: ").append(processo.getDisco());
 		sb.append(NEWLINE);
 		
 		return sb.toString();
 	}
 	//ERROS//
 	public static String erroMemoria(int PID) {
-		return PROCESSO + PID + " nao foi inicializado por falta de Mem�ria Principal.";
+		return PROCESSO + PID + " nao foi inicializado por falta de Memoria Principal.";
 	}
 	
 	public static String erroRecursos(int PID) {

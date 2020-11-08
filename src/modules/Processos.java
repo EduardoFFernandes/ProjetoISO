@@ -75,68 +75,68 @@ public class Processos {
 		return false;
 	}
 
-	public void removeProcesso(Processo pr) {
+	public void removeProcesso(Processo processo) {
 
-		if (pr.getPrioridade() == 0) {
-			filaTempoReal.remove(pr);
-		} else if (pr.getPrioridade() == 1) {
-			filaProcessosUsuarioPrioridade1.remove(pr);
-		} else if (pr.getPrioridade() == 2) {
-			filaProcessosUsuarioPrioridade2.remove(pr);
-		} else if (pr.getPrioridade() == 3) {
-			filaProcessosUsuarioPrioridade3.remove(pr);
+		if (processo.getPrioridade() == 0) {
+			filaTempoReal.remove(processo);
+		} else if (processo.getPrioridade() == 1) {
+			filaProcessosUsuarioPrioridade1.remove(processo);
+		} else if (processo.getPrioridade() == 2) {
+			filaProcessosUsuarioPrioridade2.remove(processo);
+		} else if (processo.getPrioridade() == 3) {
+			filaProcessosUsuarioPrioridade3.remove(processo);
 		}
 	}
 
-	public void diminuiPrioridadeProcesso(Processo pr) {
-		if(pr.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, nao mudar ele de fila.
+	public void diminuiPrioridadeProcesso(Processo processo) {
+		if(processo.isPossuiRecursoBlocante()) {// se o processo bloquear outro processo, nao mudar ele de fila.
 			return;
 		}
-		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
-			filaTempoReal.remove(pr);
-			filaTempoReal.add(pr);
-		} else if (pr.getPrioridade() == 1) {
-			filaProcessosUsuarioPrioridade1.remove(pr);
-			pr.setPrioridade(pr.getPrioridade() + 1);
-			filaProcessosUsuarioPrioridade2.add(pr);
-		} else if (pr.getPrioridade() == 2) {
-			filaProcessosUsuarioPrioridade2.remove(pr);
-			pr.setPrioridade(pr.getPrioridade() + 1);
-			filaProcessosUsuarioPrioridade3.add(pr);
-		} else if (pr.getPrioridade() == 3) {// move o processo para o final da
+		if (processo.getPrioridade() == 0) {// move o processo para o final da fila
+			filaTempoReal.remove(processo);
+			filaTempoReal.add(processo);
+		} else if (processo.getPrioridade() == 1) {
+			filaProcessosUsuarioPrioridade1.remove(processo);
+			processo.setPrioridade(processo.getPrioridade() + 1);
+			filaProcessosUsuarioPrioridade2.add(processo);
+		} else if (processo.getPrioridade() == 2) {
+			filaProcessosUsuarioPrioridade2.remove(processo);
+			processo.setPrioridade(processo.getPrioridade() + 1);
+			filaProcessosUsuarioPrioridade3.add(processo);
+		} else if (processo.getPrioridade() == 3) {// move o processo para o final da
 												// fila
-			filaProcessosUsuarioPrioridade3.remove(pr);
-			filaProcessosUsuarioPrioridade3.add(pr);
+			filaProcessosUsuarioPrioridade3.remove(processo);
+			filaProcessosUsuarioPrioridade3.add(processo);
 		}
 	}
 
-	public void aumentaPrioridadeProcesso(Processo pr) {
-		if (pr.getPrioridade() == 0 || pr.getPrioridade() == 1) {
+	public void aumentaPrioridadeProcesso(Processo processo) {
+		if (processo.getPrioridade() == 0 || processo.getPrioridade() == 1) {
 			return;
-		} else if (pr.getPrioridade() == 2) {
-			filaProcessosUsuarioPrioridade2.remove(pr);
-			pr.setPrioridade(pr.getPrioridade() - 1);
-			filaProcessosUsuarioPrioridade1.add(pr);
-		} else if (pr.getPrioridade() == 3) {
-			filaProcessosUsuarioPrioridade3.remove(pr);
-			pr.setPrioridade(pr.getPrioridade() - 1);
-			filaProcessosUsuarioPrioridade2.add(pr);
+		} else if (processo.getPrioridade() == 2) {
+			filaProcessosUsuarioPrioridade2.remove(processo);
+			processo.setPrioridade(processo.getPrioridade() - 1);
+			filaProcessosUsuarioPrioridade1.add(processo);
+		} else if (processo.getPrioridade() == 3) {
+			filaProcessosUsuarioPrioridade3.remove(processo);
+			processo.setPrioridade(processo.getPrioridade() - 1);
+			filaProcessosUsuarioPrioridade2.add(processo);
 		}
 	}
 
-	public void moveParaFinalDaFila(Processo pr) {
-		if (pr.getPrioridade() == 0) {// move o processo para o final da fila
+	public void moveParaFinalDaFila(Processo processo) {
+		if (processo.getPrioridade() == 0) {// move o processo para o final da fila
 			filaTempoReal.removeFirst();
-			filaTempoReal.addLast(pr);
-		} else if (pr.getPrioridade() == 1) {
-			filaProcessosUsuarioPrioridade1.remove(pr);
-			filaProcessosUsuarioPrioridade1.addLast(pr);
-		} else if (pr.getPrioridade() == 2) {
-			filaProcessosUsuarioPrioridade2.remove(pr);
-			filaProcessosUsuarioPrioridade2.addLast(pr);
-		} else if (pr.getPrioridade() == 3) {
-			filaProcessosUsuarioPrioridade3.remove(pr);
-			filaProcessosUsuarioPrioridade3.addLast(pr);
+			filaTempoReal.addLast(processo);
+		} else if (processo.getPrioridade() == 1) {
+			filaProcessosUsuarioPrioridade1.remove(processo);
+			filaProcessosUsuarioPrioridade1.addLast(processo);
+		} else if (processo.getPrioridade() == 2) {
+			filaProcessosUsuarioPrioridade2.remove(processo);
+			filaProcessosUsuarioPrioridade2.addLast(processo);
+		} else if (processo.getPrioridade() == 3) {
+			filaProcessosUsuarioPrioridade3.remove(processo);
+			filaProcessosUsuarioPrioridade3.addLast(processo);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class Processos {
 			return;
 		}
 
-		processoBlocante.setPossuiRecursoBlocante(true);
+		processoBlocante.setRecursoBlocante(true);
 		switch (processoBloqueado.getPrioridade()) {
 		case 1:
 			removeProcesso(processoBlocante);

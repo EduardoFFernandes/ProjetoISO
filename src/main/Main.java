@@ -63,11 +63,8 @@ public class Main {
 		}
 		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.GREEN);
 		
-		GerenciadorDeFilas SO = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
-		SO.start();
-//		thread = new Thread(SO);
-//		thread.setDaemon(true);
-//		thread.start();
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
+		gerenciadorDeFilas.start();
 	}
 	
 	/**
