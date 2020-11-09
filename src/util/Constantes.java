@@ -105,11 +105,11 @@ public class Constantes {
 		
 		return sb.toString();
 	}
-	public static String naoSalvouArq(Operacao op) {
-		return PROCESSO + op.getIdProcesso() + " Nao pode criar o arquivo "+op.getNomeArquivo()+" (falta de espaco)";
+	public static String naoSalvouArq(Operacao operacao) {
+		return PROCESSO + operacao.getIdProcesso() + " Nao pode criar o arquivo " +operacao.getNomeArquivo()+" (falta de espaco)";
 	}
-	public static String excluiuArq(Operacao op) {
-		return PROCESSO + op.getIdProcesso() + " deletou o arquivo "+op.getNomeArquivo();
+	public static String excluiuArq(Operacao operacao) {
+		return PROCESSO + operacao.getIdProcesso() + " deletou o arquivo "+operacao.getNomeArquivo();
 	}
 	
 	public static String dispatcher(Processo processo) {

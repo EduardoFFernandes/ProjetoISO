@@ -1,5 +1,6 @@
 package modules;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import models.Arquivo;
@@ -66,7 +67,7 @@ public class Disco  {
 		if(salvou) {
 			listenerSO.escreveNaTela(Constantes.salvouArq(op,blocoInicioArq));
 		}else {
-			listenerSO.escreveNaTela(Constantes.naoSalvouArq(op));
+			listenerSO.escreveNaTela(Constantes.naoSalvouArq(op),Color.RED);
 		}
 		return salvou;
 	}

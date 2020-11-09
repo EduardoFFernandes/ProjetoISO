@@ -70,7 +70,7 @@ public class GerenciadorDeFilas extends Thread{
 		verificaProcessoInicializandoAgora();
 		telaPrincipal.logMessage(Constantes.clock(CLOCK));
 //		TODO Modificar a forma que os recursos sao compartilhados.
-		while ((processo = gerenciadorDeProcessos.pegaProximoProcesso()) != null || !processos.isEmpty()) {
+		while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !processos.isEmpty()) {
 			if(processo == null) {
 				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
 				clockTick();
@@ -78,7 +78,7 @@ public class GerenciadorDeFilas extends Thread{
 			}
 			if(!gerenciadorDaMemoriaPrincipal.isProcessoEmMemoria(processo)){
 				if(!gerenciadorDaMemoriaPrincipal.alocaMemoria(processo.getPrioridade()==0, processo)){
-					gerenciadorDeProcessos.moveParaFinalDaFila(processo);
+					gerenciadorDeProcessos.ultimoProcesso(processo);
 					telaPrincipal.logMessage(Constantes.erroMemoria(processo.getPID()),Interface.RED);
 					continue;
 				}
@@ -148,7 +148,7 @@ public class GerenciadorDeFilas extends Thread{
 			Semaforo.desalocaRecursos(gerenciadorDeRecursos, processo);
 			telaPrincipal.logMessage(Constantes.procFinalizado(processo.getPID()),Interface.GREEN);
 		}else {
-			gerenciadorDeProcessos.diminuiPrioridadeProcesso(processo);
+			gerenciadorDeProcessos.diminuiPrioridade(processo);
 		}
 	}
 	
