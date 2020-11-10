@@ -10,80 +10,58 @@ import models.Processo;
  *  os processos vao subindo de prioridade.
  */
 public class Processos {
-	ArrayList<Processo> processosIniciais;
-	ArrayList<Processo> filaTempoReal;
-	ArrayList<Processo> filaPrioridade1;
-	ArrayList<Processo> filaPrioridade2;
-	ArrayList<Processo> filaPrioridade3;
+	ArrayList<Processo> filaProcessos;
 	ArrayList<ArrayList<Processo>> filas;
+	
 	private static int TAMANHO_MAXIMO = 1000;
 	
-	public Processos(ArrayList<Processo> processosIniciais) {
-		this.processosIniciais = processosIniciais;
-		filaPrioridade1 = new ArrayList<Processo>();
-		filaPrioridade2 = new ArrayList<Processo>();
-		filaPrioridade3 = new ArrayList<Processo>();
-
-		filaTempoReal = new ArrayList<Processo>();
+	public Processos(ArrayList<Processo> filaProcessos) {
+		this.filaProcessos = filaProcessos;
+		this.filas = new ArrayList<ArrayList<Processo>>();
+		for (int i = 0; i <= 3; i++) {
+			filas.add(new ArrayList<Processo>());
+		}
 	}
 	/**
 	 * Reune todos os processos com todas as prioridades em uma lista e retorta o proximo processo.
 	 */
 	public Processo proximoProcesso() {
-		ArrayList<Processo> filaProcessosProntos = new ArrayList<>();
-		filaProcessosProntos.addAll(filaTempoReal);
-		filaProcessosProntos.addAll(filaPrioridade1);
-		filaProcessosProntos.addAll(filaPrioridade2);
-		filaProcessosProntos.addAll(filaPrioridade3);
-
-		return filaProcessosProntos.isEmpty() ? null : filaProcessosProntos.get(0);
-
+		for (ArrayList<Processo> fila : filas) {
+			if(!fila.isEmpty()) {
+				return fila.get(0);
+			}
+		}
+		return null;
 	}
 	/**
 	 * Adiciona o processo para a fila correspondente a sua prioridade
 	 */
 	public boolean adicionaProcesso(Processo processo) {
 		if (processo.getPrioridade() == 0) {
-			if (verificaTamanho(filaTempoReal)) {
-				filaTempoReal.add(processo);
+			if (verificaTamanho(filas.get(0))) {
+				filas.get(0).add(processo);
 				return true;
 			}
 			return false;
 		} else if (processo.getPrioridade() == 1) {
-			if (verificaTamanho(filaPrioridade1)) {
-				filaPrioridade1.add(processo);
+			if (verificaTamanho(filas.get(1))) {
+				filas.get(1).add(processo);
 				return true;
 			}
 			return false;
 		} else if (processo.getPrioridade() == 2) {
-			if (verificaTamanho(filaPrioridade2)) {
-				filaPrioridade2.add(processo);
+			if (verificaTamanho(filas.get(2))) {
+				filas.get(2).add(processo);
 				return true;
 			}
 			return false;
 		} else if (processo.getPrioridade() == 3) {
-			if (verificaTamanho(filaPrioridade3)) {
-				filaPrioridade3.add(processo);
+			if (verificaTamanho(filas.get(3))) {
+				filas.get(3).add(processo);
 				return true;
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * Remove o processo para a fila correspondente a sua prioridade
-	 */
-	public void removeProcesso(Processo processo) {
-
-		if (processo.getPrioridade() == 0) {
-			filaTempoReal.remove(processo);
-		} else if (processo.getPrioridade() == 1) {
-			filaPrioridade1.remove(processo);
-		} else if (processo.getPrioridade() == 2) {
-			filaPrioridade2.remove(processo);
-		} else if (processo.getPrioridade() == 3) {
-			filaPrioridade3.remove(processo);
-		}
 	}
 	
 	/**
@@ -93,13 +71,13 @@ public class Processos {
 		if (processo.getPrioridade() == 0 || processo.getPrioridade() == 1) {
 			return;
 		} else if (processo.getPrioridade() == 2) {
-			filaPrioridade2.remove(processo);
+			filas.get(2).remove(processo);
 			processo.setPrioridade(processo.getPrioridade() - 1);
-			filaPrioridade1.add(processo);
+			filas.get(1).add(processo);
 		} else if (processo.getPrioridade() == 3) {
-			filaPrioridade3.remove(processo);
+			filas.get(3).remove(processo);
 			processo.setPrioridade(processo.getPrioridade() - 1);
-			filaPrioridade2.add(processo);
+			filas.get(2).remove(processo);
 		}
 	}
 	
@@ -111,38 +89,19 @@ public class Processos {
 			return;
 		}
 		if (processo.getPrioridade() == 0) {
-			filaTempoReal.remove(processo);
-			filaTempoReal.add(processo);
+			filas.get(0).add(processo);
+			filas.get(0).remove(processo);
 		} else if (processo.getPrioridade() == 1) {
-			filaPrioridade1.remove(processo);
+			filas.get(1).remove(processo);
 			processo.setPrioridade(processo.getPrioridade() + 1);
-			filaPrioridade2.add(processo);
+			filas.get(2).remove(processo);
 		} else if (processo.getPrioridade() == 2) {
-			filaPrioridade2.remove(processo);
+			filas.get(2).remove(processo);
 			processo.setPrioridade(processo.getPrioridade() + 1);
-			filaPrioridade3.add(processo);
-		} else if (processo.getPrioridade() == 3) {// move o processo para o final da fila
-			filaPrioridade3.remove(processo);
-			filaPrioridade3.add(processo);
-		}
-	}
-	
-	/**
-	 * O processo vira o ultimo da fila de acordo com a sua prioridade.
-	 */
-	public void ultimoProcesso(Processo processo) {
-		if (processo.getPrioridade() == 0) {
-			filaTempoReal.remove(0);
-			filaTempoReal.add(processo);
-		} else if (processo.getPrioridade() == 1) {
-			filaPrioridade1.remove(processo);
-			filaPrioridade1.add(processo);
-		} else if (processo.getPrioridade() == 2) {
-			filaPrioridade2.remove(processo);
-			filaPrioridade2.add(processo);
+			filas.get(3).add(processo);
 		} else if (processo.getPrioridade() == 3) {
-			filaPrioridade3.remove(processo);
-			filaPrioridade3.add(processo);
+			filas.get(3).remove(processo);
+			filas.get(3).add(processo);
 		}
 	}
 	
@@ -151,7 +110,7 @@ public class Processos {
 	 */
 	public void atualizaProcesso(Processo processoBloqueado) {
 		Processo processoBlocante = null;
-		for (Processo processo : processosIniciais) {
+		for (Processo processo : filaProcessos) {
 			if (processo.getPID() == processoBloqueado.getPID()) {
 				processoBlocante = processo;
 				break;
@@ -160,19 +119,54 @@ public class Processos {
 		if (processoBlocante == null) {
 			return;
 		}
-
+		
 		processoBlocante.setRecursoBlocante(true);
 		
 		if(processoBloqueado.getPrioridade() == 1) {
 			removeProcesso(processoBlocante);
-			filaPrioridade1.add(0, processoBlocante);
+			filas.get(1).add(0, processoBlocante);
 			processoBlocante.setPrioridade(processoBloqueado.getPrioridade());
 		} 
 		if(processoBloqueado.getPrioridade() == 2) {
 			removeProcesso(processoBlocante);
-			filaPrioridade2.add(0, processoBlocante);
+			filas.get(2).add(0, processoBlocante);
 			processoBlocante.setPrioridade(processoBloqueado.getPrioridade());
 		} 
+	}
+	
+	/**
+	 * O processo vira o ultimo da fila de acordo com a sua prioridade.
+	 */
+	public void ultimoProcesso(Processo processo) {
+		if (processo.getPrioridade() == 0) {
+			filas.get(0).remove(0);
+			filas.get(0).add(processo);
+		} else if (processo.getPrioridade() == 1) {
+			filas.get(1).remove(processo);
+			filas.get(1).add(processo);
+		} else if (processo.getPrioridade() == 2) {
+			filas.get(2).remove(processo);
+			filas.get(2).add(processo);
+		} else if (processo.getPrioridade() == 3) {
+			filas.get(3).remove(processo);
+			filas.get(3).remove(processo);
+		}
+	}
+	
+	/**
+	 * Remove o processo para a fila correspondente a sua prioridade
+	 */
+	public void removeProcesso(Processo processo) {
+
+		if (processo.getPrioridade() == 0) {
+			filas.get(0).remove(processo);
+		} else if (processo.getPrioridade() == 1) {
+			filas.get(1).remove(processo);
+		} else if (processo.getPrioridade() == 2) {
+			filas.get(2).remove(processo);
+		} else if (processo.getPrioridade() == 3) {
+			filas.get(3).remove(processo);
+		}
 	}
 	
 	public boolean verificaTamanho (ArrayList<Processo> fila) {
