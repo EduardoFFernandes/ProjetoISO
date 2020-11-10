@@ -35,7 +35,7 @@ import util.Constantes;
 public class Interface extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Main mainListener;
 	private String icone = "java.png";
 	private DefaultStyledDocument terminalView;
@@ -43,19 +43,20 @@ public class Interface extends JFrame implements ActionListener {
 	private JScrollPane scrollTerminal;
 	private JScrollBar scrollVertical;
 	private JFileChooser selecionador;
-	
-	JMenuBar menuBar = new JMenuBar(); 
+
+	JMenuBar menuBar = new JMenuBar();
 	JMenu menu = new JMenu(Constantes.MENU);
 	JMenuItem itemAddProcesso, itemAddArquivo, iniciar;
 
 	private StyleContext contextoDeEstilo;
 	private Style estiloTerminal;
-	
-	public final static Color GREEN = new Color(51,169,54);
+
+	public final static Color GREEN = new Color(51, 169, 54);
 	public final static Color RED = Color.RED;
-	
+
 	/**
 	 * Atribui o objeto Main e os parametros para a Interface.
+	 * 
 	 * @author eduardofreire
 	 */
 	public Interface(Main main) throws BadLocationException {
@@ -65,40 +66,41 @@ public class Interface extends JFrame implements ActionListener {
 
 	/**
 	 * Atribui os valores da Interface do sistema.
+	 * 
 	 * @author eduardofreire
 	 */
 	private void initialize() throws BadLocationException {
-		
+
 		// TERMINAL
 		terminalView = new DefaultStyledDocument();
 		painelTerminal = new JTextPane(terminalView);
 		scrollTerminal = new JScrollPane(painelTerminal);
 		scrollVertical = scrollTerminal.getVerticalScrollBar();
-		
+
 		// MENU
-		iniciar = new JMenuItem(Main.INICIAR); 
+		iniciar = new JMenuItem(Main.INICIAR);
 		iniciar.addActionListener(this);
 		iniciar.setActionCommand(Main.INICIAR);
 		menu.add(iniciar);
-		
-		itemAddProcesso = new JMenuItem(Main.PROCESSOS);  
+
+		itemAddProcesso = new JMenuItem(Main.PROCESSOS);
 		itemAddProcesso.addActionListener(this);
 		itemAddProcesso.setActionCommand(Main.PROCESSOS);
-		menu.add(itemAddProcesso); 
-		
-		itemAddArquivo = new JMenuItem(Main.ARQUIVOS); 
+		menu.add(itemAddProcesso);
+
+		itemAddArquivo = new JMenuItem(Main.ARQUIVOS);
 		itemAddArquivo.addActionListener(this);
 		itemAddArquivo.setActionCommand(Main.ARQUIVOS);
-        menu.add(itemAddArquivo);
-        menuBar.add(menu);
-		
+		menu.add(itemAddArquivo);
+		menuBar.add(menu);
+
 		contextoDeEstilo = new StyleContext();
 		estiloTerminal = contextoDeEstilo.addStyle(null, null);
-		
+
 		painelTerminal.setEditable(false);
 		painelTerminal.setPreferredSize(new Dimension(200, 200));
 		painelTerminal.setBackground(Color.black);
-		
+
 		// JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle(Constantes.TITULO);
@@ -106,18 +108,19 @@ public class Interface extends JFrame implements ActionListener {
 		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
 		setMinimumSize(new Dimension(500, 300));
 		setDefaultLookAndFeelDecorated(true);
-		
+
 		// ICONE
-		
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
 		pack();
 
 	}
 
-	
 	/**
-	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com os eventos dentro da interface,
-	 * e aqui que e tratado a questão de selecionar os arquivos e iniciar o Pseudo SO.
+	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com
+	 * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
+	 * os arquivos e iniciar o Pseudo SO.
+	 * 
 	 * @author eduardofreire
 	 */
 	@Override
@@ -125,20 +128,20 @@ public class Interface extends JFrame implements ActionListener {
 		switch (source.getActionCommand()) {
 		case Main.PROCESSOS:
 			File processo = selecionaArquivo((JMenuItem) source.getSource());
-			if(processo != null){
-				mainListener.valida(processo,source.getActionCommand());
+			if (processo != null) {
+				mainListener.valida(processo, source.getActionCommand());
 			} else {
 				mainListener.invalida(source.getActionCommand());
-				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
+				logMessage(Constantes.SELECIONAR_CANCELADO, RED);
 			}
 			break;
 		case Main.ARQUIVOS:
 			File arquivo = selecionaArquivo((JMenuItem) source.getSource());
-			if(arquivo != null){
-				mainListener.valida(arquivo,source.getActionCommand());
+			if (arquivo != null) {
+				mainListener.valida(arquivo, source.getActionCommand());
 			} else {
 				mainListener.invalida(source.getActionCommand());
-				logMessage(Constantes.SELECIONAR_CANCELADO,RED);
+				logMessage(Constantes.SELECIONAR_CANCELADO, RED);
 			}
 			break;
 		case Main.INICIAR:
@@ -151,50 +154,51 @@ public class Interface extends JFrame implements ActionListener {
 
 	/**
 	 * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
+	 * 
 	 * @author eduardofreire
 	 */
-	synchronized public void logMessage(String texto, Color cor){
+	synchronized public void logMessage(String texto, Color cor) {
 		EventQueue.invokeLater(new Runnable() {
-			
+
 			@Override
-				public void run() {
-					try {
-						StyleConstants.setForeground(estiloTerminal, cor);
-						terminalView.insertString(terminalView.getLength(),texto+Constantes.NEWLINE, estiloTerminal);
-						revalidate();
-						scrollVertical.setValue(scrollVertical.getMaximum()+1);
-						revalidate();
-					} catch (BadLocationException e) {
-						e.printStackTrace();
-					}
+			public void run() {
+				try {
+					StyleConstants.setForeground(estiloTerminal, cor);
+					terminalView.insertString(terminalView.getLength(), texto + Constantes.NEWLINE, estiloTerminal);
+					revalidate();
+					scrollVertical.setValue(scrollVertical.getMaximum() + 1);
+					revalidate();
+				} catch (BadLocationException e) {
+					e.printStackTrace();
 				}
-			});
+			}
+		});
 	}
-	
+
 	/**
 	 * 
 	 * @author eduardofreire
 	 */
-	public void logMessage(String texto){
-		logMessage(texto,Color.WHITE);
+	public void logMessage(String texto) {
+		logMessage(texto, Color.WHITE);
 	}
-	
+
 	/**
 	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensao txt.
 	 * 
-	 * @param	botao	botao clicado na tela
-	 * @return	Um arquivo se o filepicker voltou com sucesso, null caso contrario
-	 * */
-	public File selecionaArquivo(Component botao){
+	 * @param botao botao clicado na tela
+	 * @return Um arquivo se o filepicker voltou com sucesso, null caso contrario
+	 */
+	public File selecionaArquivo(Component botao) {
 		selecionador = new JFileChooser();
-	    FileNameExtensionFilter filtro = new FileNameExtensionFilter(null,"txt");//TODO: retirar a string daqui.
-	    selecionador.setFileFilter(filtro);
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter(null, "txt");// TODO: retirar a string daqui.
+		selecionador.setFileFilter(filtro);
 		int retorno = selecionador.showDialog(botao, Constantes.SELECIONAR);
-		
-        if (retorno == JFileChooser.APPROVE_OPTION) {
-            return selecionador.getSelectedFile();
-        } else {
-        	return null;
-        }
+
+		if (retorno == JFileChooser.APPROVE_OPTION) {
+			return selecionador.getSelectedFile();
+		} else {
+			return null;
+		}
 	}
 }

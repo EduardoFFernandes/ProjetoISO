@@ -18,16 +18,17 @@ public class Main {
 	private ArrayList<?> operacoes;
 	private ArrayList<Arquivo> arquivosEmDisco;
 	private ManipuladorDeArquivos manipulador;
-	
+
 	public static final String PROCESSOS = "Processos";
 	public static final String ARQUIVOS = "Arquivos";
 	public static final String INICIAR = "Iniciar";
-	
-	
+
 	/**
-	 * Funcao inicializadora do programa, cria o objeto da tela principal e a coloca como visivel
+	 * Funcao inicializadora do programa, cria o objeto da tela principal e a coloca
+	 * como visivel
+	 * 
 	 * @author Dudu
-	 * */
+	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -42,72 +43,78 @@ public class Main {
 			}
 		});
 	}
-	
+
 	/**
-	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema Operacional.
+	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema
+	 * Operacional.
+	 * 
 	 * @author Dudu
 	 * 
-	 * */
-	public void iniciar(){
-		if(arquivoDeProcessos == null){
-			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQ_PROCESSOS,Interface.RED);
+	 */
+	public void iniciar() {
+		if (arquivoDeProcessos == null) {
+			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQUIVO_PROCESSOS, Interface.RED);
 			return;
 		}
-		if(arquivoDeOperacao == null){
-			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQ_ARQUIVOS,Interface.RED);
+		if (arquivoDeOperacao == null) {
+			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQUIVO_ARQUIVOS, Interface.RED);
 			return;
 		}
-		if(arquivoDeProcessos.equals(arquivoDeOperacao)){
-			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS,Interface.RED);
+		if (arquivoDeProcessos.equals(arquivoDeOperacao)) {
+			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS, Interface.RED);
 			return;
 		}
-		telaPrincipal.logMessage(Constantes.INICIANDO,Interface.GREEN);
-		
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco, telaPrincipal, manipulador.getQtdBlocosDisco());
+		telaPrincipal.logMessage(Constantes.INICIANDO, Interface.GREEN);
+
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco,
+				telaPrincipal, manipulador.getQtdBlocosDisco());
 		gerenciadorDeFilas.start();
 	}
-	
+
 	/**
 	 * Funcao que valida os arquivos selecionados.
+	 * 
 	 * @author Dudu
-	 * */
-	public void valida(File arquivo, String tipoArquivo){
-		manipulador = new ManipuladorDeArquivos(arquivo,tipoArquivo);
+	 */
+	public void valida(File arquivo, String tipoArquivo) {
+		manipulador = new ManipuladorDeArquivos(arquivo, tipoArquivo);
 		try {
-			if(arquivo.exists() && manipulador.validaArquivo()){
+			if (arquivo.exists() && manipulador.validaArquivo()) {
 				ArrayList<?> validados = manipulador.getObjetosValidados();
-				if(tipoArquivo.equals(PROCESSOS)){				
+				if (tipoArquivo.equals(PROCESSOS)) {
 					this.arquivoDeProcessos = arquivo;
 					this.processos = validados;
-				}else{
+				} else {
 					this.arquivoDeOperacao = arquivo;
 					this.operacoes = validados;
 					this.arquivosEmDisco = manipulador.getArquivosValidados();
 				}
 				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
-			}else{
+			} else {
 				invalida(tipoArquivo);
-				telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);	
+				telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);
 			}
 		} catch (Exception e) {
 			invalida(tipoArquivo);
-			telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);	
-		} 
+			telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);
+		}
 	}
-	
+
 	/**
-	 * Funcao que trata arquivos invalidos, setando nulo as variaveis da Classe Main.
+	 * Funcao que trata arquivos invalidos, setando nulo as variaveis da Classe
+	 * Main.
+	 * 
 	 * @author Dudu
-	 * */
-	public void invalida (String tipoArquivo){
-		if(tipoArquivo == PROCESSOS) {				
+	 */
+	public void invalida(String tipoArquivo) {
+		if (tipoArquivo == PROCESSOS) {
 			this.arquivoDeProcessos = null;
 			this.processos = null;
 			return;
-		} 
+		}
 		this.arquivoDeOperacao = null;
 		this.operacoes = null;
 		this.arquivosEmDisco = null;
-		
+
 	}
 }
