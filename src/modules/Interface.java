@@ -65,58 +65,6 @@ public class Interface extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Atribui os valores da Interface do sistema.
-	 * 
-	 * @author eduardofreire
-	 */
-	private void initialize() throws BadLocationException {
-
-		// TERMINAL
-		terminalView = new DefaultStyledDocument();
-		painelTerminal = new JTextPane(terminalView);
-		scrollTerminal = new JScrollPane(painelTerminal);
-		scrollVertical = scrollTerminal.getVerticalScrollBar();
-
-		// MENU
-		iniciar = new JMenuItem(Main.INICIAR);
-		iniciar.addActionListener(this);
-		iniciar.setActionCommand(Main.INICIAR);
-		menu.add(iniciar);
-
-		itemAddProcesso = new JMenuItem(Main.PROCESSOS);
-		itemAddProcesso.addActionListener(this);
-		itemAddProcesso.setActionCommand(Main.PROCESSOS);
-		menu.add(itemAddProcesso);
-
-		itemAddArquivo = new JMenuItem(Main.ARQUIVOS);
-		itemAddArquivo.addActionListener(this);
-		itemAddArquivo.setActionCommand(Main.ARQUIVOS);
-		menu.add(itemAddArquivo);
-		menuBar.add(menu);
-
-		contextoDeEstilo = new StyleContext();
-		estiloTerminal = contextoDeEstilo.addStyle(null, null);
-
-		painelTerminal.setEditable(false);
-		painelTerminal.setPreferredSize(new Dimension(200, 200));
-		painelTerminal.setBackground(Color.black);
-
-		// JFrame
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(Constantes.TITULO);
-		setJMenuBar(menuBar);
-		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
-		setMinimumSize(new Dimension(500, 300));
-		setDefaultLookAndFeelDecorated(true);
-
-		// ICONE
-
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
-		pack();
-
-	}
-
-	/**
 	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com
 	 * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
 	 * os arquivos e iniciar o Pseudo SO.
@@ -200,5 +148,57 @@ public class Interface extends JFrame implements ActionListener {
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * Atribui os valores da Interface do sistema.
+	 * 
+	 * @author eduardofreire
+	 */
+	private void initialize() throws BadLocationException {
+
+		// TERMINAL
+		terminalView = new DefaultStyledDocument();
+		painelTerminal = new JTextPane(terminalView);
+		scrollTerminal = new JScrollPane(painelTerminal);
+		scrollVertical = scrollTerminal.getVerticalScrollBar();
+
+		// MENU
+		iniciar = new JMenuItem(Main.INICIAR);
+		iniciar.addActionListener(this);
+		iniciar.setActionCommand(Main.INICIAR);
+		menu.add(iniciar);
+
+		itemAddProcesso = new JMenuItem(Main.PROCESSOS);
+		itemAddProcesso.addActionListener(this);
+		itemAddProcesso.setActionCommand(Main.PROCESSOS);
+		menu.add(itemAddProcesso);
+
+		itemAddArquivo = new JMenuItem(Main.ARQUIVOS);
+		itemAddArquivo.addActionListener(this);
+		itemAddArquivo.setActionCommand(Main.ARQUIVOS);
+		menu.add(itemAddArquivo);
+		menuBar.add(menu);
+
+		contextoDeEstilo = new StyleContext();
+		estiloTerminal = contextoDeEstilo.addStyle(null, null);
+
+		painelTerminal.setEditable(false);
+		painelTerminal.setPreferredSize(new Dimension(200, 200));
+		painelTerminal.setBackground(Color.black);
+
+		// JFrame
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle(Constantes.TITULO);
+		setJMenuBar(menuBar);
+		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
+		setMinimumSize(new Dimension(500, 300));
+		setDefaultLookAndFeelDecorated(true);
+
+		// ICONE
+
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
+		pack();
+
 	}
 }

@@ -22,21 +22,6 @@ public class Disco  {
 		processaArquivos();
 	}
 
-
-	private void processaArquivos() {
-		for (Arquivo arquivo : iNodes) {
-			int i;
-			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
-				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
-			}
-		}
-		for (int i = 0; i < qtdBlocosDisco; i++) {
-			if (blocos[i] == null) {
-				blocos[i] = "0";
-			}
-		}
-	}
-
 	public boolean createFile(Operacao op) {
 		boolean cabe, salvou = false;
 		int qtdBlocosOp = op.getQtdBlocos();
@@ -134,7 +119,21 @@ public class Disco  {
 
 		}
 	}
-
+	
+	private void processaArquivos() {
+		for (Arquivo arquivo : iNodes) {
+			int i;
+			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
+			}
+		}
+		for (int i = 0; i < qtdBlocosDisco; i++) {
+			if (blocos[i] == null) {
+				blocos[i] = "0";
+			}
+		}
+	}
+	
 	private Arquivo procuraArquivoNoDisco(String nome) {
 		for (Arquivo arquivo : iNodes) {
 			if (arquivo.getNomeArquivo().equals(nome)) {
