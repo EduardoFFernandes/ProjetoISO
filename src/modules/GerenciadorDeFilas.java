@@ -91,7 +91,7 @@ public class GerenciadorDeFilas extends Thread {
 			telaPrincipal.logMessage(Constantes.dispatcher(processo));
 			telaPrincipal.logMessage(Constantes.executandoProc(processo.getPID()));
 			printDispatcher(processo);
-			processo.setTempoProcessador(processo.getTempoProcessador() - 1);
+			processo.setTempo(processo.getTempo() - 1);
 			// Se o processo terminar, libera os recursos
 			verificaContinuidadeDoProcesso(processo);
 			clockTick();
@@ -146,7 +146,7 @@ public class GerenciadorDeFilas extends Thread {
 
 	private void verificaContinuidadeDoProcesso(Processo processo) {
 		// se entrou aqui significa que o processo foi executado
-		if (processo.getTempoProcessador() < 1) {// se o processo acabou
+		if (processo.getTempo() < 1) {// se o processo acabou
 			gerenciadorDeProcessos.removeProcesso(processo);
 			gerenciadorDaMemoriaPrincipal.desalocaMemoria(processo);
 			Semaforo.desalocaRecursos(gerenciadorDeRecursos, processo);

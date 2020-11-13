@@ -6,8 +6,7 @@ public class Operacao {
 	private int codOperacao;
 	private int qtdBlocos;
 	
-	public static final int OP_EXCLUIR = 1;
-	public static final int OP_CRIAR = 0;
+
 	
 	public Operacao(int idProcesso, int codOperacao,String nomeArquivo) {
 		this.idProcesso = idProcesso;

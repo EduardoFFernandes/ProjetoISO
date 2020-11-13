@@ -40,7 +40,10 @@ public class Constantes {
 	public static String INSTRUCAO = " Instrucao ";
 	public static String RETURN_SIGINT = " return SIGINT";
 	public static String INICIO = " Inicio";
-
+	
+    public static final int OP_EXCLUIR = 1;
+    public static final int OP_CRIAR = 0;
+	
 	public static String arquivoValidado(String nomeArquivo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ARQUIVO_SELECIONADO);
@@ -126,7 +129,7 @@ public class Constantes {
 		sb.append(NEWLINE);
 		sb.append("prioridade: ").append(processo.getPrioridade());
 		sb.append(NEWLINE);
-		sb.append("tempo de processador: ").append(processo.getTempoProcessador());
+		sb.append("tempo de processador: ").append(processo.getTempo());
 		sb.append(NEWLINE);
 		sb.append("impressoras: ").append(processo.getImpressora());
 		sb.append(NEWLINE);

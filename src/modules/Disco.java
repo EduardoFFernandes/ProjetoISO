@@ -107,7 +107,7 @@ public class Disco  {
 			listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO);
 			return;
 		}
-		 if (op.getCodOperacao() == Operacao.OP_CRIAR) {
+		 if (op.getCodOperacao() == Constantes.OP_CRIAR) {
 			// operacao de criar arquivo
 			 createFile(op);
 		} else {

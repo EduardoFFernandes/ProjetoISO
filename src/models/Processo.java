@@ -1,132 +1,130 @@
 package models;
 
 public class Processo {
-	private int tempoInicializacao;//em qual clock o processo vai inicializar
-	private int prioridade;
-	private int tempoProcessador;//quantos clocks o processo vai rodar
-	private int blocosMemoria;//quantidade de blocos em RAM
-	private int inicioProcessoMemoria;//posicao do primeiro bloco na RAM
-	private int impressora;
-	private int scanner;
-	private int modem;
-	private int disco;
-	private int PID; //quando o SO é iniciado ,é gerado um PID.
-	private boolean recursosAlocados;  // indicador que os recursos do processo foram alocados
-	private boolean recursoBlocante;
-	
-	public Processo(int tempoInicializacao, int prioridade, int tempoProcessador, int blocosEmMemoriaRAM,
-			int reqCodImpressora, int reqScanner, int reqModem, int reqCodDisco,int PID) {
+    private int tempoInicializacao;
+    private int prioridade;
+    private int tempo;
+    private int blocosMemoria;
+    private int inicioProcessoMemoria;
+    private int impressora;
+    private int scanner;
+    private int modem;
+    private int disco;
+    private int PID;
+    private boolean recursosAlocados;
+    private boolean recursoBlocante;
 
-		this.setTempoInicializacao(tempoInicializacao);
-		this.setPrioridade(prioridade);
-		this.setTempoProcessador(tempoProcessador);
-		this.setBlocosMemoria(blocosEmMemoriaRAM);
-		this.setImpressora(reqCodImpressora);
-		this.setScanner(reqScanner);
-		this.setModem(reqModem);
-		this.setDisco(reqCodDisco);
-		this.setPID(PID);
-		
-		this.setInicioProcessoMemoria(-1);
-		this.recursosAlocados = false;
-		this.recursoBlocante = false;
-	}
+    public Processo(int tempoInicializacao, int prioridade, int tempoProcessador, int blocosEmMemoria,
+            int impressora, int scanner, int modem, int disco, int PID) {
 
-	public int getTempoInicializacao() {
-		return tempoInicializacao;
-	}
+        this.setTempoInicializacao(tempoInicializacao);
+        this.setPrioridade(prioridade);
+        this.setTempo(tempoProcessador);
+        this.setBlocosMemoria(blocosEmMemoria);
+        this.setImpressora(impressora);
+        this.setScanner(scanner);
+        this.setModem(modem);
+        this.setDisco(disco);
+        this.setPID(PID);
+        this.setInicioProcessoMemoria(-1);
+        this.recursosAlocados = false;
+        this.recursoBlocante = false;
+    }
 
-	public void setTempoInicializacao(int tempoInicializacao) {
-		this.tempoInicializacao = tempoInicializacao;
-	}
+    public int getTempoInicializacao() {
+        return tempoInicializacao;
+    }
 
-	public int getPrioridade() {
-		return prioridade;
-	}
+    public void setTempoInicializacao(int tempoInicializacao) {
+        this.tempoInicializacao = tempoInicializacao;
+    }
 
-	public void setPrioridade(int prioridade) {
-		this.prioridade = prioridade;
-	}
+    public int getPrioridade() {
+        return prioridade;
+    }
 
-	public int getTempoProcessador() {
-		return tempoProcessador;
-	}
+    public void setPrioridade(int prioridade) {
+        this.prioridade = prioridade;
+    }
 
-	public void setTempoProcessador(int tempoProcessador) {
-		this.tempoProcessador = tempoProcessador;
-	}
+    public int getTempo() {
+        return tempo;
+    }
 
-	public int getBlocosMemoria() {
-		return blocosMemoria;
-	}
+    public void setTempo(int tempo) {
+        this.tempo = tempo;
+    }
 
-	public void setBlocosMemoria(int blocosMemoria) {
-		this.blocosMemoria = blocosMemoria;
-	}
+    public int getBlocosMemoria() {
+        return blocosMemoria;
+    }
 
-	public int getInicioProcessoMemoria() {
-		return inicioProcessoMemoria;
-	}
+    public void setBlocosMemoria(int blocosMemoria) {
+        this.blocosMemoria = blocosMemoria;
+    }
 
-	public void setInicioProcessoMemoria(int inicioProcessoMemoria) {
-		this.inicioProcessoMemoria = inicioProcessoMemoria;
-	}
+    public int getInicioProcessoMemoria() {
+        return inicioProcessoMemoria;
+    }
 
-	public int getImpressora() {
-		return impressora;
-	}
+    public void setInicioProcessoMemoria(int inicioProcessoMemoria) {
+        this.inicioProcessoMemoria = inicioProcessoMemoria;
+    }
 
-	public void setImpressora(int impressoraId) {
-		this.impressora = impressoraId;
-	}
+    public int getImpressora() {
+        return impressora;
+    }
 
-	public int getScanner() {
-		return scanner;
-	}
+    public void setImpressora(int impressoraId) {
+        this.impressora = impressoraId;
+    }
 
-	public void setScanner(int scannerId) {
-		this.scanner = scannerId;
-	}
+    public int getScanner() {
+        return scanner;
+    }
 
-	public int getModem() {
-		return modem;
-	}
+    public void setScanner(int scannerId) {
+        this.scanner = scannerId;
+    }
 
-	public void setModem(int modemId) {
-		this.modem = modemId;
-	}
+    public int getModem() {
+        return modem;
+    }
 
-	public int getDisco() {
-		return disco;
-	}
+    public void setModem(int modemId) {
+        this.modem = modemId;
+    }
 
-	public void setDisco(int discoId) {
-		this.disco = discoId;
-	}
+    public int getDisco() {
+        return disco;
+    }
 
-	public int getPID() {
-		return PID;
-	}
+    public void setDisco(int discoId) {
+        this.disco = discoId;
+    }
 
-	public void setPID(int pID) {
-		PID = pID;
-	}
+    public int getPID() {
+        return PID;
+    }
 
-	public boolean isRecursosAlocados() {
-		return recursosAlocados;
-	}
-	
-	public void setRecursosAlocados(boolean recursosAlocados) {
-		this.recursosAlocados = recursosAlocados;
-	}
+    public void setPID(int pID) {
+        PID = pID;
+    }
 
-	public boolean isPossuiRecursoBlocante() {
-		return recursoBlocante;
-	}
-	
-	public void setRecursoBlocante(boolean recursoBlocante) {
-		this.recursoBlocante = recursoBlocante;
-	}
+    public boolean isRecursosAlocados() {
+        return recursosAlocados;
+    }
+
+    public void setRecursosAlocados(boolean recursosAlocados) {
+        this.recursosAlocados = recursosAlocados;
+    }
+
+    public boolean isPossuiRecursoBlocante() {
+        return recursoBlocante;
+    }
+
+    public void setRecursoBlocante(boolean recursoBlocante) {
+        this.recursoBlocante = recursoBlocante;
+    }
 
 }
-	

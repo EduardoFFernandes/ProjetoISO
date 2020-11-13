@@ -16,19 +16,36 @@ public class Arquivo {
 		this.idProcessoCriouArquivo = idProcessoCriouArquivo;
 	}
 
-	public String getNomeArquivo() {
-		return nomeArquivo;
-	}
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
 
-	public int getPosPrimeiroBloco() {
-		return posPrimeiroBloco;
-	}
+    public int getPosPrimeiroBloco() {
+        return posPrimeiroBloco;
+    }
 
-	public int getQtdBlocosArq() {
-		return qtdBlocosArq;
-	}
+    public int getQtdBlocosArq() {
+        return qtdBlocosArq;
+    }
 
-	public int getIdProcessoCriouArquivo() {
-		return idProcessoCriouArquivo;
-	}
+    public int getIdProcessoCriouArquivo() {
+        return idProcessoCriouArquivo;
+    }
+
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+    }
+
+    public void setPosPrimeiroBloco(int posPrimeiroBloco) {
+        this.posPrimeiroBloco = posPrimeiroBloco;
+    }
+
+    public void setQtdBlocosArq(int qtdBlocosArq) {
+        this.qtdBlocosArq = qtdBlocosArq;
+    }
+
+    public void setIdProcessoCriouArquivo(int idProcessoCriouArquivo) {
+        this.idProcessoCriouArquivo = idProcessoCriouArquivo;
+    }
+
 }
