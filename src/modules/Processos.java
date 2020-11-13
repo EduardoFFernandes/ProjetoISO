@@ -6,7 +6,7 @@ import models.Processo;
 
 /**
  * Essa classe controla a prioridade das filas dos processos(Eu gosto de pensar
- * que sao processamentos), esta ligado a logica do semáforo também, quando a
+ * que sao processamentos), esta ligado a logica do semï¿½foro tambï¿½m, quando a
  * competicao de recursos o processo vai perdendo prioridade, conforme os clocks
  * passam os processos vao subindo de prioridade.
  */
@@ -89,7 +89,7 @@ public class Processos {
 	 * Diminui a prioridade do processo.
 	 */
 	public void diminuiPrioridade(Processo processo) {
-		if (processo.isPossuiRecursoBlocante()) {
+		if (processo.isRecursoBlocante()) {
 			return;
 		}
 		if (processo.getPrioridade() == 0) {

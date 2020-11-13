@@ -2,19 +2,14 @@ package models;
 
 public class Arquivo {
 
-	private String nomeArquivo;
-	private int posPrimeiroBloco;
-	private int qtdBlocosArq;
-	private int idProcessoCriouArquivo;
-	
-	public static final int ARQUIVO_PADRAO = -1;
-	
-	public Arquivo(String nomeArquivo, int posPrimeiroBloco, int qtdBlocosArq, int idProcessoCriouArquivo) {
-		this.nomeArquivo = nomeArquivo;
-		this.posPrimeiroBloco = posPrimeiroBloco;
-		this.qtdBlocosArq = qtdBlocosArq;
-		this.idProcessoCriouArquivo = idProcessoCriouArquivo;
-	}
+    private String nomeArquivo;
+    private int posPrimeiroBloco;
+    private int qtdBlocosArq;
+    private int idProcessoCriouArquivo;
+
+    public Arquivo() {
+        super();
+    }
 
     public String getNomeArquivo() {
         return nomeArquivo;

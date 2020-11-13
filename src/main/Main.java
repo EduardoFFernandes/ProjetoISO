@@ -16,7 +16,7 @@ public class Main {
 	private File arquivoDeOperacao = null;
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoes;
-	private ArrayList<Arquivo> arquivosEmDisco;
+	private ArrayList<Arquivo> arquivosValidados;
 	private ManipuladorDeArquivos manipulador;
 
 	public static final String PROCESSOS = "Processos";
@@ -45,8 +45,7 @@ public class Main {
 	}
 
 	/**
-	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema
-	 * Operacional.
+	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema Operacional.
 	 * 
 	 * @author Dudu
 	 * 
@@ -66,7 +65,7 @@ public class Main {
 		}
 		telaPrincipal.logMessage(Constantes.INICIANDO, Interface.GREEN);
 
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco,
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosValidados,
 				telaPrincipal, manipulador.getQtdBlocosDisco());
 		gerenciadorDeFilas.start();
 	}
@@ -87,7 +86,7 @@ public class Main {
 				} else {
 					this.arquivoDeOperacao = arquivo;
 					this.operacoes = validados;
-					this.arquivosEmDisco = manipulador.getArquivosValidados();
+					this.arquivosValidados = manipulador.getArquivosValidados();
 				}
 				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
 			} else {
@@ -114,7 +113,7 @@ public class Main {
 		}
 		this.arquivoDeOperacao = null;
 		this.operacoes = null;
-		this.arquivosEmDisco = null;
+		this.arquivosValidados = null;
 
 	}
 }
