@@ -43,9 +43,45 @@ public class GerenciadorDeFilas extends Thread {
 		gerenciadorDaMemoriaPrincipal = new Memoria();
 		gerenciadorDeRecursos = new Recursos();
 		CLOCK = 0;
-
+	}
+	
+	synchronized public void escreveNaTela(String toPrint, Color cor) {
+		telaPrincipal.logMessage(toPrint, cor);
 	}
 
+	synchronized public void escreveNaTela(String toPrint) {
+		telaPrincipal.logMessage(toPrint);
+	}
+
+	synchronized public boolean isProcessoTempoReal(int idProcesso) {
+		// verifica aqui se o processo e de tempo real
+
+		for (Processo processo : processosIniciais) {
+			if (processo.getPID() == idProcesso) {
+				if (processo.getPrioridade() == 0)
+					return true;
+				break;
+			}
+		}
+		return false;
+	}
+	
+	synchronized private void clockTick() throws InterruptedException {
+		CLOCK++;
+		wait(QUANTUM);
+		telaPrincipal.logMessage("\n");
+		verificaProcessoInicializandoAgora();
+	}
+
+	synchronized public void printDispatcher(Processo processo) throws InterruptedException {
+		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INICIO);
+		for (int i = 1; i <= 3; i++) {
+			escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INSTRUCAO + i);
+		}
+		wait(300);
+		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.RETURN_SIGINT);
+	}
+	
 	@Override
 	public void run() {
 
@@ -97,28 +133,7 @@ public class GerenciadorDeFilas extends Thread {
 			clockTick();
 		}
 	}
-
-	synchronized public void escreveNaTela(String toPrint, Color cor) {
-		telaPrincipal.logMessage(toPrint, cor);
-	}
-
-	synchronized public void escreveNaTela(String toPrint) {
-		telaPrincipal.logMessage(toPrint);
-	}
-
-	synchronized public boolean isProcessoTempoReal(int idProcesso) {
-		// verifica aqui se o processo e de tempo real
-
-		for (Processo processo : processosIniciais) {
-			if (processo.getPID() == idProcesso) {
-				if (processo.getPrioridade() == 0)
-					return true;
-				break;
-			}
-		}
-		return false;
-	}
-
+	
 	public boolean isProcessoValido(int PID) {
 		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == PID) {
@@ -154,21 +169,5 @@ public class GerenciadorDeFilas extends Thread {
 		} else {
 			gerenciadorDeProcessos.diminuiPrioridade(processo);
 		}
-	}
-
-	synchronized private void clockTick() throws InterruptedException {
-		CLOCK++;
-		wait(QUANTUM);
-		telaPrincipal.logMessage("\n");
-		verificaProcessoInicializandoAgora();
-	}
-
-	synchronized public void printDispatcher(Processo processo) throws InterruptedException {
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INICIO);
-		for (int i = 1; i <= 3; i++) {
-			escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INSTRUCAO + i);
-		}
-		wait(300);
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.RETURN_SIGINT);
 	}
 }
