@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
-import util.Constantes;
+import static util.Constantes.*;
+import static util.Util.*;
 
 public class Disco {
 
@@ -50,9 +51,9 @@ public class Disco {
         }
 
         if (salvou) {
-            listenerSO.escreveNaTela(Constantes.salvouArquivo(operacao, blocoInicioArq));
+            listenerSO.escreveNaTela(salvouArquivo(operacao, blocoInicioArq));
         } else {
-            listenerSO.escreveNaTela(Constantes.naoSalvouArquivo(operacao), Color.RED);
+            listenerSO.escreveNaTela(naoSalvouArquivo(operacao), Color.RED);
         }
         return salvou;
     }
@@ -70,50 +71,49 @@ public class Disco {
         StringBuilder sb = new StringBuilder();
         int printaNaTelaComQuebraDeLinha;
 
-        sb.append(Constantes.NEWLINE);
-        sb.append(Constantes.DISCO_MAPA_OCUPACAO);
-        sb.append(Constantes.NEWLINE);
+        sb.append(NEWLINE);
+        sb.append(DISCO_MAPA_OCUPACAO);
+        sb.append(NEWLINE);
 
         for (int i = 0; i < qtdBlocosDisco; i++) {
             printaNaTelaComQuebraDeLinha = i % 10;
             if (printaNaTelaComQuebraDeLinha != 0) {
                 sb.append("| " + blocos[i] + " |");
             } else {
-                sb.append(Constantes.NEWLINE);
+                sb.append(NEWLINE);
                 sb.append("| " + blocos[i] + " |");
             }
         }
         listenerSO.escreveNaTela(sb.toString());
     }
 
-    public void executaOperacao(Operacao op, int opNum) {
-        listenerSO.escreveNaTela(Constantes.operacoesDoSistema(opNum));
-        if (!listenerSO.isProcessoValido(op.getIdProcesso())) {
-            listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO);
+    public void executaOperacao(Operacao operacao) {
+        if (!listenerSO.isProcessoValido(operacao.getIdProcesso())) {
+            listenerSO.escreveNaTela(NAO_EXISTE_PROCESSO);
             return;
         }
-        if (op.getCodOperacao() == Constantes.OP_CRIAR) {
+        if (operacao.getCodOperacao() == OP_CRIAR) {
             // operacao de criar arquivo
-            createFile(op);
+            createFile(operacao);
         } else {
             // operacao de excluir arquivo
-            Arquivo arq = procuraArquivoNoDisco(op.getNomeArquivo());
+            Arquivo arq = procuraArquivoNoDisco(operacao.getNomeArquivo());
             if (arq == null) {
                 // se nao encontrou arquivo.
-                listenerSO.escreveNaTela(Constantes.arqNaoEncontrado(op.getNomeArquivo()));
+                listenerSO.escreveNaTela(arqNaoEncontrado(operacao.getNomeArquivo()));
             }
             // encontrou arquivo
-            if (op.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
+            if (operacao.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
                 // processo e o mesmo que criou o arquivo
                 deleteFile(arq);
-                listenerSO.escreveNaTela(Constantes.excluiuArq(op));
-            } else if (listenerSO.isProcessoTempoReal(op.getIdProcesso())) {
+                listenerSO.escreveNaTela(excluiuArq(operacao));
+            } else if (listenerSO.isProcessoTempoReal(operacao.getIdProcesso())) {
                 // processo nao e o que criou o arquivo mas e de tempo real
                 deleteFile(arq);
-                listenerSO.escreveNaTela(Constantes.excluiuArq(op));
+                listenerSO.escreveNaTela(excluiuArq(operacao));
             } else {
                 // processo nao e o que criou o arquivo e nao e de tempo real
-                listenerSO.escreveNaTela(Constantes.procSemPermissaoExcluirArq(op.getIdProcesso(), op.getNomeArquivo()),
+                listenerSO.escreveNaTela(procSemPermissaoExcluirArq(operacao.getIdProcesso(), operacao.getNomeArquivo()),
                         Interface.RED);
             }
 

@@ -1,12 +1,25 @@
 package modules;
 
+import static util.Constantes.INICIO;
+import static util.Constantes.INSTRUCAO;
+import static util.Constantes.PROCESSO;
+import static util.Constantes.RETURN_SIGINT;
+import static util.Constantes.SEM_PROCESSO_EXECUTAR;
+import static util.Util.dispatcher;
+import static util.Util.erroEspacoGerenciadorDeProcessos;
+import static util.Util.erroMemoria;
+import static util.Util.executandoProc;
+import static util.Util.operacoesDoSistema;
+import static util.Util.procFinalizado;
+import static util.Util.sistemaDeArquivos;
+
 import java.awt.Color;
 import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
 import models.Processo;
-import util.Constantes;
+
 
 public class GerenciadorDeFilas extends Thread {
 
@@ -74,12 +87,12 @@ public class GerenciadorDeFilas extends Thread {
 	}
 
 	synchronized public void printDispatcher(Processo processo) throws InterruptedException {
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INICIO);
+		escreveNaTela(PROCESSO + processo.getPID() + INICIO);
 		for (int i = 1; i <= 3; i++) {
-			escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INSTRUCAO + i);
+			escreveNaTela(PROCESSO + processo.getPID() + INSTRUCAO + i);
 		}
 		wait(300);
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.RETURN_SIGINT);
+		escreveNaTela(PROCESSO + processo.getPID() + RETURN_SIGINT);
 	}
 	
 	@Override
@@ -94,9 +107,10 @@ public class GerenciadorDeFilas extends Thread {
 		}
 
 		// Executa as operacoes de disco;
-		this.escreveNaTela(Constantes.sistemaDeArquivos());
+		this.escreveNaTela(sistemaDeArquivos());
 		for (int i = 0; i < this.operacoesEstruturaArq.size(); i++) {
-			gerenciadorDoDisco.executaOperacao(operacoesEstruturaArq.get(i), i + 1);
+			escreveNaTela(operacoesDoSistema(i + 1));
+			gerenciadorDoDisco.executaOperacao(operacoesEstruturaArq.get(i));
 		}
 		gerenciadorDoDisco.printSituacaoDisco();
 
@@ -109,14 +123,14 @@ public class GerenciadorDeFilas extends Thread {
 //		TODO Modificar a forma que os recursos sao compartilhados.
 		while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !processos.isEmpty()) {
 			if (processo == null) {
-				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
+				telaPrincipal.logMessage(SEM_PROCESSO_EXECUTAR);
 				clockTick();
 				continue;
 			}
 			if (!gerenciadorDaMemoriaPrincipal.isProcessoEmMemoria(processo)) {
 				if (!gerenciadorDaMemoriaPrincipal.alocaMemoria(processo.getPrioridade() == 0, processo)) {
 					gerenciadorDeProcessos.ultimoProcessoFila(processo);
-					telaPrincipal.logMessage(Constantes.erroMemoria(processo.getPID()), Interface.RED);
+					telaPrincipal.logMessage(erroMemoria(processo.getPID()), Interface.RED);
 					continue;
 				}
 			}
@@ -124,8 +138,8 @@ public class GerenciadorDeFilas extends Thread {
 				Semaforo.alocaRecurso(gerenciadorDeProcessos, gerenciadorDeRecursos, processo, telaPrincipal);
 				continue;
 			}
-			telaPrincipal.logMessage(Constantes.dispatcher(processo));
-			telaPrincipal.logMessage(Constantes.executandoProc(processo.getPID()));
+			telaPrincipal.logMessage(dispatcher(processo));
+			telaPrincipal.logMessage(executandoProc(processo.getPID()));
 			printDispatcher(processo);
 			processo.setTempo(processo.getTempo() - 1);
 			// Se o processo terminar, libera os recursos
@@ -151,7 +165,7 @@ public class GerenciadorDeFilas extends Thread {
 				if (gerenciadorDeProcessos.adicionaProcesso(processo)) {// tenta adicionar o mesmo as filas de processo
 					novaLista.remove(processo);// remove o mesmo dos processos que nao foram inicializados
 				} else {// se nao conseguiu adicionar, printa na tela
-					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(processo.getPID()),
+					telaPrincipal.logMessage(erroEspacoGerenciadorDeProcessos(processo.getPID()),
 							Interface.RED);
 				}
 			}
@@ -165,7 +179,7 @@ public class GerenciadorDeFilas extends Thread {
 			gerenciadorDeProcessos.removeProcesso(processo);
 			gerenciadorDaMemoriaPrincipal.desalocaMemoria(processo);
 			Semaforo.desalocaRecursos(gerenciadorDeRecursos, processo);
-			telaPrincipal.logMessage(Constantes.procFinalizado(processo.getPID()), Interface.GREEN);
+			telaPrincipal.logMessage(procFinalizado(processo.getPID()), Interface.GREEN);
 		} else {
 			gerenciadorDeProcessos.diminuiPrioridade(processo);
 		}

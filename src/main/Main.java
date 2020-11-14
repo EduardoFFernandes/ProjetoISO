@@ -1,5 +1,12 @@
 package main;
 
+import static util.Constantes.ARQUIVO_IGUAIS;
+import static util.Constantes.INICIANDO;
+import static util.Constantes.NAO_SELECIONADO_ARQUIVOS;
+import static util.Constantes.NAO_SELECIONADO_PROCESSOS;
+import static util.Util.arquivoNaoValido;
+import static util.Util.arquivoValidado;
+
 import java.awt.EventQueue;
 import java.io.File;
 import java.util.ArrayList;
@@ -7,8 +14,7 @@ import java.util.ArrayList;
 import models.Arquivo;
 import modules.GerenciadorDeFilas;
 import modules.Interface;
-import util.Constantes;
-import util.ManipuladorDeArquivos;
+import modules.ManipuladorDeArquivos;
 
 public class Main {
 	private static Interface telaPrincipal;
@@ -16,11 +22,7 @@ public class Main {
 	private File arquivoDeOperacao = null;
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoes;
-<<<<<<< HEAD
 	private ArrayList<Arquivo> arquivos;
-=======
-	private ArrayList<Arquivo> arquivosValidados;
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 	private ManipuladorDeArquivos manipulador;
 
 	public static final String PROCESSOS = "Processos";
@@ -30,7 +32,7 @@ public class Main {
 	/**
 	 * Funcao inicializadora do programa, cria a tela principal da aplicacao.
 	 * 
-	 * @author Dudu
+	 * 
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -48,72 +50,60 @@ public class Main {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema
-	 * Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso significa que um processo paralelo vai ser iniciado assim
-	 * que o objeto gerenciadorDeFilas é iniciado(java.lang.Thread.start()) tendo como argumentos os processos carregados, operacoes carregadas,
-	 * arquivos carregados, a tela principal(JPanel), e a quantidade de blocos no arquivo carregado.
-=======
-	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema Operacional.
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
+	 * Sistema Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso
+	 * significa que um processo paralelo vai ser iniciado assim que o objeto
+	 * gerenciadorDeFilas é iniciado(java.lang.Thread.start()) tendo como argumentos
+	 * os processos carregados, operacoes carregadas, arquivos carregados, a tela
+	 * principal(JPanel), e a quantidade de blocos no arquivo carregado.
 	 * 
-	 * @author Dudu
+	 * 
 	 * 
 	 */
 	public void iniciar() {
 		if (arquivoDeProcessos == null) {
-			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQUIVO_PROCESSOS, Interface.RED);
+			telaPrincipal.logMessage(NAO_SELECIONADO_PROCESSOS, Interface.RED);
 			return;
 		}
 		if (arquivoDeOperacao == null) {
-			telaPrincipal.logMessage(Constantes.NAO_SELECIONADO_ARQUIVO_ARQUIVOS, Interface.RED);
+			telaPrincipal.logMessage(NAO_SELECIONADO_ARQUIVOS, Interface.RED);
 			return;
 		}
 		if (arquivoDeProcessos.equals(arquivoDeOperacao)) {
-			telaPrincipal.logMessage(Constantes.ARQUIVO_IGUAIS, Interface.RED);
+			telaPrincipal.logMessage(ARQUIVO_IGUAIS, Interface.RED);
 			return;
 		}
-		telaPrincipal.logMessage(Constantes.INICIANDO, Interface.GREEN);
+		telaPrincipal.logMessage(INICIANDO, Interface.GREEN);
 
-<<<<<<< HEAD
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos,
-=======
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosValidados,
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
-				telaPrincipal, manipulador.getQtdBlocosDisco());
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos, telaPrincipal,
+				manipulador.getQtdBlocosDisco());
 		gerenciadorDeFilas.start();
 	}
 
 	/**
 	 * Funcao que valida os arquivos selecionados.
 	 * 
-	 * @author Dudu
+	 * 
 	 */
 	public void valida(File arquivo, String tipoArquivo) {
 		manipulador = new ManipuladorDeArquivos(arquivo, tipoArquivo);
 		try {
 			if (arquivo.exists() && manipulador.validaArquivo()) {
-				ArrayList<?> validados = manipulador.getObjetosValidados();
 				if (tipoArquivo.equals(PROCESSOS)) {
 					this.arquivoDeProcessos = arquivo;
-					this.processos = validados;
+					this.processos = manipulador.getProcessosValidados();
 				} else {
 					this.arquivoDeOperacao = arquivo;
-					this.operacoes = validados;
-<<<<<<< HEAD
+					this.operacoes = manipulador.getOperacoesValidadas();
 					this.arquivos = manipulador.getArquivosValidados();
-=======
-					this.arquivosValidados = manipulador.getArquivosValidados();
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 				}
-				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
+				telaPrincipal.logMessage(arquivoValidado(arquivo.getName()), Interface.GREEN);
 			} else {
 				invalida(tipoArquivo);
-				telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);
+				telaPrincipal.logMessage(arquivoNaoValido(arquivo.getName()), Interface.RED);
 			}
 		} catch (Exception e) {
 			invalida(tipoArquivo);
-			telaPrincipal.logMessage(Constantes.arquivoNaoValido(arquivo.getName()), Interface.RED);
+			telaPrincipal.logMessage(arquivoNaoValido(arquivo.getName()), Interface.RED);
 		}
 	}
 
@@ -121,7 +111,7 @@ public class Main {
 	 * Funcao que trata arquivos invalidos, setando nulo as variaveis da Classe
 	 * Main.
 	 * 
-	 * @author Dudu
+	 * 
 	 */
 	public void invalida(String tipoArquivo) {
 		if (tipoArquivo == PROCESSOS) {
@@ -131,11 +121,6 @@ public class Main {
 		}
 		this.arquivoDeOperacao = null;
 		this.operacoes = null;
-<<<<<<< HEAD
 		this.arquivos = null;
-=======
-		this.arquivosValidados = null;
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
-
 	}
 }
