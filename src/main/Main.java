@@ -16,7 +16,11 @@ public class Main {
 	private File arquivoDeOperacao = null;
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoes;
+<<<<<<< HEAD
 	private ArrayList<Arquivo> arquivos;
+=======
+	private ArrayList<Arquivo> arquivosValidados;
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 	private ManipuladorDeArquivos manipulador;
 
 	public static final String PROCESSOS = "Processos";
@@ -44,10 +48,14 @@ public class Main {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema
 	 * Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso significa que um processo paralelo vai ser iniciado assim
 	 * que o objeto gerenciadorDeFilas é iniciado(java.lang.Thread.start()) tendo como argumentos os processos carregados, operacoes carregadas,
 	 * arquivos carregados, a tela principal(JPanel), e a quantidade de blocos no arquivo carregado.
+=======
+	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema Operacional.
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 	 * 
 	 * @author Dudu
 	 * 
@@ -67,7 +75,11 @@ public class Main {
 		}
 		telaPrincipal.logMessage(Constantes.INICIANDO, Interface.GREEN);
 
+<<<<<<< HEAD
 		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos,
+=======
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosValidados,
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 				telaPrincipal, manipulador.getQtdBlocosDisco());
 		gerenciadorDeFilas.start();
 	}
@@ -88,7 +100,11 @@ public class Main {
 				} else {
 					this.arquivoDeOperacao = arquivo;
 					this.operacoes = validados;
+<<<<<<< HEAD
 					this.arquivos = manipulador.getArquivosValidados();
+=======
+					this.arquivosValidados = manipulador.getArquivosValidados();
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 				}
 				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
 			} else {
@@ -115,7 +131,11 @@ public class Main {
 		}
 		this.arquivoDeOperacao = null;
 		this.operacoes = null;
+<<<<<<< HEAD
 		this.arquivos = null;
+=======
+		this.arquivosValidados = null;
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 
 	}
 }

@@ -41,8 +41,16 @@ public class Constantes {
 	public static String RETURN_SIGINT = " return SIGINT";
 	public static String INICIO = " Inicio";
 	
+<<<<<<< HEAD
 	public static final String JAVA_PNG = "java.png";
 
+=======
+    public static final int OP_EXCLUIR = 1;
+    public static final int OP_CRIAR = 0;
+    
+    public static final int ARQUIVO_PADRAO = -1;
+	
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 	public static String arquivoValidado(String nomeArquivo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ARQUIVO_SELECIONADO);
@@ -83,7 +91,7 @@ public class Constantes {
 		return NEWLINE + SISTEMA_DE_ARQUIVOS + NEWLINE;
 	}
 
-	public static String salvouArq(Operacao op, int inicio) {
+	public static String salvouArquivo(Operacao op, int inicio) {
 		int i;
 		StringBuilder sb = new StringBuilder();
 		sb.append(PROCESSO);
@@ -107,7 +115,7 @@ public class Constantes {
 		return sb.toString();
 	}
 
-	public static String naoSalvouArq(Operacao operacao) {
+	public static String naoSalvouArquivo(Operacao operacao) {
 		return PROCESSO + operacao.getIdProcesso() + " Nao pode criar o arquivo " + operacao.getNomeArquivo()
 				+ " (falta de espaco)";
 	}
@@ -128,7 +136,7 @@ public class Constantes {
 		sb.append(NEWLINE);
 		sb.append("prioridade: ").append(processo.getPrioridade());
 		sb.append(NEWLINE);
-		sb.append("tempo de processador: ").append(processo.getTempoProcessador());
+		sb.append("tempo de processador: ").append(processo.getTempo());
 		sb.append(NEWLINE);
 		sb.append("impressoras: ").append(processo.getImpressora());
 		sb.append(NEWLINE);
