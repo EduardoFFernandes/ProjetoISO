@@ -29,7 +29,7 @@ public class GerenciadorDeFilas extends Thread {
 	private static int QUANTUM = 1000; // milisegundos
 
 	@SuppressWarnings("unchecked")
-	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes, ArrayList<Arquivo> arquivosEmDisco,
+	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes, ArrayList<Arquivo> arquivos,
 			Interface telaPrincipal, int qtdBlocosDisco) {
 
 		this.telaPrincipal = telaPrincipal;
@@ -39,7 +39,7 @@ public class GerenciadorDeFilas extends Thread {
 		this.setDaemon(true);
 
 		gerenciadorDeProcessos = new Processos(processosIniciais);
-		gerenciadorDoDisco = new Disco(qtdBlocosDisco, this, arquivosEmDisco);
+		gerenciadorDoDisco = new Disco(qtdBlocosDisco, this, arquivos);
 		gerenciadorDaMemoriaPrincipal = new Memoria();
 		gerenciadorDeRecursos = new Recursos();
 		CLOCK = 0;

@@ -16,7 +16,7 @@ public class Main {
 	private File arquivoDeOperacao = null;
 	private ArrayList<?> processos;
 	private ArrayList<?> operacoes;
-	private ArrayList<Arquivo> arquivosEmDisco;
+	private ArrayList<Arquivo> arquivos;
 	private ManipuladorDeArquivos manipulador;
 
 	public static final String PROCESSOS = "Processos";
@@ -24,8 +24,7 @@ public class Main {
 	public static final String INICIAR = "Iniciar";
 
 	/**
-	 * Funcao inicializadora do programa, cria o objeto da tela principal e a coloca
-	 * como visivel
+	 * Funcao inicializadora do programa, cria a tela principal da aplicacao.
 	 * 
 	 * @author Dudu
 	 */
@@ -46,7 +45,9 @@ public class Main {
 
 	/**
 	 * Funcao que verifica se os arquivos foram carregados e inicia o Sistema
-	 * Operacional.
+	 * Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso significa que um processo paralelo vai ser iniciado assim
+	 * que o objeto gerenciadorDeFilas é iniciado(java.lang.Thread.start()) tendo como argumentos os processos carregados, operacoes carregadas,
+	 * arquivos carregados, a tela principal(JPanel), e a quantidade de blocos no arquivo carregado.
 	 * 
 	 * @author Dudu
 	 * 
@@ -66,7 +67,7 @@ public class Main {
 		}
 		telaPrincipal.logMessage(Constantes.INICIANDO, Interface.GREEN);
 
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivosEmDisco,
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos,
 				telaPrincipal, manipulador.getQtdBlocosDisco());
 		gerenciadorDeFilas.start();
 	}
@@ -87,7 +88,7 @@ public class Main {
 				} else {
 					this.arquivoDeOperacao = arquivo;
 					this.operacoes = validados;
-					this.arquivosEmDisco = manipulador.getArquivosValidados();
+					this.arquivos = manipulador.getArquivosValidados();
 				}
 				telaPrincipal.logMessage(Constantes.arquivoValidado(arquivo.getName()), Interface.GREEN);
 			} else {
@@ -114,7 +115,7 @@ public class Main {
 		}
 		this.arquivoDeOperacao = null;
 		this.operacoes = null;
-		this.arquivosEmDisco = null;
+		this.arquivos = null;
 
 	}
 }

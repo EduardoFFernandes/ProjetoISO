@@ -40,6 +40,8 @@ public class Constantes {
 	public static String INSTRUCAO = " Instrucao ";
 	public static String RETURN_SIGINT = " return SIGINT";
 	public static String INICIO = " Inicio";
+	
+	public static final String JAVA_PNG = "java.png";
 
 	public static String arquivoValidado(String nomeArquivo) {
 		StringBuilder sb = new StringBuilder();

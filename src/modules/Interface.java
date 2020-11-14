@@ -37,7 +37,7 @@ public class Interface extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private Main mainListener;
-	private String icone = "java.png";
+	private String icone = Constantes.JAVA_PNG;
 	private DefaultStyledDocument terminalView;
 	private JTextPane painelTerminal;
 	private JScrollPane scrollTerminal;
