@@ -33,5 +33,6 @@ public class Constantes {
     public static int OP_EXCLUIR = 1;
     public static int OP_CRIAR = 0;
     public static int ARQUIVO_PADRAO = -1;
+    public static int QUANTUM = 1000;
 	
 }

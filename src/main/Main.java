@@ -12,6 +12,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import models.Arquivo;
+import models.Operacao;
+import models.Processo;
 import modules.GerenciadorDeFilas;
 import modules.Interface;
 import modules.ManipuladorDeArquivos;
@@ -20,8 +22,8 @@ public class Main {
 	private static Interface telaPrincipal;
 	private File arquivoDeProcessos = null;
 	private File arquivoDeOperacao = null;
-	private ArrayList<?> processos;
-	private ArrayList<?> operacoes;
+	private ArrayList<Processo> processos;
+	private ArrayList<Operacao> operacoes;
 	private ArrayList<Arquivo> arquivos;
 	private ManipuladorDeArquivos manipulador;
 

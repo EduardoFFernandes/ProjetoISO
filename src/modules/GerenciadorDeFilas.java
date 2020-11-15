@@ -5,6 +5,8 @@ import static util.Constantes.INSTRUCAO;
 import static util.Constantes.PROCESSO;
 import static util.Constantes.RETURN_SIGINT;
 import static util.Constantes.SEM_PROCESSO_EXECUTAR;
+import static util.Constantes.NEWLINE;
+import static util.Constantes.QUANTUM;
 import static util.Util.dispatcher;
 import static util.Util.erroEspacoGerenciadorDeProcessos;
 import static util.Util.erroMemoria;
@@ -39,10 +41,8 @@ public class GerenciadorDeFilas extends Thread {
 	 * seja, o processo inicia assim que um quantum estiver para iniciar.
 	 */
 	private int CLOCK;
-	private static int QUANTUM = 1000; // milisegundos
 
-	@SuppressWarnings("unchecked")
-	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes, ArrayList<Arquivo> arquivos,
+	public GerenciadorDeFilas(ArrayList<Processo> processos, ArrayList<Operacao> operacoes, ArrayList<Arquivo> arquivos,
 			Interface telaPrincipal, int qtdBlocosDisco) {
 
 		this.telaPrincipal = telaPrincipal;
@@ -98,15 +98,11 @@ public class GerenciadorDeFilas extends Thread {
 	@Override
 	public void run() {
 
-		// inicia o processador -> loop ate a fila de processos acabar
 		try {
 			fila();
 		} catch (InterruptedException e) {
-			// A thread do SO foi interrompida por algum motivo
 			e.printStackTrace();
 		}
-
-		// Executa as operacoes de disco;
 		this.escreveNaTela(sistemaDeArquivos());
 		for (int i = 0; i < this.operacoesEstruturaArq.size(); i++) {
 			escreveNaTela(operacoesDoSistema(i + 1));
@@ -119,8 +115,7 @@ public class GerenciadorDeFilas extends Thread {
 	public void fila() throws InterruptedException {
 		Processo processo = null;
 		verificaProcessoInicializandoAgora();
-		telaPrincipal.logMessage("\n");
-//		TODO Modificar a forma que os recursos sao compartilhados.
+		telaPrincipal.logMessage(NEWLINE);
 		while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !processos.isEmpty()) {
 			if (processo == null) {
 				telaPrincipal.logMessage(SEM_PROCESSO_EXECUTAR);
