@@ -6,6 +6,7 @@ import java.util.Arrays;
 import models.Processo;
 
 public class Memoria {
+	//TODO mudar isso
 	private int[] bloco = new int[1024];
 	private ArrayList<Processo> processos;
 	

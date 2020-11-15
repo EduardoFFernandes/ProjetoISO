@@ -3,17 +3,18 @@ package util;
 import static util.Constantes.ARQUIVO_INVALIDO;
 import static util.Constantes.ARQUIVO_SELECIONADO;
 import static util.Constantes.ARQUIVO_VALIDO;
+import static util.Constantes.DISCO_MAPA_OCUPACAO;
 import static util.Constantes.DISCO_PROCESSO_SEM_PERMISSAO;
-import static util.Constantes.NEWLINE;
 import static util.Constantes.PROCESSO;
 import static util.Constantes.SISTEMA_DE_ARQUIVOS;
-import static util.Constantes.VIRGULA;
 
 import models.Operacao;
 import models.Processo;
+import modules.Disco;
+import modules.Interface;
 
 public class Util {
-	
+
 	public int getInt(String string) {
 		return Integer.parseInt(string);
 	}
@@ -24,7 +25,7 @@ public class Util {
 		}
 		return true;
 	}
-	
+
 	public static String arquivoValidado(String nomeArquivo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ARQUIVO_SELECIONADO);
@@ -62,7 +63,7 @@ public class Util {
 	}
 
 	public static String sistemaDeArquivos() {
-		return NEWLINE + SISTEMA_DE_ARQUIVOS + NEWLINE;
+		return "\n" + SISTEMA_DE_ARQUIVOS + "\n";
 	}
 
 	public static String salvouArquivo(Operacao op, int inicio) {
@@ -76,7 +77,7 @@ public class Util {
 		if (op.getQtdBlocos() <= 6) {
 			sb.append(String.valueOf(inicio));
 			for (i = inicio + 1; i < inicio + op.getQtdBlocos() - 1; i++) {
-				sb.append(VIRGULA + String.valueOf(i));
+				sb.append(", " + String.valueOf(i));
 			}
 			sb.append(" e " + String.valueOf(inicio + op.getQtdBlocos() - 1));
 		} else {
@@ -90,7 +91,7 @@ public class Util {
 	}
 
 	public static String naoSalvouArquivo(Operacao operacao) {
-		return PROCESSO + operacao.getIdProcesso() + " Nao pode criar o arquivo " + operacao.getNomeArquivo()
+		return PROCESSO + operacao.getIdProcesso() + " nao pode criar o arquivo " + operacao.getNomeArquivo()
 				+ " (falta de espaco)";
 	}
 
@@ -98,28 +99,45 @@ public class Util {
 		return PROCESSO + operacao.getIdProcesso() + " deletou o arquivo " + operacao.getNomeArquivo();
 	}
 
+	public static void resultadoDisco(final Interface telaPrincipal, final Disco gerenciadorDoDisco) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n");
+		sb.append(DISCO_MAPA_OCUPACAO);
+
+		for (int i = 0; i < gerenciadorDoDisco.getBlocosDisco(); i++) {
+			if (i % 10 != 0) {
+				sb.append(gerenciadorDoDisco.getBlocos()[i] + " | ");
+			} else {
+				sb.append("\n");
+				sb.append("| " + gerenciadorDoDisco.getBlocos()[i] + " | ");
+			}
+		}
+		telaPrincipal.logMessage(sb.toString());
+	}
+
 	public static String dispatcher(Processo processo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Dispatcher =>");
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("PID: ").append(processo.getPID());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("offset: ").append(processo.getInicioProcessoMemoria());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("blocos: ").append(processo.getBlocosMemoria());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("prioridade: ").append(processo.getPrioridade());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("tempo de processador: ").append(processo.getTempo());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("impressoras: ").append(processo.getImpressora());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("scanners: ").append(processo.getScanner());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("modems: ").append(processo.getModem());
-		sb.append(NEWLINE);
+		sb.append("\n");
 		sb.append("disco rigido: ").append(processo.getDisco());
-		sb.append(NEWLINE);
+		sb.append("\n");
 
 		return sb.toString();
 	}
@@ -133,7 +151,7 @@ public class Util {
 		return PROCESSO + PID + " nao foi inicializado por falta de Recursos.";
 	}
 
-	public static String erroEspacoGerenciadorDeProcessos(int PID) {
+	public static String erroFaltaEspacoProcessos(int PID) {
 		return PROCESSO + PID + " nao foi inicializado por falta espaco no gerenciador de processos.";
 	}
 }

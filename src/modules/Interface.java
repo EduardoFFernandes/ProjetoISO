@@ -1,8 +1,10 @@
 package modules;
 
+import static util.Constantes.ARQUIVOS;
+import static util.Constantes.INICIAR;
 import static util.Constantes.JAVA_PNG;
 import static util.Constantes.MENU;
-import static util.Constantes.NEWLINE;
+import static util.Constantes.PROCESSOS;
 import static util.Constantes.SELECIONAR;
 import static util.Constantes.SELECIONAR_CANCELADO;
 import static util.Constantes.TITULO;
@@ -32,7 +34,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import main.Main;
+import pseudoSO.PseudoSO;
 
 /**
  * Interface do sistema e terminal.
@@ -42,7 +44,7 @@ public class Interface extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private Main mainListener;
+	private PseudoSO mainListener;
 	private String icone = JAVA_PNG;
 	private DefaultStyledDocument terminalView;
 	private JTextPane painelTerminal;
@@ -65,8 +67,8 @@ public class Interface extends JFrame implements ActionListener {
 	 * 
 	 * @author eduardofreire
 	 */
-	public Interface(Main main) throws BadLocationException {
-		this.mainListener = main;
+	public Interface(PseudoSO pseudoSO) throws BadLocationException {
+		this.mainListener = pseudoSO;
 		initialize();
 	}
 
@@ -80,7 +82,7 @@ public class Interface extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent source) {
 		switch (source.getActionCommand()) {
-		case Main.PROCESSOS:
+		case PROCESSOS:
 			File processo = selecionaArquivo((JMenuItem) source.getSource());
 			if (processo != null) {
 				mainListener.valida(processo, source.getActionCommand());
@@ -89,7 +91,7 @@ public class Interface extends JFrame implements ActionListener {
 				logMessage(SELECIONAR_CANCELADO, RED);
 			}
 			break;
-		case Main.ARQUIVOS:
+		case ARQUIVOS:
 			File arquivo = selecionaArquivo((JMenuItem) source.getSource());
 			if (arquivo != null) {
 				mainListener.valida(arquivo, source.getActionCommand());
@@ -98,7 +100,7 @@ public class Interface extends JFrame implements ActionListener {
 				logMessage(SELECIONAR_CANCELADO, RED);
 			}
 			break;
-		case Main.INICIAR:
+		case INICIAR:
 			mainListener.iniciar();
 			break;
 		default:
@@ -118,7 +120,7 @@ public class Interface extends JFrame implements ActionListener {
 			public void run() {
 				try {
 					StyleConstants.setForeground(estiloTerminal, cor);
-					terminalView.insertString(terminalView.getLength(), texto + NEWLINE, estiloTerminal);
+					terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
 					revalidate();
 					scrollVertical.setValue(scrollVertical.getMaximum() + 1);
 					revalidate();
@@ -170,19 +172,19 @@ public class Interface extends JFrame implements ActionListener {
 		scrollVertical = scrollTerminal.getVerticalScrollBar();
 
 		// MENU
-		iniciar = new JMenuItem(Main.INICIAR);
+		iniciar = new JMenuItem(INICIAR);
 		iniciar.addActionListener(this);
-		iniciar.setActionCommand(Main.INICIAR);
+		iniciar.setActionCommand(INICIAR);
 		menu.add(iniciar);
 
-		itemAddProcesso = new JMenuItem(Main.PROCESSOS);
+		itemAddProcesso = new JMenuItem(PROCESSOS);
 		itemAddProcesso.addActionListener(this);
-		itemAddProcesso.setActionCommand(Main.PROCESSOS);
+		itemAddProcesso.setActionCommand(PROCESSOS);
 		menu.add(itemAddProcesso);
 
-		itemAddArquivo = new JMenuItem(Main.ARQUIVOS);
+		itemAddArquivo = new JMenuItem(ARQUIVOS);
 		itemAddArquivo.addActionListener(this);
-		itemAddArquivo.setActionCommand(Main.ARQUIVOS);
+		itemAddArquivo.setActionCommand(ARQUIVOS);
 		menu.add(itemAddArquivo);
 		menuBar.add(menu);
 

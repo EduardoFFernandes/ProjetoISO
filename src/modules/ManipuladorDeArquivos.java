@@ -1,6 +1,8 @@
 package modules;
 
+import static util.Constantes.ARQUIVOS;
 import static util.Constantes.ARQUIVO_PADRAO;
+import static util.Constantes.PROCESSOS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import main.Main;
 import models.Arquivo;
 import models.Operacao;
 import models.Processo;
@@ -22,8 +23,7 @@ public class ManipuladorDeArquivos extends Util {
 	private ArrayList<Arquivo> arquivosValidados;
 	private ArrayList<Processo> processosValidados;
 	private ArrayList<Operacao> operacoesValidados;
-	private int qtdBlocosDisco;
-	private int qtdArqEmDisco;
+	private int blocosDisco;
 	private boolean validado;
 
 	
@@ -43,24 +43,9 @@ public class ManipuladorDeArquivos extends Util {
 		return arquivosValidados;
 	}
 
-	public int getQtdBlocosDisco() {
-		if (validado && tipoArquivo == Main.ARQUIVOS) {
-			return qtdBlocosDisco;
-		}
-		return -1;
-	}
-
-	public int getQtdArqEmDisco() {
-		if (validado && tipoArquivo == Main.ARQUIVOS) {
-			return qtdArqEmDisco;
-		}
-		return -1;
-	}
-
-
 	public boolean validaArquivo() throws IOException {
 
-		if (tipoArquivo.equals(Main.PROCESSOS)) {
+		if (tipoArquivo.equals(PROCESSOS)) {
 			processosValidados = new ArrayList<Processo>();
 			return validaProcessos();
 		} else {
@@ -69,6 +54,13 @@ public class ManipuladorDeArquivos extends Util {
 			return validaArquivos();
 		}
 
+	}
+	
+	public int getBlocosDisco() {
+		if (validado && tipoArquivo == ARQUIVOS) {
+			return blocosDisco;
+		}
+		return -1;
 	}
 
 	/**
@@ -124,7 +116,7 @@ public class ManipuladorDeArquivos extends Util {
 		if (!isValidString(linha)) {
 			return false;
 		}
-		qtdBlocosDisco = Integer.parseInt(linha);
+		blocosDisco = Integer.parseInt(linha);
 		linha = buffRead.readLine();// quantidade de Arquivos/segmentos em disco
 		if (!isValidString(linha)) {
 			return false;

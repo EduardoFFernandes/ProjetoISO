@@ -1,9 +1,10 @@
-package main;
+package pseudoSO;
 
 import static util.Constantes.ARQUIVO_IGUAIS;
 import static util.Constantes.INICIANDO;
 import static util.Constantes.NAO_SELECIONADO_ARQUIVOS;
 import static util.Constantes.NAO_SELECIONADO_PROCESSOS;
+import static util.Constantes.PROCESSOS;
 import static util.Util.arquivoNaoValido;
 import static util.Util.arquivoValidado;
 
@@ -18,7 +19,7 @@ import modules.GerenciadorDeFilas;
 import modules.Interface;
 import modules.ManipuladorDeArquivos;
 
-public class Main {
+public class PseudoSO {
 	private static Interface telaPrincipal;
 	private File arquivoDeProcessos = null;
 	private File arquivoDeOperacao = null;
@@ -26,10 +27,6 @@ public class Main {
 	private ArrayList<Operacao> operacoes;
 	private ArrayList<Arquivo> arquivos;
 	private ManipuladorDeArquivos manipulador;
-
-	public static final String PROCESSOS = "Processos";
-	public static final String ARQUIVOS = "Arquivos";
-	public static final String INICIAR = "Iniciar";
 
 	/**
 	 * Funcao inicializadora do programa, cria a tela principal da aplicacao.
@@ -41,8 +38,8 @@ public class Main {
 			@Override
 			public void run() {
 				try {
-					Main main = new Main();
-					telaPrincipal = new Interface(main);
+					PseudoSO pseudoSO = new PseudoSO();
+					telaPrincipal = new Interface(pseudoSO);
 					telaPrincipal.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -76,8 +73,8 @@ public class Main {
 		}
 		telaPrincipal.logMessage(INICIANDO, Interface.GREEN);
 
-		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos, telaPrincipal,
-				manipulador.getQtdBlocosDisco());
+		GerenciadorDeFilas gerenciadorDeFilas = new GerenciadorDeFilas(processos, operacoes, arquivos, telaPrincipal,manipulador.getBlocosDisco());
+		gerenciadorDeFilas.setDaemon(true);
 		gerenciadorDeFilas.start();
 	}
 
