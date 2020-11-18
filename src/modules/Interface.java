@@ -8,6 +8,7 @@ import static util.Constantes.PROCESSOS;
 import static util.Constantes.SELECIONAR;
 import static util.Constantes.SELECIONAR_CANCELADO;
 import static util.Constantes.TITULO;
+import static util.Constantes.TXT;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -65,7 +66,7 @@ public class Interface extends JFrame implements ActionListener {
 	/**
 	 * Atribui o objeto Main e os parametros para a Interface.
 	 * 
-	 * @author eduardofreire
+	 * 
 	 */
 	public Interface(PseudoSO pseudoSO) throws BadLocationException {
 		this.mainListener = pseudoSO;
@@ -77,7 +78,6 @@ public class Interface extends JFrame implements ActionListener {
 	 * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
 	 * os arquivos e iniciar o Pseudo SO.
 	 * 
-	 * @author eduardofreire
 	 */
 	@Override
 	public void actionPerformed(ActionEvent source) {
@@ -111,7 +111,6 @@ public class Interface extends JFrame implements ActionListener {
 	/**
 	 * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
 	 * 
-	 * @author eduardofreire
 	 */
 	synchronized public void logMessage(String texto, Color cor) {
 		EventQueue.invokeLater(new Runnable() {
@@ -133,23 +132,20 @@ public class Interface extends JFrame implements ActionListener {
 
 	/**
 	 * 
-	 * @author eduardofreire
+	 * 
 	 */
 	public void logMessage(String texto) {
 		logMessage(texto, Color.WHITE);
 	}
 
 	/**
-	 * Abre o selecionador de arquivos do Java e mostra apenas os com extensao txt.
-	 * 
-	 * @param botao botao clicado na tela
-	 * @return Um arquivo se o filepicker voltou com sucesso, null caso contrario
+	 * Metodo que abre o dialogo de busca de arquivos.
 	 */
-	public File selecionaArquivo(Component botao) {
+	public File selecionaArquivo(Component component) {
 		selecionador = new JFileChooser();
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter(null, "txt");// TODO: retirar a string daqui.
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter(null, TXT);
 		selecionador.setFileFilter(filtro);
-		int retorno = selecionador.showDialog(botao, SELECIONAR);
+		int retorno = selecionador.showDialog(component, SELECIONAR);
 
 		if (retorno == JFileChooser.APPROVE_OPTION) {
 			return selecionador.getSelectedFile();
@@ -161,7 +157,7 @@ public class Interface extends JFrame implements ActionListener {
 	/**
 	 * Atribui os valores da Interface do sistema.
 	 * 
-	 * @author eduardofreire
+	 * 
 	 */
 	private void initialize() throws BadLocationException {
 
@@ -204,7 +200,6 @@ public class Interface extends JFrame implements ActionListener {
 		setDefaultLookAndFeelDecorated(true);
 
 		// ICONE
-
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
 		pack();
 

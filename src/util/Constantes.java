@@ -29,6 +29,7 @@ public class Constantes {
 	public static final String RETURN_SIGINT = " return SIGINT";
 	public static final String INICIO = " Inicio";
 	public static final String JAVA_PNG = "java.png";
+	public static final String TXT = "txt";
 	
     public static int OP_EXCLUIR = 1;
     public static int OP_CRIAR = 0;

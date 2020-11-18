@@ -22,7 +22,6 @@ import models.Processo;
 
 
 public class GerenciadorDeFilas extends Thread {
-    //TODO Mecher nisso
 	private ArrayList<Processo> processos;
 	private ArrayList<Processo> processosIniciais;
 	private ArrayList<Operacao> operacoesEstruturaArq;
