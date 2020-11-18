@@ -8,7 +8,7 @@ import models.Operacao;
 import util.Constantes;
 
 public class Disco {
-
+    //TODO Mecher nisso
     private int qtdBlocosDisco;
     private ArrayList<Arquivo> arquivos;
     private GerenciadorDeFilas listenerSO;
