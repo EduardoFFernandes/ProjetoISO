@@ -6,11 +6,7 @@ import java.util.Arrays;
 import models.Processo;
 
 public class Memoria {
-<<<<<<< HEAD
     //TODO Mecher nisso
-=======
-	//TODO mudar isso
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 	private int[] bloco = new int[1024];
 	private ArrayList<Processo> processos;
 	
