@@ -1,12 +1,25 @@
 package modules;
 
-import java.awt.Color;
+import static util.Constantes.INICIO;
+import static util.Constantes.INSTRUCAO;
+import static util.Constantes.PROCESSO;
+import static util.Constantes.RETURN_SIGINT;
+import static util.Constantes.SEM_PROCESSO_EXECUTAR;
+import static util.Util.dispatcher;
+import static util.Util.erroFaltaEspacoProcessos;
+import static util.Util.erroMemoria;
+import static util.Util.executandoProc;
+import static util.Util.operacoesDoSistema;
+import static util.Util.procFinalizado;
+import static util.Util.resultadoDisco;
+import static util.Util.sistemaDeArquivos;
+
 import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
 import models.Processo;
-import util.Constantes;
+
 
 public class GerenciadorDeFilas extends Thread {
     //TODO Mecher nisso
@@ -26,36 +39,33 @@ public class GerenciadorDeFilas extends Thread {
 	 * seja, o processo inicia assim que um quantum estiver para iniciar.
 	 */
 	private int CLOCK;
-	private static int QUANTUM = 1000; // milisegundos
 
-	@SuppressWarnings("unchecked")
-	public GerenciadorDeFilas(ArrayList<?> processos, ArrayList<?> operacoes, ArrayList<Arquivo> arquivosEmDisco,
+	public GerenciadorDeFilas(ArrayList<Processo> processos, ArrayList<Operacao> operacoes, ArrayList<Arquivo> arquivos,
 			Interface telaPrincipal, int qtdBlocosDisco) {
 
 		this.telaPrincipal = telaPrincipal;
-		this.processos = (ArrayList<Processo>) processos;
-		this.processosIniciais = (ArrayList<Processo>) processos;
-		this.operacoesEstruturaArq = (ArrayList<Operacao>) operacoes;
-		this.setDaemon(true);
+		this.processos = processos;
+		this.processosIniciais = processos;
+		this.operacoesEstruturaArq = operacoes;
 
 		gerenciadorDeProcessos = new Processos(processosIniciais);
-		gerenciadorDoDisco = new Disco(qtdBlocosDisco, this, arquivosEmDisco);
+		gerenciadorDoDisco = new Disco(qtdBlocosDisco, this, arquivos);
+		gerenciadorDoDisco.processaArquivos();
 		gerenciadorDaMemoriaPrincipal = new Memoria();
 		gerenciadorDeRecursos = new Recursos();
 		CLOCK = 0;
 	}
 	
-	synchronized public void escreveNaTela(String toPrint, Color cor) {
-		telaPrincipal.logMessage(toPrint, cor);
+	@Override
+	public void run() {
+		try {
+			executaFilas();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-
-	synchronized public void escreveNaTela(String toPrint) {
-		telaPrincipal.logMessage(toPrint);
-	}
-
+	
 	synchronized public boolean isProcessoTempoReal(int idProcesso) {
-		// verifica aqui se o processo e de tempo real
-
 		for (Processo processo : processosIniciais) {
 			if (processo.getPID() == idProcesso) {
 				if (processo.getPrioridade() == 0)
@@ -66,57 +76,29 @@ public class GerenciadorDeFilas extends Thread {
 		return false;
 	}
 	
-	synchronized private void clockTick() throws InterruptedException {
-		CLOCK++;
-		wait(QUANTUM);
-		telaPrincipal.logMessage("\n");
-		verificaProcessoInicializandoAgora();
-	}
-
 	synchronized public void printDispatcher(Processo processo) throws InterruptedException {
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INICIO);
+		telaPrincipal.logMessage(PROCESSO + processo.getPID() + INICIO);
 		for (int i = 1; i <= 3; i++) {
-			escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.INSTRUCAO + i);
+			telaPrincipal.logMessage(PROCESSO + processo.getPID() + INSTRUCAO + i);
 		}
 		wait(300);
-		escreveNaTela(Constantes.PROCESSO + processo.getPID() + Constantes.RETURN_SIGINT);
+		telaPrincipal.logMessage(PROCESSO + processo.getPID() + RETURN_SIGINT);
 	}
 	
-	@Override
-	public void run() {
-
-		// inicia o processador -> loop ate a fila de processos acabar
-		try {
-			fila();
-		} catch (InterruptedException e) {
-			// A thread do SO foi interrompida por algum motivo
-			e.printStackTrace();
-		}
-
-		// Executa as operacoes de disco;
-		this.escreveNaTela(Constantes.sistemaDeArquivos());
-		for (int i = 0; i < this.operacoesEstruturaArq.size(); i++) {
-			gerenciadorDoDisco.executaOperacao(operacoesEstruturaArq.get(i), i + 1);
-		}
-		gerenciadorDoDisco.printSituacaoDisco();
-
-	}
-
-	public void fila() throws InterruptedException {
+	public void executaFilas() throws InterruptedException {
 		Processo processo = null;
-		verificaProcessoInicializandoAgora();
+		tempoInicializacaoProcessos();
 		telaPrincipal.logMessage("\n");
-//		TODO Modificar a forma que os recursos sao compartilhados.
 		while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !processos.isEmpty()) {
 			if (processo == null) {
-				telaPrincipal.logMessage(Constantes.SEM_PROCESSO_EXECUTAR);
-				clockTick();
+				telaPrincipal.logMessage(SEM_PROCESSO_EXECUTAR);
+				clock();
 				continue;
 			}
 			if (!gerenciadorDaMemoriaPrincipal.isProcessoEmMemoria(processo)) {
 				if (!gerenciadorDaMemoriaPrincipal.alocaMemoria(processo.getPrioridade() == 0, processo)) {
 					gerenciadorDeProcessos.ultimoProcessoFila(processo);
-					telaPrincipal.logMessage(Constantes.erroMemoria(processo.getPID()), Interface.RED);
+					telaPrincipal.logMessage(erroMemoria(processo.getPID()), Interface.RED);
 					continue;
 				}
 			}
@@ -124,14 +106,20 @@ public class GerenciadorDeFilas extends Thread {
 				Semaforo.alocaRecurso(gerenciadorDeProcessos, gerenciadorDeRecursos, processo, telaPrincipal);
 				continue;
 			}
-			telaPrincipal.logMessage(Constantes.dispatcher(processo));
-			telaPrincipal.logMessage(Constantes.executandoProc(processo.getPID()));
+			telaPrincipal.logMessage(dispatcher(processo));
+			telaPrincipal.logMessage(executandoProc(processo.getPID()));
 			printDispatcher(processo);
 			processo.setTempo(processo.getTempo() - 1);
 			// Se o processo terminar, libera os recursos
-			verificaContinuidadeDoProcesso(processo);
-			clockTick();
+			tempoProcesso(processo);
+			clock();
 		}
+		telaPrincipal.logMessage(sistemaDeArquivos());
+		for (int i = 0; i < this.operacoesEstruturaArq.size(); i++) {
+			telaPrincipal.logMessage(operacoesDoSistema(i + 1));
+			gerenciadorDoDisco.executaOperacao(operacoesEstruturaArq.get(i));
+		}
+		resultadoDisco(telaPrincipal,gerenciadorDoDisco);
 	}
 	
 	public boolean isProcessoValido(int PID) {
@@ -143,31 +131,110 @@ public class GerenciadorDeFilas extends Thread {
 
 		return false;
 	}
+	
+	public ArrayList<Processo> getProcessos() {
+		return processos;
+	}
 
-	private void verificaProcessoInicializandoAgora() {
-		ArrayList<Processo> novaLista = new ArrayList<>(processos);
+	public void setProcessos(ArrayList<Processo> processos) {
+		this.processos = processos;
+	}
+
+	public ArrayList<Processo> getProcessosIniciais() {
+		return processosIniciais;
+	}
+
+	public void setProcessosIniciais(ArrayList<Processo> processosIniciais) {
+		this.processosIniciais = processosIniciais;
+	}
+
+	public ArrayList<Operacao> getOperacoesEstruturaArq() {
+		return operacoesEstruturaArq;
+	}
+
+	public void setOperacoesEstruturaArq(ArrayList<Operacao> operacoesEstruturaArq) {
+		this.operacoesEstruturaArq = operacoesEstruturaArq;
+	}
+
+	public Interface getTelaPrincipal() {
+		return telaPrincipal;
+	}
+
+	public void setTelaPrincipal(Interface telaPrincipal) {
+		this.telaPrincipal = telaPrincipal;
+	}
+
+	public Disco getGerenciadorDoDisco() {
+		return gerenciadorDoDisco;
+	}
+
+	public void setGerenciadorDoDisco(Disco gerenciadorDoDisco) {
+		this.gerenciadorDoDisco = gerenciadorDoDisco;
+	}
+
+	public Memoria getGerenciadorDaMemoriaPrincipal() {
+		return gerenciadorDaMemoriaPrincipal;
+	}
+
+	public void setGerenciadorDaMemoriaPrincipal(Memoria gerenciadorDaMemoriaPrincipal) {
+		this.gerenciadorDaMemoriaPrincipal = gerenciadorDaMemoriaPrincipal;
+	}
+
+	public Recursos getGerenciadorDeRecursos() {
+		return gerenciadorDeRecursos;
+	}
+
+	public void setGerenciadorDeRecursos(Recursos gerenciadorDeRecursos) {
+		this.gerenciadorDeRecursos = gerenciadorDeRecursos;
+	}
+
+	public Processos getGerenciadorDeProcessos() {
+		return gerenciadorDeProcessos;
+	}
+
+	public void setGerenciadorDeProcessos(Processos gerenciadorDeProcessos) {
+		this.gerenciadorDeProcessos = gerenciadorDeProcessos;
+	}
+
+	/**
+	 * Verifica a inicializacao dos processos, se estiver no tempo do clock correto, adiciona o processo ao gerenciador de Processos
+	 */
+	private void tempoInicializacaoProcessos() {
+		ArrayList<Processo> processosAux = new ArrayList<>();
+		processosAux.addAll(processos);
 		processos.forEach((processo) -> {
-			if (processo.getTempoInicializacao() == CLOCK) {// se o processo vai iniciar agora
-				if (gerenciadorDeProcessos.adicionaProcesso(processo)) {// tenta adicionar o mesmo as filas de processo
-					novaLista.remove(processo);// remove o mesmo dos processos que nao foram inicializados
-				} else {// se nao conseguiu adicionar, printa na tela
-					telaPrincipal.logMessage(Constantes.erroEspacoGerenciadorDeProcessos(processo.getPID()),
+			if (processo.getTempoInicializacao() == CLOCK) {
+				if (gerenciadorDeProcessos.adicionaProcesso(processo)) {
+					processosAux.remove(processo);
+				} else {
+					telaPrincipal.logMessage(erroFaltaEspacoProcessos(processo.getPID()),
 							Interface.RED);
 				}
 			}
 		});
-		processos = novaLista;
+		processos = processosAux;
 	}
-
-	private void verificaContinuidadeDoProcesso(Processo processo) {
-		// se entrou aqui significa que o processo foi executado
-		if (processo.getTempo() < 1) {// se o processo acabou
+	
+	/**
+	 * Verifica se o tempo do processo chegou a 0, nesse caso ele remove o processo da logica da aplicacao, caso nao seja,
+	 * o processo perde prioridade para os outros.
+	 */
+	private void tempoProcesso(Processo processo) {
+		if (processo.getTempo() == 0) {
 			gerenciadorDeProcessos.removeProcesso(processo);
 			gerenciadorDaMemoriaPrincipal.desalocaMemoria(processo);
 			Semaforo.desalocaRecursos(gerenciadorDeRecursos, processo);
-			telaPrincipal.logMessage(Constantes.procFinalizado(processo.getPID()), Interface.GREEN);
+			telaPrincipal.logMessage(procFinalizado(processo.getPID()), Interface.GREEN);
 		} else {
 			gerenciadorDeProcessos.diminuiPrioridade(processo);
 		}
 	}
+	
+	synchronized private void clock() throws InterruptedException {
+		CLOCK++;
+		wait(1000);
+		telaPrincipal.logMessage("\n");
+		tempoInicializacaoProcessos();
+	}
+
 }

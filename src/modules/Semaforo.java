@@ -1,13 +1,14 @@
 package modules;
 
+import static util.Util.erroRecursos;
+
 import models.Processo;
-import util.Constantes;
 
 /**
  * Por padrão todo recurso é inicializado com o SEMAFORO_ABERTO o que indica que
  * ele está livre para ser alocado.
  * 
- * @author Dudu
+ * 
  */
 public class Semaforo {
 
@@ -19,7 +20,7 @@ public class Semaforo {
 	 * processamento e bloqueia aquele recurso temporariamente para os outros
 	 * processamentos. Aqui o semaforo fica fechado.
 	 * 
-	 * @author Dudu
+	 * 
 	 */
 	public static void alocaRecurso(Processos gerenciadorDeProcessos, Recursos gerenciadorDeRecursos,
 			Processo processoAtual, Interface telaPrincipal) {
@@ -30,7 +31,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		}
 		if (processoAtual.getScanner() > 0) {
@@ -40,7 +41,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		}
 		if (processoAtual.getImpressora() == 1) {
@@ -50,7 +51,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		} else if (processoAtual.getImpressora() == 2) {
 			if (gerenciadorDeRecursos.getImpressoras()[1] == SEMAFORO_ABERTO) {
@@ -59,7 +60,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		}
 		if (processoAtual.getDisco() == 1) {
@@ -69,7 +70,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		} else if (processoAtual.getDisco() == 2) {
 			if (gerenciadorDeRecursos.getDiscoRigido()[1] == SEMAFORO_ABERTO) {
@@ -78,7 +79,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(Constantes.erroRecursos(processoAtual.getPID()), Interface.RED);
+				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
 			}
 		}
 		processoAtual.setRecursosAlocados(true);
@@ -88,7 +89,7 @@ public class Semaforo {
 	 * Essa função implementa a lógica de semáforo, retira o recurso do
 	 * processamento para libera-lo para os outros. Aqui o semaforo fica aberto.
 	 * 
-	 * @author Dudu
+	 * 
 	 */
 	public static boolean desalocaRecursos(Recursos gerenciadorDeRecursos, Processo processoAtual) {
 		if (processoAtual.getModem() > 0 && gerenciadorDeRecursos.getModem() == SEMAFORO_FECHADO) {

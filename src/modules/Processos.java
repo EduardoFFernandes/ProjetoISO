@@ -168,7 +168,7 @@ public class Processos {
 		}
 	}
 
-	public boolean verificaTamanho(ArrayList<Processo> fila) {
+	private boolean verificaTamanho(ArrayList<Processo> fila) {
 		return fila.size() < TAMANHO_MAXIMO;
 	}
 }

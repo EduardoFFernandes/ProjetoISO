@@ -5,141 +5,177 @@ import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
-import util.Constantes;
+import static util.Constantes.*;
+import static util.Util.*;
 
 public class Disco {
+<<<<<<< HEAD
     //TODO Mecher nisso
     private int qtdBlocosDisco;
     private ArrayList<Arquivo> arquivos;
     private GerenciadorDeFilas listenerSO;
     private String[] blocos;
+=======
 
-    public Disco(int qtdBlocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
-        this.arquivos = arquivos;
-        this.qtdBlocosDisco = qtdBlocosDisco;
-        this.listenerSO = listenerSO;
-        blocos = new String[qtdBlocosDisco];
-        processaArquivos();
-    }
+	private ArrayList<Arquivo> arquivos;
+	private GerenciadorDeFilas gerenciadorDeFilas;
+	private String[] blocos;
+	private int blocosDisco;
+>>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 
-    public boolean createFile(Operacao operacao) {
-        boolean cabe, salvou = false;
-        int qtdBlocosOp = operacao.getQtdBlocos();
-        int blocoInicioArq = -1;
-        for (int i = 0; i < qtdBlocosDisco; i++) {
-            cabe = true;
-            if (i + qtdBlocosOp > qtdBlocosDisco) {
-                break;
-            }
-            if (blocos[i] == "0") {
-                for (int y = 0; y < qtdBlocosOp; y++) {
-                    if (blocos[i + y] != "0") {
-                        cabe = false;
-                        break;
-                    }
-                }
-                if (cabe) {
-                    blocoInicioArq = i;
-                    for (int y = 0; y < qtdBlocosOp; y++) {
-                        blocos[blocoInicioArq + y] = operacao.getNomeArquivo();
-                    }
-                    salvou = true;
-                    break;
-                }
-            }
-        }
+	public Disco(int blocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
+		this.arquivos = arquivos;
+		this.blocosDisco = blocosDisco;
+		this.gerenciadorDeFilas = listenerSO;
+		this.blocos = new String[blocosDisco];
+	}
 
-        if (salvou) {
-            listenerSO.escreveNaTela(Constantes.salvouArquivo(operacao, blocoInicioArq));
-        } else {
-            listenerSO.escreveNaTela(Constantes.naoSalvouArquivo(operacao), Color.RED);
-        }
-        return salvou;
-    }
+	public boolean cria(Operacao operacao) {
+		boolean cabe, salvou = false;
+		int qtdBlocosOp = operacao.getQtdBlocos();
+		int blocoInicioArq = -1;
+		for (int i = 0; i < blocosDisco; i++) {
+			cabe = true;
+			if (i + qtdBlocosOp > blocosDisco) {
+				break;
+			}
+			if (blocos[i] == "0") {
+				for (int j = 0; j < qtdBlocosOp; j++) {
+					if (blocos[i + j] != "0") {
+						cabe = false;
+						break;
+					}
+				}
+				if (cabe) {
+					blocoInicioArq = i;
+					for (int k = 0; k < qtdBlocosOp; k++) {
+						blocos[blocoInicioArq + k] = operacao.getNomeArquivo();
+					}
+					salvou = true;
+					break;
+				}
+			}
+		}
 
-    public boolean deleteFile(Arquivo arquivo) {
-        for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
-            blocos[arquivo.getPosPrimeiroBloco() + i] = "0";
-        }
+		if (salvou) {
+			gerenciadorDeFilas.getTelaPrincipal().logMessage(salvouArquivo(operacao, blocoInicioArq));
+		} else {
+			gerenciadorDeFilas.getTelaPrincipal().logMessage(naoSalvouArquivo(operacao), Color.RED);
+		}
+		return salvou;
+	}
 
-        return true;
-    }
+	public boolean deleta(Arquivo arquivo) {
+		for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+			blocos[arquivo.getPosPrimeiroBloco() + i] = "0";
+		}
 
-    public void printSituacaoDisco() {
+		return true;
+	}
 
-        StringBuilder sb = new StringBuilder();
-        int printaNaTelaComQuebraDeLinha;
+	public void resultadoDisco() {
 
-        sb.append(Constantes.NEWLINE);
-        sb.append(Constantes.DISCO_MAPA_OCUPACAO);
-        sb.append(Constantes.NEWLINE);
+		StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < qtdBlocosDisco; i++) {
-            printaNaTelaComQuebraDeLinha = i % 10;
-            if (printaNaTelaComQuebraDeLinha != 0) {
-                sb.append("| " + blocos[i] + " |");
-            } else {
-                sb.append(Constantes.NEWLINE);
-                sb.append("| " + blocos[i] + " |");
-            }
-        }
-        listenerSO.escreveNaTela(sb.toString());
-    }
+		sb.append("\n");
+		sb.append(DISCO_MAPA_OCUPACAO);
+		sb.append("\n");
+		sb.append("| ");
 
-    public void executaOperacao(Operacao op, int opNum) {
-        listenerSO.escreveNaTela(Constantes.operacoesDoSistema(opNum));
-        if (!listenerSO.isProcessoValido(op.getIdProcesso())) {
-            listenerSO.escreveNaTela(Constantes.NAO_EXISTE_PROCESSO);
-            return;
-        }
-        if (op.getCodOperacao() == Constantes.OP_CRIAR) {
-            // operacao de criar arquivo
-            createFile(op);
-        } else {
-            // operacao de excluir arquivo
-            Arquivo arq = procuraArquivoNoDisco(op.getNomeArquivo());
-            if (arq == null) {
-                // se nao encontrou arquivo.
-                listenerSO.escreveNaTela(Constantes.arqNaoEncontrado(op.getNomeArquivo()));
-            }
-            // encontrou arquivo
-            if (op.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
-                // processo e o mesmo que criou o arquivo
-                deleteFile(arq);
-                listenerSO.escreveNaTela(Constantes.excluiuArq(op));
-            } else if (listenerSO.isProcessoTempoReal(op.getIdProcesso())) {
-                // processo nao e o que criou o arquivo mas e de tempo real
-                deleteFile(arq);
-                listenerSO.escreveNaTela(Constantes.excluiuArq(op));
-            } else {
-                // processo nao e o que criou o arquivo e nao e de tempo real
-                listenerSO.escreveNaTela(Constantes.procSemPermissaoExcluirArq(op.getIdProcesso(), op.getNomeArquivo()),
-                        Interface.RED);
-            }
+		for (int i = 0; i < blocosDisco; i++) {
+			if (i % 10 != 0) {
+				sb.append(blocos[i] + " |");
+			} else {
+				sb.append("\n");
+				sb.append("| " + blocos[i] + " |");
+			}
+		}
+		gerenciadorDeFilas.getTelaPrincipal().logMessage(sb.toString());
+	}
 
-        }
-    }
+	public void executaOperacao(Operacao operacao) {
+		if (!gerenciadorDeFilas.isProcessoValido(operacao.getIdProcesso())) {
+			gerenciadorDeFilas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
+			return;
+		}
+		if (operacao.getCodOperacao() == OP_CRIAR) {
+			// operacao de criar arquivo
+			cria(operacao);
+		} else {
+			// operacao de excluir arquivo
+			Arquivo arq = procuraArquivo(operacao.getNomeArquivo());
+			if (arq == null) {
+				// se nao encontrou arquivo.
+				gerenciadorDeFilas.getTelaPrincipal().logMessage(arqNaoEncontrado(operacao.getNomeArquivo()));
+			} else if (operacao.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
+				// processo e o mesmo que criou o arquivo
+				deleta(arq);
+				gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+			} else if (gerenciadorDeFilas.isProcessoTempoReal(operacao.getIdProcesso())) {
+				// processo nao e o que criou o arquivo mas e de tempo real
+				deleta(arq);
+				gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+			} else {
+				// processo nao e o que criou o arquivo e nao e de tempo real
+				gerenciadorDeFilas.getTelaPrincipal().logMessage(
+						procSemPermissaoExcluirArq(operacao.getIdProcesso(), operacao.getNomeArquivo()), Interface.RED);
+			}
 
-    private void processaArquivos() {
-        for (Arquivo arquivo : arquivos) {
-            int i;
-            for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
-                blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
-            }
-        }
-        for (int i = 0; i < qtdBlocosDisco; i++) {
-            if (blocos[i] == null) {
-                blocos[i] = "0";
-            }
-        }
-    }
+		}
+	}
 
-    private Arquivo procuraArquivoNoDisco(String nome) {
-        for (Arquivo arquivo : arquivos) {
-            if (arquivo.getNomeArquivo().equals(nome)) {
-                return arquivo;
-            }
-        }
-        return null;
-    }
+	public void processaArquivos() {
+		for (Arquivo arquivo : arquivos) {
+			int i;
+			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
+			}
+		}
+		for (int i = 0; i < blocosDisco; i++) {
+			if (blocos[i] == null) {
+				blocos[i] = "0";
+			}
+		}
+	}
+
+	private Arquivo procuraArquivo(String nome) {
+		for (Arquivo arquivo : arquivos) {
+			if (arquivo.getNomeArquivo().equals(nome)) {
+				return arquivo;
+			}
+		}
+		return null;
+	}
+
+	public int getBlocosDisco() {
+		return blocosDisco;
+	}
+
+	public void setBlocosDisco(int blocosDisco) {
+		this.blocosDisco = blocosDisco;
+	}
+
+	public ArrayList<Arquivo> getArquivos() {
+		return arquivos;
+	}
+
+	public void setArquivos(ArrayList<Arquivo> arquivos) {
+		this.arquivos = arquivos;
+	}
+
+	public GerenciadorDeFilas getListenerSO() {
+		return gerenciadorDeFilas;
+	}
+
+	public void setListenerSO(GerenciadorDeFilas listenerSO) {
+		this.gerenciadorDeFilas = listenerSO;
+	}
+
+	public String[] getBlocos() {
+		return blocos;
+	}
+
+	public void setBlocos(String[] blocos) {
+		this.blocos = blocos;
+	}
 }
