@@ -5,163 +5,155 @@ import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
+import util.Util;
+
 import static util.Constantes.*;
 import static util.Util.*;
 
 public class Disco {
-    
-	private ArrayList<Arquivo> arquivos;
-	private GerenciadorDeFilas gerenciadorDeFilas;
-	private String[] blocos;
-	private int blocosDisco;
 
-	public Disco(int blocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
-		this.arquivos = arquivos;
-		this.blocosDisco = blocosDisco;
-		this.gerenciadorDeFilas = listenerSO;
-		this.blocos = new String[blocosDisco];
-	}
-	
-	
-	/**
-	 * Metodo que executa as operacoes recebidas.
-	 */
-	public void executaOperacao(Operacao operacao) {
-        if (operacao.getCodOperacao() == OP_CRIAR) {
-            cria(operacao);
-        } else {
-            Arquivo arq = procuraArquivo(operacao.getNomeArquivo());
-            if (arq == null) {
-                gerenciadorDeFilas.getTelaPrincipal().logMessage(arqNaoEncontrado(operacao.getNomeArquivo()));
-            } else if (operacao.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
-                deleta(arq);
-                gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
-            } else if (gerenciadorDeFilas.isProcessoTempoReal(operacao.getIdProcesso())) {
-                deleta(arq);
-                gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
-            } else {
-                gerenciadorDeFilas.getTelaPrincipal().logMessage(
-                        procSemPermissaoExcluirArq(operacao.getIdProcesso(), operacao.getNomeArquivo()), Interface.RED);
-            }
+    private ArrayList<Arquivo> arquivos;
+    private GerenciadorDeFilas gerenciadorDeFilas;
+    private String discoAsString;
+    private int blocosDisco;
 
-        }
-        if (!gerenciadorDeFilas.isProcessoValido(operacao.getIdProcesso())) {
-            gerenciadorDeFilas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
-            return;
-        }
+    public Disco(int blocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
+        this.arquivos = arquivos;
+        this.blocosDisco = blocosDisco;
+        this.gerenciadorDeFilas = listenerSO;
+        discoAsString = Util.discoEmBranco(discoAsString, blocosDisco);
     }
-	
-	/**
-	 * Metodo que cria os arquivos do disco.
-	 */
-	public boolean cria(Operacao operacao) {
-	    String blocosAsString = new String();
-        String espacoNecessario = new String();
+
+    /**
+     * Metodo que cria os arquivos do disco.
+     */
+    public boolean cria(Operacao operacao, int posicaoOperacao) {
         int indiceDisponivel;
-        for (String string : blocos) {
-            blocosAsString = blocosAsString.concat(string);
-        }
+        String espacoNecessario = new String();
         for (int i = 0; i < operacao.getQtdBlocos(); i++) {
             espacoNecessario = espacoNecessario.concat("0");
         }
-        if ((indiceDisponivel = blocosAsString.indexOf(espacoNecessario)) != -1) {
-            for (int i = indiceDisponivel; i < indiceDisponivel + operacao.getQtdBlocos(); i++) {
-                blocos[i] = operacao.getNomeArquivo();
-            }
+        if ((indiceDisponivel = discoAsString.indexOf(espacoNecessario)) != -1) {
+
+            discoAsString = discoAsString.substring(0, indiceDisponivel)
+                    .concat(espacoNecessario.replaceAll("0", operacao.getNomeArquivo()))
+                    .concat(discoAsString.substring(indiceDisponivel + operacao.getQtdBlocos()));
+            gerenciadorDeFilas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, true));
             gerenciadorDeFilas.getTelaPrincipal().logMessage(salvouArquivo(operacao, indiceDisponivel));
             return true;
         } else {
+            gerenciadorDeFilas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, false));
             gerenciadorDeFilas.getTelaPrincipal().logMessage(naoSalvouArquivo(operacao), Color.RED);
             return false;
         }
-	}
-	
-	
-	/**
-	 * Metodo que exclui arquivos do disco.
-	 */
-	public boolean deleta(Arquivo arquivo) {
-		for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
-			blocos[arquivo.getPosPrimeiroBloco() + i] = "0";
-		}
+    }
 
-		return true;
-	}
+    /**
+     * Metodo que executa as operacoes recebidas.
+     */
+    public void executaOperacoes(ArrayList<Operacao> operacoes, Interface telaPrincipal) {
+        int posicaoOperacao = 1;
+        for (Operacao operacao : operacoes) {
 
-	public void resultadoDisco() {
+            if (operacao.getCodOperacao() == OP_CRIAR) {
 
-		StringBuilder sb = new StringBuilder();
+                cria(operacao, posicaoOperacao);
+            } else {
+                Arquivo arq = procuraArquivo(operacao.getNomeArquivo());
+                if (arq == null) {
+                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                    gerenciadorDeFilas.getTelaPrincipal().logMessage(arqNaoEncontrado(operacao.getNomeArquivo()));
+                } else if (operacao.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
+                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, true));
+                    deleta(arq);
+                    gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                } else if (gerenciadorDeFilas.isProcessoTempoReal(operacao.getIdProcesso())) {
+                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, true));
+                    deleta(arq);
+                    gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                } else {
+                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                    gerenciadorDeFilas.getTelaPrincipal().logMessage(
+                            procSemPermissaoExcluirArq(operacao.getIdProcesso(), operacao.getNomeArquivo()),
+                            Interface.RED);
+                }
 
-		sb.append("\n");
-		sb.append(DISCO_MAPA_OCUPACAO);
-		sb.append("\n");
-		sb.append("| ");
+            }
+            if (!gerenciadorDeFilas.isProcessoValido(operacao.getIdProcesso())) {
+                telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                gerenciadorDeFilas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
+                return;
+            }
+            posicaoOperacao++;
+        }
+    }
 
-		for (int i = 0; i < blocosDisco; i++) {
-			if (i % 10 != 0) {
-				sb.append(blocos[i] + " |");
-			} else {
-				sb.append("\n");
-				sb.append("| " + blocos[i] + " |");
-			}
-		}
-		gerenciadorDeFilas.getTelaPrincipal().logMessage(sb.toString());
-	}
+    /**
+     * Metodo que exclui arquivos do disco.
+     */
+    public boolean deleta(Arquivo arquivo) {
 
-	
+        String espacoLivre = new String();
+        for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+            espacoLivre = espacoLivre.concat("0");
+        }
+        discoAsString = discoAsString.substring(0, arquivo.getPosPrimeiroBloco()).concat(espacoLivre)
+                .concat(discoAsString.substring(arquivo.getPosPrimeiroBloco() + arquivo.getQtdBlocosArq()));
+        return true;
+    }
 
-	public void processaArquivos() {
-		for (Arquivo arquivo : arquivos) {
-			int i;
-			for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
-				blocos[arquivo.getPosPrimeiroBloco() + i] = arquivo.getNomeArquivo();
-			}
-		}
-		for (int i = 0; i < blocosDisco; i++) {
-			if (blocos[i] == null) {
-				blocos[i] = "0";
-			}
-		}
-	}
+    public void processaArquivos() {
+        for (Arquivo arquivo : arquivos) {
+            int i;
+            String espacoLivre = new String();
+            for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+                espacoLivre = espacoLivre.concat(arquivo.getNomeArquivo());
+            }
+            discoAsString = discoAsString.substring(0, arquivo.getPosPrimeiroBloco()).concat(espacoLivre)
+                    .concat(discoAsString.substring(arquivo.getPosPrimeiroBloco() + arquivo.getQtdBlocosArq()));
 
-	private Arquivo procuraArquivo(String nome) {
-		for (Arquivo arquivo : arquivos) {
-			if (arquivo.getNomeArquivo().equals(nome)) {
-				return arquivo;
-			}
-		}
-		return null;
-	}
+        }
+    }
 
-	public int getBlocosDisco() {
-		return blocosDisco;
-	}
+    private Arquivo procuraArquivo(String nome) {
+        for (Arquivo arquivo : arquivos) {
+            if (arquivo.getNomeArquivo().equals(nome)) {
+                return arquivo;
+            }
+        }
+        return null;
+    }
 
-	public void setBlocosDisco(int blocosDisco) {
-		this.blocosDisco = blocosDisco;
-	}
+    public String getDiscoAsString() {
+        return discoAsString;
+    }
 
-	public ArrayList<Arquivo> getArquivos() {
-		return arquivos;
-	}
+    public void setDiscoAsString(String discoAsString) {
+        this.discoAsString = discoAsString;
+    }
 
-	public void setArquivos(ArrayList<Arquivo> arquivos) {
-		this.arquivos = arquivos;
-	}
+    public int getBlocosDisco() {
+        return blocosDisco;
+    }
 
-	public GerenciadorDeFilas getListenerSO() {
-		return gerenciadorDeFilas;
-	}
+    public void setBlocosDisco(int blocosDisco) {
+        this.blocosDisco = blocosDisco;
+    }
 
-	public void setListenerSO(GerenciadorDeFilas listenerSO) {
-		this.gerenciadorDeFilas = listenerSO;
-	}
+    public ArrayList<Arquivo> getArquivos() {
+        return arquivos;
+    }
 
-	public String[] getBlocos() {
-		return blocos;
-	}
+    public void setArquivos(ArrayList<Arquivo> arquivos) {
+        this.arquivos = arquivos;
+    }
 
-	public void setBlocos(String[] blocos) {
-		this.blocos = blocos;
-	}
+    public GerenciadorDeFilas getListenerSO() {
+        return gerenciadorDeFilas;
+    }
+
+    public void setListenerSO(GerenciadorDeFilas listenerSO) {
+        this.gerenciadorDeFilas = listenerSO;
+    }
+
 }

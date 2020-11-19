@@ -58,8 +58,8 @@ public class Util {
 		return "Arquivo: " + arq + ", Nao encontrado.";
 	}
 
-	public static String operacoesDoSistema(int op) {
-		return "Operacao " + op + " =>";
+	public static String operacoesDoSistema(int posicaoOperacao, boolean status) {
+		return "Operacao " + posicaoOperacao + " =>" + ((status) ? " Sucesso" : " Falha");
 	}
 
 	public static String sistemaDeArquivos() {
@@ -107,10 +107,10 @@ public class Util {
 
 		for (int i = 0; i < gerenciadorDoDisco.getBlocosDisco(); i++) {
 			if (i % 10 != 0) {
-				sb.append(gerenciadorDoDisco.getBlocos()[i] + " | ");
+				sb.append(gerenciadorDoDisco.getDiscoAsString().charAt(i) + " | ");
 			} else {
 				sb.append("\n");
-				sb.append("| " + gerenciadorDoDisco.getBlocos()[i] + " | ");
+				sb.append("| " + gerenciadorDoDisco.getDiscoAsString().charAt(i) + " | ");
 			}
 		}
 		telaPrincipal.logMessage(sb.toString());
@@ -155,10 +155,20 @@ public class Util {
 		return PROCESSO + PID + " nao foi inicializado por falta espaco no gerenciador de processos.";
 	}
 	
+	// Metodos que criam a logica do disco e memoria
 	public static String memoriaEmBranco(String blocoMemoria) {
+	    blocoMemoria = new String();
 	    for (int i = 0; i < 1024; i++) {
 	        blocoMemoria = blocoMemoria.concat("E");
 	    }
 	   return blocoMemoria;
 	}
+	
+	public static String discoEmBranco(String blocoDisco, int tamanho) {
+	    blocoDisco = new String();
+        for (int i = 0; i < tamanho; i++) {
+            blocoDisco = blocoDisco.concat("0");
+        }
+       return blocoDisco;
+    }
 }

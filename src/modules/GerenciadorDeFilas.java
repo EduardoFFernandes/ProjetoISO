@@ -9,7 +9,6 @@ import static util.Util.dispatcher;
 import static util.Util.erroFaltaEspacoProcessos;
 import static util.Util.erroMemoria;
 import static util.Util.executandoProc;
-import static util.Util.operacoesDoSistema;
 import static util.Util.procFinalizado;
 import static util.Util.resultadoDisco;
 import static util.Util.sistemaDeArquivos;
@@ -24,7 +23,7 @@ import models.Processo;
 public class GerenciadorDeFilas extends Thread {
 	private ArrayList<Processo> processos;
 	private ArrayList<Processo> processosIniciais;
-	private ArrayList<Operacao> operacoesEstruturaArq;
+	private ArrayList<Operacao> operacoes;
 
 	private Interface telaPrincipal;
 	private Disco gerenciadorDoDisco;
@@ -45,7 +44,7 @@ public class GerenciadorDeFilas extends Thread {
 		this.telaPrincipal = telaPrincipal;
 		this.processos = processos;
 		this.processosIniciais = processos;
-		this.operacoesEstruturaArq = operacoes;
+		this.operacoes = operacoes;
 
 		gerenciadorDeProcessos = new Processos(processosIniciais);
 		gerenciadorDoDisco = new Disco(qtdBlocosDisco, this, arquivos);
@@ -114,10 +113,7 @@ public class GerenciadorDeFilas extends Thread {
 			clock();
 		}
 		telaPrincipal.logMessage(sistemaDeArquivos());
-		for (int i = 0; i < this.operacoesEstruturaArq.size(); i++) {
-			telaPrincipal.logMessage(operacoesDoSistema(i + 1));
-			gerenciadorDoDisco.executaOperacao(operacoesEstruturaArq.get(i));
-		}
+		gerenciadorDoDisco.executaOperacoes(operacoes, telaPrincipal);
 		resultadoDisco(telaPrincipal,gerenciadorDoDisco);
 	}
 	
@@ -148,11 +144,11 @@ public class GerenciadorDeFilas extends Thread {
 	}
 
 	public ArrayList<Operacao> getOperacoesEstruturaArq() {
-		return operacoesEstruturaArq;
+		return operacoes;
 	}
 
 	public void setOperacoesEstruturaArq(ArrayList<Operacao> operacoesEstruturaArq) {
-		this.operacoesEstruturaArq = operacoesEstruturaArq;
+		this.operacoes = operacoesEstruturaArq;
 	}
 
 	public Interface getTelaPrincipal() {
