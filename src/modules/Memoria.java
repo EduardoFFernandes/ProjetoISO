@@ -1,76 +1,61 @@
 package modules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import models.Processo;
+import util.Util;
 
 public class Memoria {
-    //TODO Mecher nisso
-	private int[] bloco = new int[1024];
-	private ArrayList<Processo> processos;
-	
+    private String memoriaAsString;
+    private ArrayList<Processo> processos;
 
-	Memoria() {
-		processos = new ArrayList<>();
-		Arrays.fill(bloco, -1);
-	}
+    Memoria() {
+        memoriaAsString = Util.memoriaEmBranco(memoriaAsString);
+        processos = new ArrayList<>();
+    }
 
-	public boolean alocaMemoria(boolean isProcessoTempoReal, Processo processo) {
-		int inicioBlocos = 64;
-		int fimBlocos = 1024;
-		boolean cabe, salvou = false;
-		int qtdBlocosPro = processo.getBlocosMemoria();
-		if (isProcessoTempoReal) {
-			inicioBlocos = 0;
-			fimBlocos = 64;
-		}
+    public boolean aloca(boolean isProcessoTempoReal, Processo processo) {
+        String espacoNecessario = new String();
+        int indiceDisponivel;
 
-		for (int i = inicioBlocos; i < fimBlocos; i++) {
-			cabe = true;
-			if (i + qtdBlocosPro > fimBlocos) {// TODO verificar aqui se o que foi colocado esta certo
-				break;
-			}
+        for (int i = 0; i < processo.getBlocosMemoria(); i++) {
 
-			if (bloco[i] == -1) {// se o bloco que estamos avaliando esta vazio
-				for (int y = 0; y < qtdBlocosPro; y++) {
-					if (bloco[i + y] > 0) {// se o valor contido no bloco em questao for diferente de -1 entao nao cabe
-						cabe = false;
-						break;
-					}
-				}
-				if (cabe) {// se cabe significa que encontrou um espaco grande o suficiente para colocar o
-							// processo
-					gravaNaMemoria(i, qtdBlocosPro, processo.getPID()); 
-					processo.setInicioProcessoMemoria(i);
-					processos.add(processo);
-					salvou = true;
-					break;
-				}
-			}
-		}
+            espacoNecessario = espacoNecessario.concat("E");
+        }
+        if (isProcessoTempoReal) {
 
-		return salvou;
-	}
+            indiceDisponivel = memoriaAsString.substring(0, 64).indexOf(espacoNecessario);
+        } else {
 
-	public void desalocaMemoria(Processo processo) {
-		gravaNaMemoria(processo.getInicioProcessoMemoria(),processo.getBlocosMemoria(), -1);
-		processo.setInicioProcessoMemoria(-1);
-		processos.remove(processo);
+            indiceDisponivel = memoriaAsString.substring(64).indexOf(espacoNecessario);
+            indiceDisponivel = (indiceDisponivel == -1) ? -1 : indiceDisponivel + 64;
+        }
+        if (indiceDisponivel != -1) {
 
-	}
+            memoriaAsString = memoriaAsString.substring(0, indiceDisponivel)
+                    .concat(espacoNecessario.replaceAll("E", String.valueOf(processo.getPID())))
+                    .concat(memoriaAsString.substring(indiceDisponivel + processo.getBlocosMemoria()));
+            processo.setInicioProcessoMemoria(indiceDisponivel);
+            processos.add(processo);
+            return true;
+        }
+        return false;
+    }
 
-	private void gravaNaMemoria(int inicio, int tam, int dado) {
-		int fim = inicio+tam;
-		for (int y = inicio; y < fim; y++) {
-			bloco[y] = dado;
-		}
-	}
+    public void desaloca(Processo processo) {
 
-	public boolean isProcessoEmMemoria(Processo processo) {
-		if (processos.contains(processo)) {
-			return true;
-		}
-		return false;
-	}
+        String espacoLivre = new String();
+        for (int i = 0; i < processo.getBlocosMemoria(); i++) {
+            espacoLivre = espacoLivre.concat("E");
+        }
+        memoriaAsString = memoriaAsString.substring(0, processo.getInicioProcessoMemoria()).concat(espacoLivre)
+                .concat(memoriaAsString.substring(processo.getInicioProcessoMemoria() + processo.getBlocosMemoria()));
+        processo.setInicioProcessoMemoria(-1);
+        processos.remove(processo);
+
+    }
+
+    public ArrayList<Processo> getProcessos() {
+        return processos;
+    }
 }

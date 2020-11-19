@@ -154,4 +154,11 @@ public class Util {
 	public static String erroFaltaEspacoProcessos(int PID) {
 		return PROCESSO + PID + " nao foi inicializado por falta espaco no gerenciador de processos.";
 	}
+	
+	public static String memoriaEmBranco(String blocoMemoria) {
+	    for (int i = 0; i < 1024; i++) {
+	        blocoMemoria = blocoMemoria.concat("E");
+	    }
+	   return blocoMemoria;
+	}
 }

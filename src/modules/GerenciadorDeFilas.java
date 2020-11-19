@@ -94,8 +94,8 @@ public class GerenciadorDeFilas extends Thread {
 				clock();
 				continue;
 			}
-			if (!gerenciadorDaMemoriaPrincipal.isProcessoEmMemoria(processo)) {
-				if (!gerenciadorDaMemoriaPrincipal.alocaMemoria(processo.getPrioridade() == 0, processo)) {
+			if (!gerenciadorDaMemoriaPrincipal.getProcessos().contains(processo)) {
+				if (!gerenciadorDaMemoriaPrincipal.aloca(processo.getPrioridade() == 0, processo)) {
 					gerenciadorDeProcessos.ultimoProcessoFila(processo);
 					telaPrincipal.logMessage(erroMemoria(processo.getPID()), Interface.RED);
 					continue;
@@ -221,7 +221,7 @@ public class GerenciadorDeFilas extends Thread {
 	private void tempoProcesso(Processo processo) {
 		if (processo.getTempo() == 0) {
 			gerenciadorDeProcessos.removeProcesso(processo);
-			gerenciadorDaMemoriaPrincipal.desalocaMemoria(processo);
+			gerenciadorDaMemoriaPrincipal.desaloca(processo);
 			Semaforo.desalocaRecursos(gerenciadorDeRecursos, processo);
 			telaPrincipal.logMessage(procFinalizado(processo.getPID()), Interface.GREEN);
 		} else {
