@@ -48,12 +48,12 @@ public class Util {
 		return PROCESSO + PID + " foi finalizado.";
 	}
 
-	public static String processoErroDelete(int procId, String arq) {
-		return PROCESSO + procId + DISCO_PROCESSO_SEM_PERMISSAO + arq;
+	public static String processoErroDelete(int idProcesso, String nomeArquivo) {
+		return PROCESSO + idProcesso + DISCO_PROCESSO_SEM_PERMISSAO + nomeArquivo;
 	}
 
-	public static String arquivoNaoEncontrado(String arq) {
-		return "Arquivo " + arq + ", nao encontrado.";
+	public static String arquivoNaoEncontrado(String nomeArquivo) {
+		return "Arquivo " + nomeArquivo + " nao encontrado.";
 	}
 
 	public static String operacoesDoSistema(int posicaoOperacao, boolean status) {
@@ -65,7 +65,7 @@ public class Util {
 		return "\n" + SISTEMA_DE_ARQUIVOS + "\n";
 	}
 
-	public static String salvouArquivo(Operacao op, int inicio) {
+	public static String salvouArquivo(Operacao op, int inicioBloco) {
 		int i;
 		StringBuilder sb = new StringBuilder();
 		sb.append(PROCESSO);
@@ -74,15 +74,15 @@ public class Util {
 		sb.append(op.getNomeArquivo());
 		sb.append("(blocos: ");
 		if (op.getBlocosNecessarios() <= 6) {
-			sb.append(String.valueOf(inicio));
-			for (i = inicio + 1; i < inicio + op.getBlocosNecessarios() - 1; i++) {
+			sb.append(String.valueOf(inicioBloco));
+			for (i = inicioBloco + 1; i < inicioBloco + op.getBlocosNecessarios() - 1; i++) {
 				sb.append(", " + String.valueOf(i));
 			}
-			sb.append(" e " + String.valueOf(inicio + op.getBlocosNecessarios() - 1));
+			sb.append(" e " + String.valueOf(inicioBloco + op.getBlocosNecessarios() - 1));
 		} else {
-			sb.append(inicio);
+			sb.append(inicioBloco);
 			sb.append(" ate ");
-			sb.append(inicio + op.getBlocosNecessarios() - 1);
+			sb.append(inicioBloco + op.getBlocosNecessarios() - 1);
 		}
 		sb.append(")");
 

@@ -19,6 +19,10 @@ import modules.Filas;
 import modules.Interface;
 import modules.LeitorDeArquivos;
 
+// Lucas da Silva Souza                        16/0013020
+// Anne Carolina Borges Gontijo Gomes          14/0016546
+// Eduardo Freire Fernandes                    16/0027136
+
 public class PseudoSO {
 	private static Interface terminal;
 	private File arquivoDeProcessos = null;
