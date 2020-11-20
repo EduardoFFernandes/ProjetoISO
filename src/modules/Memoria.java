@@ -13,7 +13,10 @@ public class Memoria {
         memoriaAsString = Util.memoriaEmBranco(memoriaAsString);
         processos = new ArrayList<>();
     }
-
+    
+    /**
+     * Metodo que le a memoria principal e se possivel aloca espaco para o processo ser processado.
+     */
     public boolean aloca(boolean isProcessoTempoReal, Processo processo) {
         String espacoNecessario = new String();
         int indiceDisponivel;
@@ -42,6 +45,9 @@ public class Memoria {
         return false;
     }
 
+    /**
+     * Metodo que retira o espaco alocado dos processos.
+     */
     public void desaloca(Processo processo) {
 
         String espacoLivre = new String();

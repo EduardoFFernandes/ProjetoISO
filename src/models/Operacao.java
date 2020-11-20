@@ -1,10 +1,13 @@
 package models;
 
+/**
+ * Essa classe mantem a operacao no sistema.
+ */
 public class Operacao {
-    private String nomeArquivo;
     private int idProcesso;
     private int codOperacao;
-    private int qtdBlocos;
+    private String nomeArquivo;
+    private int blocosNecessarios;
 
     public Operacao() {
         super();
@@ -22,8 +25,8 @@ public class Operacao {
         return codOperacao;
     }
 
-    public int getQtdBlocos() {
-        return qtdBlocos;
+    public int getBlocosNecessarios() {
+        return blocosNecessarios;
     }
 
     public void setNomeArquivo(String nomeArquivo) {
@@ -38,8 +41,8 @@ public class Operacao {
         this.codOperacao = codOperacao;
     }
 
-    public void setQtdBlocos(int qtdBlocos) {
-        this.qtdBlocos = qtdBlocos;
+    public void setBlocosNecessarios(int qtdBlocos) {
+        this.blocosNecessarios = qtdBlocos;
     }
 
 }

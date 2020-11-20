@@ -1,11 +1,14 @@
 package models;
 
+/**
+ * Essa classe mantem o arquivo no sistema.
+ */
 public class Arquivo {
 
     private String nomeArquivo;
-    private int posPrimeiroBloco;
-    private int qtdBlocosArq;
-    private int idProcessoCriouArquivo;
+    private int primeiroBloco;
+    private int blocosOcupados;
+    private int idProcesso;
 
     public Arquivo() {
         super();
@@ -15,32 +18,32 @@ public class Arquivo {
         return nomeArquivo;
     }
 
-    public int getPosPrimeiroBloco() {
-        return posPrimeiroBloco;
+    public int getPrimeiroBloco() {
+        return primeiroBloco;
     }
 
-    public int getQtdBlocosArq() {
-        return qtdBlocosArq;
+    public int getBlocosOcupados() {
+        return blocosOcupados;
     }
 
-    public int getIdProcessoCriouArquivo() {
-        return idProcessoCriouArquivo;
+    public int getIdProcesso() {
+        return idProcesso;
     }
 
     public void setNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
     }
 
-    public void setPosPrimeiroBloco(int posPrimeiroBloco) {
-        this.posPrimeiroBloco = posPrimeiroBloco;
+    public void setPrimeiroBloco(int posPrimeiroBloco) {
+        this.primeiroBloco = posPrimeiroBloco;
     }
 
-    public void setQtdBlocosArq(int qtdBlocosArq) {
-        this.qtdBlocosArq = qtdBlocosArq;
+    public void setBlocosOcupados(int qtdBlocosArq) {
+        this.blocosOcupados = qtdBlocosArq;
     }
 
-    public void setIdProcessoCriouArquivo(int idProcessoCriouArquivo) {
-        this.idProcessoCriouArquivo = idProcessoCriouArquivo;
+    public void setIdProcesso(int idProcessoCriouArquivo) {
+        this.idProcesso = idProcessoCriouArquivo;
     }
 
 }

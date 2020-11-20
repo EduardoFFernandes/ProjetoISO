@@ -1,26 +1,31 @@
 package modules;
 
-import java.awt.Color;
+import static util.Constantes.NAO_EXISTE_PROCESSO;
+import static util.Constantes.OP_CRIAR;
+import static util.Util.arquivoNaoEncontrado;
+import static util.Util.excluiuArq;
+import static util.Util.naoSalvouArquivo;
+import static util.Util.operacoesDoSistema;
+import static util.Util.processoErroDelete;
+import static util.Util.salvouArquivo;
+
 import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
 import util.Util;
 
-import static util.Constantes.*;
-import static util.Util.*;
-
 public class Disco {
 
     private ArrayList<Arquivo> arquivos;
-    private GerenciadorDeFilas gerenciadorDeFilas;
+    private Filas filas;
     private String discoAsString;
     private int blocosDisco;
 
-    public Disco(int blocosDisco, GerenciadorDeFilas listenerSO, ArrayList<Arquivo> arquivos) {
+    public Disco(int blocosDisco, Filas listenerSO, ArrayList<Arquivo> arquivos) {
         this.arquivos = arquivos;
         this.blocosDisco = blocosDisco;
-        this.gerenciadorDeFilas = listenerSO;
+        this.filas = listenerSO;
         discoAsString = Util.discoEmBranco(discoAsString, blocosDisco);
     }
 
@@ -30,20 +35,20 @@ public class Disco {
     public boolean cria(Operacao operacao, int posicaoOperacao) {
         int indiceDisponivel;
         String espacoNecessario = new String();
-        for (int i = 0; i < operacao.getQtdBlocos(); i++) {
+        for (int i = 0; i < operacao.getBlocosNecessarios(); i++) {
             espacoNecessario = espacoNecessario.concat("0");
         }
         if ((indiceDisponivel = discoAsString.indexOf(espacoNecessario)) != -1) {
 
             discoAsString = discoAsString.substring(0, indiceDisponivel)
                     .concat(espacoNecessario.replaceAll("0", operacao.getNomeArquivo()))
-                    .concat(discoAsString.substring(indiceDisponivel + operacao.getQtdBlocos()));
-            gerenciadorDeFilas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, true));
-            gerenciadorDeFilas.getTelaPrincipal().logMessage(salvouArquivo(operacao, indiceDisponivel));
+                    .concat(discoAsString.substring(indiceDisponivel + operacao.getBlocosNecessarios()));
+            filas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, true));
+            filas.getTelaPrincipal().logMessage(salvouArquivo(operacao, indiceDisponivel));
             return true;
         } else {
-            gerenciadorDeFilas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, false));
-            gerenciadorDeFilas.getTelaPrincipal().logMessage(naoSalvouArquivo(operacao), Color.RED);
+            filas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, false));
+            filas.getTelaPrincipal().logMessage(naoSalvouArquivo(operacao));
             return false;
         }
     }
@@ -51,7 +56,7 @@ public class Disco {
     /**
      * Metodo que executa as operacoes recebidas.
      */
-    public void executaOperacoes(ArrayList<Operacao> operacoes, Interface telaPrincipal) {
+    public void executaOperacoes(ArrayList<Operacao> operacoes, Interface terminal) {
         int posicaoOperacao = 1;
         for (Operacao operacao : operacoes) {
 
@@ -59,29 +64,28 @@ public class Disco {
 
                 cria(operacao, posicaoOperacao);
             } else {
-                Arquivo arq = procuraArquivo(operacao.getNomeArquivo());
-                if (arq == null) {
-                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                    gerenciadorDeFilas.getTelaPrincipal().logMessage(arqNaoEncontrado(operacao.getNomeArquivo()));
-                } else if (operacao.getIdProcesso() == arq.getIdProcessoCriouArquivo()) {
-                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, true));
-                    deleta(arq);
-                    gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
-                } else if (gerenciadorDeFilas.isProcessoTempoReal(operacao.getIdProcesso())) {
-                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, true));
-                    deleta(arq);
-                    gerenciadorDeFilas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                Arquivo arquivo = procuraArquivo(operacao.getNomeArquivo());
+                if (arquivo == null) {
+                    terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                    filas.getTelaPrincipal().logMessage(arquivoNaoEncontrado(operacao.getNomeArquivo()));
+                } else if (operacao.getIdProcesso() == arquivo.getIdProcesso()) {
+                    terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
+                    deleta(arquivo);
+                    filas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                } else if (filas.isProcessoTempoReal(operacao.getIdProcesso())) {
+                    terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
+                    deleta(arquivo);
+                    filas.getTelaPrincipal().logMessage(excluiuArq(operacao));
                 } else {
-                    telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                    gerenciadorDeFilas.getTelaPrincipal().logMessage(
-                            procSemPermissaoExcluirArq(operacao.getIdProcesso(), operacao.getNomeArquivo()),
-                            Interface.RED);
+                    terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                    filas.getTelaPrincipal().logMessage(
+                            processoErroDelete(operacao.getIdProcesso(), operacao.getNomeArquivo()));
                 }
 
             }
-            if (!gerenciadorDeFilas.isProcessoValido(operacao.getIdProcesso())) {
-                telaPrincipal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                gerenciadorDeFilas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
+            if (!filas.isProcessoValido(operacao.getIdProcesso())) {
+                terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
+                filas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
                 return;
             }
             posicaoOperacao++;
@@ -94,27 +98,33 @@ public class Disco {
     public boolean deleta(Arquivo arquivo) {
 
         String espacoLivre = new String();
-        for (int i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+        for (int i = 0; i < arquivo.getBlocosOcupados(); i++) {
             espacoLivre = espacoLivre.concat("0");
         }
-        discoAsString = discoAsString.substring(0, arquivo.getPosPrimeiroBloco()).concat(espacoLivre)
-                .concat(discoAsString.substring(arquivo.getPosPrimeiroBloco() + arquivo.getQtdBlocosArq()));
+        discoAsString = discoAsString.substring(0, arquivo.getPrimeiroBloco()).concat(espacoLivre)
+                .concat(discoAsString.substring(arquivo.getPrimeiroBloco() + arquivo.getBlocosOcupados()));
         return true;
     }
 
+    /**
+     * Metodo que insere os arquivos passados manualmente pelo arquivo de texto no disco.
+     */
     public void processaArquivos() {
         for (Arquivo arquivo : arquivos) {
             int i;
             String espacoLivre = new String();
-            for (i = 0; i < arquivo.getQtdBlocosArq(); i++) {
+            for (i = 0; i < arquivo.getBlocosOcupados(); i++) {
                 espacoLivre = espacoLivre.concat(arquivo.getNomeArquivo());
             }
-            discoAsString = discoAsString.substring(0, arquivo.getPosPrimeiroBloco()).concat(espacoLivre)
-                    .concat(discoAsString.substring(arquivo.getPosPrimeiroBloco() + arquivo.getQtdBlocosArq()));
+            discoAsString = discoAsString.substring(0, arquivo.getPrimeiroBloco()).concat(espacoLivre)
+                    .concat(discoAsString.substring(arquivo.getPrimeiroBloco() + arquivo.getBlocosOcupados()));
 
         }
     }
-
+    
+    /**
+     * Metodo de busca.
+     */
     private Arquivo procuraArquivo(String nome) {
         for (Arquivo arquivo : arquivos) {
             if (arquivo.getNomeArquivo().equals(nome)) {
@@ -148,12 +158,12 @@ public class Disco {
         this.arquivos = arquivos;
     }
 
-    public GerenciadorDeFilas getListenerSO() {
-        return gerenciadorDeFilas;
+    public Filas getListenerSO() {
+        return filas;
     }
 
-    public void setListenerSO(GerenciadorDeFilas listenerSO) {
-        this.gerenciadorDeFilas = listenerSO;
+    public void setListenerSO(Filas listenerSO) {
+        this.filas = listenerSO;
     }
 
 }

@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * Essa classe mantem o processo no sistema operacional.
+ */
 public class Processo {
     private int tempoInicializacao;
     private int prioridade;

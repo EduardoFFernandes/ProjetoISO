@@ -5,8 +5,8 @@ import static util.Util.erroRecursos;
 import models.Processo;
 
 /**
- * Por padrão todo recurso é inicializado com o SEMAFORO_ABERTO o que indica que
- * ele está livre para ser alocado.
+ * Por padrao todo recurso e inicializado com o SEMAFORO_ABERTO o que indica que
+ * ele esta livre para ser alocado.
  * 
  * 
  */
@@ -16,14 +16,14 @@ public class Semaforo {
 	private static int SEMAFORO_FECHADO = 1;
 
 	/**
-	 * Essa função implementa a lógica de semáforo, atribui o recurso ao
+	 * Esse metodo implementa a logica de semaforo, atribui o recurso ao
 	 * processamento e bloqueia aquele recurso temporariamente para os outros
 	 * processamentos. Aqui o semaforo fica fechado.
 	 * 
 	 * 
 	 */
 	public static void alocaRecurso(Processos gerenciadorDeProcessos, Recursos gerenciadorDeRecursos,
-			Processo processoAtual, Interface telaPrincipal) {
+			Processo processoAtual, Interface terminal) {
 		if (processoAtual.getModem() > 0) {
 			if (gerenciadorDeRecursos.getModem() == SEMAFORO_ABERTO) {
 				gerenciadorDeRecursos.setModem(SEMAFORO_FECHADO);
@@ -31,7 +31,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		}
 		if (processoAtual.getScanner() > 0) {
@@ -41,7 +41,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		}
 		if (processoAtual.getImpressora() == 1) {
@@ -51,7 +51,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		} else if (processoAtual.getImpressora() == 2) {
 			if (gerenciadorDeRecursos.getImpressoras()[1] == SEMAFORO_ABERTO) {
@@ -60,7 +60,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		}
 		if (processoAtual.getDisco() == 1) {
@@ -70,7 +70,7 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		} else if (processoAtual.getDisco() == 2) {
 			if (gerenciadorDeRecursos.getDiscoRigido()[1] == SEMAFORO_ABERTO) {
@@ -79,17 +79,15 @@ public class Semaforo {
 				desalocaRecursos(gerenciadorDeRecursos, processoAtual);
 				gerenciadorDeProcessos.atualizaProcesso(processoAtual);
 				gerenciadorDeProcessos.ultimoProcessoFila(processoAtual);
-				telaPrincipal.logMessage(erroRecursos(processoAtual.getPID()), Interface.RED);
+				terminal.logMessage(erroRecursos(processoAtual.getPID()));
 			}
 		}
 		processoAtual.setRecursosAlocados(true);
 	}
 
 	/**
-	 * Essa função implementa a lógica de semáforo, retira o recurso do
+	 * Esse metodo implementa a logica de semï¿½foro, retira o recurso do
 	 * processamento para libera-lo para os outros. Aqui o semaforo fica aberto.
-	 * 
-	 * 
 	 */
 	public static boolean desalocaRecursos(Recursos gerenciadorDeRecursos, Processo processoAtual) {
 		if (processoAtual.getModem() > 0 && gerenciadorDeRecursos.getModem() == SEMAFORO_FECHADO) {

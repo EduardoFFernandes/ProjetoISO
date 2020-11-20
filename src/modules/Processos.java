@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import models.Processo;
 
 /**
- * Essa classe controla a prioridade das filas dos processos(Eu gosto de pensar
- * que sao processamentos), esta ligado a logica do sem�foro tamb�m, quando a
- * competicao de recursos o processo vai perdendo prioridade, conforme os clocks
+ * Essa classe controla a prioridade das filas dos processos, esta ligado a logica do semaforo tambem, 
+ * quando a competicao de recursos o processo vai perdendo prioridade, conforme os clocks
  * passam os processos vao subindo de prioridade.
  */
 public class Processos {

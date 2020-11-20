@@ -16,7 +16,7 @@ import models.Operacao;
 import models.Processo;
 import util.Util;
 
-public class ManipuladorDeArquivos extends Util {
+public class LeitorDeArquivos extends Util {
 
 	private String tipoArquivo;
 	private File arquivo;
@@ -27,7 +27,7 @@ public class ManipuladorDeArquivos extends Util {
 	private boolean validado;
 
 	
-	public ManipuladorDeArquivos(File arquivo, String tipoArquivo) {
+	public LeitorDeArquivos(File arquivo, String tipoArquivo) {
 		this.tipoArquivo = tipoArquivo;
 		this.arquivo = arquivo;
 		this.validado = false;
@@ -130,9 +130,9 @@ public class ManipuladorDeArquivos extends Util {
 
 			Arquivo arquivo = new Arquivo();
 			arquivo.setNomeArquivo(valores[0]);
-			arquivo.setPosPrimeiroBloco(getInt(valores[1]));
-			arquivo.setQtdBlocosArq(getInt(valores[2]));
-			arquivo.setIdProcessoCriouArquivo(ARQUIVO_PADRAO);
+			arquivo.setPrimeiroBloco(getInt(valores[1]));
+			arquivo.setBlocosOcupados(getInt(valores[2]));
+			arquivo.setIdProcesso(ARQUIVO_PADRAO);
 			arquivosValidados.add(arquivo);
 		}
 
@@ -150,7 +150,7 @@ public class ManipuladorDeArquivos extends Util {
 				operacao.setIdProcesso(getInt(valores[0]));
 				operacao.setCodOperacao(getInt(valores[1]));
 				operacao.setNomeArquivo(valores[2]);
-				operacao.setQtdBlocos(getInt(valores[3]));
+				operacao.setBlocosNecessarios(getInt(valores[3]));
 
 			} else {
 				operacao = new Operacao();

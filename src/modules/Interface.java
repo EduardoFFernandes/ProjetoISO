@@ -60,9 +60,6 @@ public class Interface extends JFrame implements ActionListener {
 	private StyleContext contextoDeEstilo;
 	private Style estiloTerminal;
 
-	public final static Color GREEN = new Color(51, 169, 54);
-	public final static Color RED = Color.RED;
-
 	/**
 	 * Atribui o objeto Main e os parametros para a Interface.
 	 * 
@@ -88,7 +85,7 @@ public class Interface extends JFrame implements ActionListener {
 				mainListener.valida(processo, source.getActionCommand());
 			} else {
 				mainListener.invalida(source.getActionCommand());
-				logMessage(SELECIONAR_CANCELADO, RED);
+				logMessage(SELECIONAR_CANCELADO);
 			}
 			break;
 		case ARQUIVOS:
@@ -97,7 +94,7 @@ public class Interface extends JFrame implements ActionListener {
 				mainListener.valida(arquivo, source.getActionCommand());
 			} else {
 				mainListener.invalida(source.getActionCommand());
-				logMessage(SELECIONAR_CANCELADO, RED);
+				logMessage(SELECIONAR_CANCELADO);
 			}
 			break;
 		case INICIAR:
@@ -112,13 +109,13 @@ public class Interface extends JFrame implements ActionListener {
 	 * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
 	 * 
 	 */
-	synchronized public void logMessage(String texto, Color cor) {
+	synchronized public void logMessage(String texto) {
 		EventQueue.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					StyleConstants.setForeground(estiloTerminal, cor);
+					StyleConstants.setForeground(estiloTerminal, Color.WHITE);
 					terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
 					revalidate();
 					scrollVertical.setValue(scrollVertical.getMaximum() + 1);
@@ -128,14 +125,6 @@ public class Interface extends JFrame implements ActionListener {
 				}
 			}
 		});
-	}
-
-	/**
-	 * 
-	 * 
-	 */
-	public void logMessage(String texto) {
-		logMessage(texto, Color.WHITE);
 	}
 
 	/**

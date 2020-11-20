@@ -5,8 +5,10 @@ import static util.Constantes.ARQUIVO_SELECIONADO;
 import static util.Constantes.ARQUIVO_VALIDO;
 import static util.Constantes.DISCO_MAPA_OCUPACAO;
 import static util.Constantes.DISCO_PROCESSO_SEM_PERMISSAO;
+import static util.Constantes.FALHA;
 import static util.Constantes.PROCESSO;
 import static util.Constantes.SISTEMA_DE_ARQUIVOS;
+import static util.Constantes.SUCESSO;
 
 import models.Operacao;
 import models.Processo;
@@ -34,7 +36,7 @@ public class Util {
 		return sb.toString();
 	}
 
-	public static String arquivoNaoValido(String nomeArquivo) {
+	public static String arquivoInvalido(String nomeArquivo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(ARQUIVO_SELECIONADO);
 		sb.append(nomeArquivo);
@@ -42,24 +44,25 @@ public class Util {
 		return sb.toString();
 	}
 
-	public static String executandoProc(int PID) {
+	public static String processoExecutado(int PID) {
 		return PROCESSO + PID + " =>";
 	}
 
-	public static String procFinalizado(int PID) {
+	public static String processoFinalizado(int PID) {
 		return PROCESSO + PID + " foi finalizado.";
 	}
 
-	public static String procSemPermissaoExcluirArq(int procId, String arq) {
+	public static String processoErroDelete(int procId, String arq) {
 		return PROCESSO + procId + DISCO_PROCESSO_SEM_PERMISSAO + arq;
 	}
 
-	public static String arqNaoEncontrado(String arq) {
-		return "Arquivo: " + arq + ", Nao encontrado.";
+	public static String arquivoNaoEncontrado(String arq) {
+		return "Arquivo " + arq + ", nao encontrado.";
 	}
 
 	public static String operacoesDoSistema(int posicaoOperacao, boolean status) {
-		return "Operacao " + posicaoOperacao + " =>" + ((status) ? " Sucesso" : " Falha");
+
+        return "Operacao " + posicaoOperacao + " =>" + ((status) ? SUCESSO : FALHA);
 	}
 
 	public static String sistemaDeArquivos() {
@@ -74,16 +77,16 @@ public class Util {
 		sb.append(" criou o arquivo ");
 		sb.append(op.getNomeArquivo());
 		sb.append("(blocos: ");
-		if (op.getQtdBlocos() <= 6) {
+		if (op.getBlocosNecessarios() <= 6) {
 			sb.append(String.valueOf(inicio));
-			for (i = inicio + 1; i < inicio + op.getQtdBlocos() - 1; i++) {
+			for (i = inicio + 1; i < inicio + op.getBlocosNecessarios() - 1; i++) {
 				sb.append(", " + String.valueOf(i));
 			}
-			sb.append(" e " + String.valueOf(inicio + op.getQtdBlocos() - 1));
+			sb.append(" e " + String.valueOf(inicio + op.getBlocosNecessarios() - 1));
 		} else {
 			sb.append(inicio);
 			sb.append(" ate ");
-			sb.append(inicio + op.getQtdBlocos() - 1);
+			sb.append(inicio + op.getBlocosNecessarios() - 1);
 		}
 		sb.append(")");
 
@@ -92,14 +95,14 @@ public class Util {
 
 	public static String naoSalvouArquivo(Operacao operacao) {
 		return PROCESSO + operacao.getIdProcesso() + " nao pode criar o arquivo " + operacao.getNomeArquivo()
-				+ " (falta de espaco)";
+				+ " ,falta de espaco";
 	}
 
 	public static String excluiuArq(Operacao operacao) {
 		return PROCESSO + operacao.getIdProcesso() + " deletou o arquivo " + operacao.getNomeArquivo();
 	}
 
-	public static void resultadoDisco(final Interface telaPrincipal, final Disco gerenciadorDoDisco) {
+	public static void resultadoDisco(final Interface terminal, final Disco gerenciadorDoDisco) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
@@ -113,7 +116,7 @@ public class Util {
 				sb.append("| " + gerenciadorDoDisco.getDiscoAsString().charAt(i) + " | ");
 			}
 		}
-		telaPrincipal.logMessage(sb.toString());
+		terminal.logMessage(sb.toString());
 	}
 
 	public static String dispatcher(Processo processo) {

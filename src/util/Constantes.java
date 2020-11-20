@@ -11,9 +11,11 @@ public class Constantes {
 	public static final String SELECIONAR = "Selecionar";
 	public static final String SELECIONAR_CANCELADO = "Selecionar arquivo, cancelado.";
 	public static final String ARQUIVO_SELECIONADO = "Arquivo: ";
-	public static final String ARQUIVO_VALIDO = " validado com sucesso.";
+	public static final String ARQUIVO_VALIDO = " validado.";
 	public static final String ARQUIVO_INVALIDO = " invalido.";
-	public static final String ARQUIVO_IGUAIS = "Arquivos Iguais.";
+	public static final String SUCESSO = " Sucesso";
+	public static final String FALHA = " Falha";
+	public static final String ARQUIVO_IGUAIS = "arquivos iguais.";
 	public static final String ADICIONAR_PROCESSO = "Adicionar Processos";
 	public static final String ADICIONAR_ARQUIVOS = "Adicionar Arquivos";
 	public static final String INICIAR = "Iniciar";
