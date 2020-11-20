@@ -49,7 +49,7 @@ public class PseudoSO {
 	/**
 	 * Sistema Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso
 	 * significa que um processo paralelo vai ser iniciado assim que o objeto
-	 * gerenciadorDeFilas � iniciado(java.lang.Thread.start()) tendo como argumentos
+	 * gerenciadorDeFilas e iniciado(java.lang.Thread.start()) tendo como argumentos
 	 * os processos carregados, operacoes carregadas, arquivos carregados, a tela
 	 * principal(JPanel), e a quantidade de blocos no arquivo carregado.
 	 */

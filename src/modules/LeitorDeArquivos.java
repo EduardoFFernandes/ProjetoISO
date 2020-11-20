@@ -73,24 +73,24 @@ public class LeitorDeArquivos extends Util {
 
 		String linha;
 		while ((linha = buffRead.readLine()) != null) {
-			if (!isValidString(linha)) {
+			if (!textoValido(linha)) {
 				return false;
 			}
 			String[] valores = linha.split(", ");
 			for (int i = 0; i < 7; i++) {
-				if (!isValidString(valores[i])) {
+				if (!textoValido(valores[i])) {
 					return false;
 				}
 			}
 			Processo processo = new Processo();
-			processo.setTempoInicializacao(getInt(valores[0]));
-			processo.setPrioridade(getInt(valores[1]));
-			processo.setTempo(getInt(valores[2]));
-			processo.setBlocosMemoria(getInt(valores[3]));
-			processo.setImpressora(getInt(valores[4]));
-			processo.setScanner(getInt(valores[5]));
-			processo.setModem(getInt(valores[6]));
-			processo.setDisco(getInt(valores[7]));
+			processo.setTempoInicializacao(Integer.parseInt(valores[0]));
+			processo.setPrioridade(Integer.parseInt(valores[1]));
+			processo.setTempo(Integer.parseInt(valores[2]));
+			processo.setBlocosMemoria(Integer.parseInt(valores[3]));
+			processo.setImpressora(Integer.parseInt(valores[4]));
+			processo.setScanner(Integer.parseInt(valores[5]));
+			processo.setModem(Integer.parseInt(valores[6]));
+			processo.setDisco(Integer.parseInt(valores[7]));
 			processo.setPID(processId);
 			processo.setInicioProcessoMemoria(-1);
 			processo.setRecursosAlocados(false);
@@ -113,25 +113,25 @@ public class LeitorDeArquivos extends Util {
 		String linha;
 		
 		linha = buffRead.readLine();// quantidade total de blocos no disco
-		if (!isValidString(linha)) {
+		if (!textoValido(linha)) {
 			return false;
 		}
 		blocosDisco = Integer.parseInt(linha);
 		linha = buffRead.readLine();// quantidade de Arquivos/segmentos em disco
-		if (!isValidString(linha)) {
+		if (!textoValido(linha)) {
 			return false;
 		}
 		int segmentos = Integer.parseInt(linha);
 		for (int i = 0; i < segmentos; i++) { // percorre todos os segmentos
 			String[] valores = buffRead.readLine().split(", ");
-			if (!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2])) {
+			if (!textoValido(valores[0]) || !textoValido(valores[1]) || !textoValido(valores[2])) {
 				return false;
 			}
 
 			Arquivo arquivo = new Arquivo();
 			arquivo.setNomeArquivo(valores[0]);
-			arquivo.setPrimeiroBloco(getInt(valores[1]));
-			arquivo.setBlocosOcupados(getInt(valores[2]));
+			arquivo.setPrimeiroBloco(Integer.parseInt(valores[1]));
+			arquivo.setBlocosOcupados(Integer.parseInt(valores[2]));
 			arquivo.setIdProcesso(ARQUIVO_PADRAO);
 			arquivosValidados.add(arquivo);
 		}
@@ -139,23 +139,23 @@ public class LeitorDeArquivos extends Util {
 		while ((linha = buffRead.readLine()) != null) {
 			Operacao operacao = null;
 			String[] valores = linha.split(", ");
-			if (!isValidString(valores[0]) || !isValidString(valores[1]) || !isValidString(valores[2])) {
+			if (!textoValido(valores[0]) || !textoValido(valores[1]) || !textoValido(valores[2])) {
 				return false;
 			}
 			if (valores.length == 4) {// operacao de adicao de arquivos
-				if (!isValidString(valores[3])) {
+				if (!textoValido(valores[3])) {
 					return false;
 				}
 				operacao = new Operacao();
-				operacao.setIdProcesso(getInt(valores[0]));
-				operacao.setCodOperacao(getInt(valores[1]));
+				operacao.setIdProcesso(Integer.parseInt(valores[0]));
+				operacao.setCodOperacao(Integer.parseInt(valores[1]));
 				operacao.setNomeArquivo(valores[2]);
-				operacao.setBlocosNecessarios(getInt(valores[3]));
+				operacao.setBlocosNecessarios(Integer.parseInt(valores[3]));
 
 			} else {
 				operacao = new Operacao();
-				operacao.setIdProcesso(getInt(valores[0]));
-				operacao.setCodOperacao(getInt(valores[1]));
+				operacao.setIdProcesso(Integer.parseInt(valores[0]));
+				operacao.setCodOperacao(Integer.parseInt(valores[1]));
 				operacao.setNomeArquivo(valores[2]);
 			}
 			operacoesValidados.add(operacao);

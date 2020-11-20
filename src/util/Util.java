@@ -17,11 +17,7 @@ import modules.Interface;
 
 public class Util {
 
-	public int getInt(String string) {
-		return Integer.parseInt(string);
-	}
-
-	public boolean isValidString(String string) {
+	public boolean textoValido(String string) {
 		if (string == null || string.equals("")) {
 			return false;
 		}
