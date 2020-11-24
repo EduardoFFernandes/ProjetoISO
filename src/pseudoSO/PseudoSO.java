@@ -50,29 +50,6 @@ public class PseudoSO {
         });
     }
 
-<<<<<<< HEAD
-	/**
-	 * Sistema Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso
-	 * significa que um processo paralelo vai ser iniciado assim que o objeto
-	 * Filas e iniciado(java.lang.Thread.start()) tendo como argumentos
-	 * os processos carregados, operacoes carregadas, arquivos carregados, a tela
-	 * principal(JPanel), e a quantidade de blocos no arquivo carregado.
-	 */
-	public void iniciar() {
-		if (arquivoDeProcessos == null) {
-			terminal.logMessage(NAO_SELECIONADO_PROCESSOS);
-			return;
-		}
-		if (arquivoDeOperacao == null) {
-			terminal.logMessage(NAO_SELECIONADO_ARQUIVOS);
-			return;
-		}
-		if (arquivoDeProcessos.equals(arquivoDeOperacao)) {
-			terminal.logMessage(ARQUIVO_IGUAIS);
-			return;
-		}
-		terminal.logMessage(INICIANDO);
-=======
     /**
      * Sistema Operacional, aqui a classe GerenciadorDeFilas extende Threads, isso
      * significa que um processo paralelo vai ser iniciado assim que o objeto
@@ -94,7 +71,6 @@ public class PseudoSO {
             return;
         }
         terminal.logMessage(INICIANDO);
->>>>>>> branch 'master' of https://github.com/EduardoFFernandes/ProjetoISO.git
 
         Filas filas = new Filas(processos, operacoes, arquivos, terminal, manipulador.getBlocosDisco());
         filas.setDaemon(true);
