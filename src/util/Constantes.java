@@ -24,7 +24,7 @@ public class Constantes {
 	public static final String DISCO_PROCESSO_SEM_PERMISSAO = " Nao possui permissao para excluir o arquivo: ";
 	public static final String DISCO_MAPA_OCUPACAO = "Mapa de ocupacoes do disco: ";
 	public static final String PROCESSO = "Processo ";
-	public static final String SEM_PROCESSO_EXECUTAR = "Sem processos a executar";
+	public static final String SEM_PROCESSO_EXECUTAR = "sem processos a executar";
 	public static final String NAO_EXISTE_PROCESSO = "Nao existe o processo.";
 	public static final String SISTEMA_DE_ARQUIVOS = "Sistema de arquivos =>";
 	public static final String INSTRUCAO = " Instrucao ";

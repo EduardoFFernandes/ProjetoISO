@@ -6,7 +6,10 @@ import static util.Constantes.ARQUIVO_VALIDO;
 import static util.Constantes.DISCO_MAPA_OCUPACAO;
 import static util.Constantes.DISCO_PROCESSO_SEM_PERMISSAO;
 import static util.Constantes.FALHA;
+import static util.Constantes.INICIO;
+import static util.Constantes.INSTRUCAO;
 import static util.Constantes.PROCESSO;
+import static util.Constantes.RETURN_SIGINT;
 import static util.Constantes.SISTEMA_DE_ARQUIVOS;
 import static util.Constantes.SUCESSO;
 
@@ -115,6 +118,15 @@ public class Util {
 		terminal.logMessage(sb.toString());
 	}
 
+	public static void processoInfo(Interface terminal, Processo processo) throws InterruptedException {
+		terminal.logMessage(PROCESSO + processo.getPID() + INICIO);
+		for (int i = 1; i <= 3; i++) {
+			terminal.logMessage(PROCESSO + processo.getPID() + INSTRUCAO + i);
+		}
+		terminal.logMessage(PROCESSO + processo.getPID() + RETURN_SIGINT);
+	}
+
+	
 	public static String dispatcher(Processo processo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Dispatcher =>");

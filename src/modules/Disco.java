@@ -43,12 +43,12 @@ public class Disco {
             discoAsString = discoAsString.substring(0, indiceDisponivel)
                     .concat(espacoNecessario.replaceAll("0", operacao.getNomeArquivo()))
                     .concat(discoAsString.substring(indiceDisponivel + operacao.getBlocosNecessarios()));
-            filas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, true));
-            filas.getTelaPrincipal().logMessage(salvouArquivo(operacao, indiceDisponivel));
+            filas.getTerminal().logMessage(operacoesDoSistema(posicaoOperacao, true));
+            filas.getTerminal().logMessage(salvouArquivo(operacao, indiceDisponivel));
             return true;
         } else {
-            filas.getTelaPrincipal().logMessage(operacoesDoSistema(posicaoOperacao, false));
-            filas.getTelaPrincipal().logMessage(naoSalvouArquivo(operacao));
+            filas.getTerminal().logMessage(operacoesDoSistema(posicaoOperacao, false));
+            filas.getTerminal().logMessage(naoSalvouArquivo(operacao));
             return false;
         }
     }
@@ -67,25 +67,25 @@ public class Disco {
                 Arquivo arquivo = procuraArquivo(operacao.getNomeArquivo());
                 if (arquivo == null) {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                    filas.getTelaPrincipal().logMessage(arquivoNaoEncontrado(operacao.getNomeArquivo()));
+                    filas.getTerminal().logMessage(arquivoNaoEncontrado(operacao.getNomeArquivo()));
                 } else if (operacao.getIdProcesso() == arquivo.getIdProcesso()) {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
                     deleta(arquivo);
-                    filas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                    filas.getTerminal().logMessage(excluiuArq(operacao));
                 } else if (filas.isProcessoTempoReal(operacao.getIdProcesso())) {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
                     deleta(arquivo);
-                    filas.getTelaPrincipal().logMessage(excluiuArq(operacao));
+                    filas.getTerminal().logMessage(excluiuArq(operacao));
                 } else {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                    filas.getTelaPrincipal().logMessage(
+                    filas.getTerminal().logMessage(
                             processoErroDelete(operacao.getIdProcesso(), operacao.getNomeArquivo()));
                 }
 
             }
             if (!filas.isProcessoValido(operacao.getIdProcesso())) {
                 terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
-                filas.getTelaPrincipal().logMessage(NAO_EXISTE_PROCESSO);
+                filas.getTerminal().logMessage(NAO_EXISTE_PROCESSO);
                 return;
             }
             posicaoOperacao++;
