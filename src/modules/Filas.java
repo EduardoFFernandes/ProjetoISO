@@ -2,17 +2,16 @@ package modules;
 
 import static util.Constantes.SEM_PROCESSO_EXECUTAR;
 import static util.Util.dispatcher;
-import static util.Util.processoInfo;
 import static util.Util.erroFaltaEspacoProcessos;
 import static util.Util.erroMemoria;
 import static util.Util.processoExecutado;
 import static util.Util.processoFinalizado;
+import static util.Util.processoInfo;
 import static util.Util.resultadoDisco;
 import static util.Util.sistemaDeArquivos;
 
 import java.util.ArrayList;
 
-import models.Arquivo;
 import models.Operacao;
 import models.Processo;
 
@@ -26,80 +25,51 @@ public class Filas extends Thread {
 	private ArrayList<Processo> processos; // Essa lista vai ser manipulavel
 	private ArrayList<Operacao> operacoes;
 	private int clock;
-
-	public Filas(ArrayList<Processo> lstProcessos, ArrayList<Operacao> operacoes, ArrayList<Arquivo> arquivos,
-			Interface terminal, int blocosDisco) {
-		gerenciadorDeProcessos = new Processos(lstProcessos);
-		gerenciadorDoDisco = new Disco(blocosDisco, this, arquivos);
-		gerenciadorDoDisco.processaArquivos();
-		gerenciadorDaMemoriaPrincipal = new Memoria();
-		gerenciadorDeRecursos = new Recursos();
-		this.setTerminal(terminal);
-		this.setLstProcessos(lstProcessos);
-
-		this.setProcessos(lstProcessos);
-		this.setOperacoes(operacoes);
-		;
-	}
-
+	
+	/**
+	 * Metodo que controla o fluxo de acoes do sistema operacional.
+	 */
 	@Override
 	public void run() {
 		try {
-			executaFilas();
+			clock = 0;
+			Processo processo = null;
+			tempoInicializacaoProcessos();
+			terminal.logMessage("\n");
+			while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !lstProcessos.isEmpty()) {
+				if (processo == null) {
+					terminal.logMessage((clock + 1) + " º clock, " + SEM_PROCESSO_EXECUTAR  );
+					clock();
+					continue;
+				}
+				if (!gerenciadorDaMemoriaPrincipal.getProcessos().contains(processo)) {
+					if (!gerenciadorDaMemoriaPrincipal.aloca(processo.getPrioridade() == 0, processo)) {
+						gerenciadorDeProcessos.ultimoProcessoFila(processo);
+						terminal.logMessage(erroMemoria(processo.getPID()));
+						continue;
+					}
+				}
+				if (!processo.recursosAlocado()) {
+					Semaforo.alocaRecurso(gerenciadorDeProcessos, gerenciadorDeRecursos, processo, terminal);
+					continue;
+				}
+				terminal.logMessage(dispatcher(processo));
+				terminal.logMessage(processoExecutado(processo.getPID()));
+				processoInfo(terminal,processo);
+				processo.setTempo(processo.getTempo() - 1);
+				tempoProcesso(processo);
+				clock();
+			}
+			terminal.logMessage(sistemaDeArquivos());
+			gerenciadorDoDisco.executaOperacoes(operacoes, terminal);
+			resultadoDisco(terminal, gerenciadorDoDisco);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	synchronized public boolean isProcessoTempoReal(int idProcesso) {
-		for (Processo processo : processos) {
-			if (processo.getPID() == idProcesso) {
-				if (processo.getPrioridade() == 0)
-					return true;
-				break;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Metodo que controla o fluxo de acoes do sistema operacional.
-	 */
-	public void executaFilas() throws InterruptedException {
-		clock = 0;
-		Processo processo = null;
-		tempoInicializacaoProcessos();
-		terminal.logMessage("\n");
-		while ((processo = gerenciadorDeProcessos.proximoProcesso()) != null || !lstProcessos.isEmpty()) {
-			if (processo == null) {
-				terminal.logMessage((clock + 1) + " º clock, " + SEM_PROCESSO_EXECUTAR  );
-				clock();
-				continue;
-			}
-			if (!gerenciadorDaMemoriaPrincipal.getProcessos().contains(processo)) {
-				if (!gerenciadorDaMemoriaPrincipal.aloca(processo.getPrioridade() == 0, processo)) {
-					gerenciadorDeProcessos.ultimoProcessoFila(processo);
-					terminal.logMessage(erroMemoria(processo.getPID()));
-					continue;
-				}
-			}
-			if (!processo.isRecursosAlocados()) {
-				Semaforo.alocaRecurso(gerenciadorDeProcessos, gerenciadorDeRecursos, processo, terminal);
-				continue;
-			}
-			terminal.logMessage(dispatcher(processo));
-			terminal.logMessage(processoExecutado(processo.getPID()));
-			processoInfo(terminal,processo);
-			processo.setTempo(processo.getTempo() - 1);
-			tempoProcesso(processo);
-			clock();
-		}
-		terminal.logMessage(sistemaDeArquivos());
-		gerenciadorDoDisco.executaOperacoes(operacoes, terminal);
-		resultadoDisco(terminal, gerenciadorDoDisco);
-	}
-
-	public boolean isProcessoValido(int PID) {
+	
+	public boolean processoValidado(int PID) {
 		for (Processo processo : processos) {
 			if (processo.getPID() == PID) {
 				return true;
@@ -168,7 +138,21 @@ public class Filas extends Thread {
 	public void setGerenciadorDeProcessos(Processos gerenciadorDeProcessos) {
 		this.gerenciadorDeProcessos = gerenciadorDeProcessos;
 	}
-
+	
+	/**
+	 * Verifica se o processo tem a prioridade de tempo real.
+	 */
+	synchronized public boolean processoTempoReal(int idProcesso) {
+		for (Processo processo : processos) {
+			if (processo.getPID() == idProcesso) {
+				if (processo.getPrioridade() == 0)
+					return true;
+				break;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Verifica a inicializacao dos processos, se estiver no tempo do clock correto,
 	 * adiciona o processo ao gerenciador de Processos
@@ -193,7 +177,7 @@ public class Filas extends Thread {
 	 * da logica da aplicacao, caso nao seja, o processo perde prioridade para os
 	 * outros.
 	 */
-	private void tempoProcesso(Processo processo) {
+	synchronized private void tempoProcesso(Processo processo) {
 		if (processo.getTempo() == 0) {
 			gerenciadorDeProcessos.removeProcesso(processo);
 			gerenciadorDaMemoriaPrincipal.desaloca(processo);
@@ -206,9 +190,8 @@ public class Filas extends Thread {
 
 	synchronized private void clock() throws InterruptedException {
 		clock++;
-		wait(1000);
 		terminal.logMessage("\n");
 		tempoInicializacaoProcessos();
+		wait(1000);
 	}
-
 }

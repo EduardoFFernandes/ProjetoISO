@@ -1,7 +1,6 @@
 package util;
 
 public class Constantes {
-
 	
 	public static final String TITULO = "Trabalho ISO";
 	public static final String PROCESSOS = "Processos";
@@ -33,6 +32,7 @@ public class Constantes {
 	public static final String JAVA_PNG = "java.png";
 	public static final String TXT = "txt";
 	
+	public static int TAMANHO_MAXIMO = 1000;
     public static int OP_EXCLUIR = 1;
     public static int OP_CRIAR = 0;
     public static int ARQUIVO_PADRAO = -1;

@@ -1,6 +1,7 @@
 package modules;
 
 import java.util.ArrayList;
+import static util.Constantes.TAMANHO_MAXIMO;
 
 import models.Processo;
 
@@ -14,14 +15,8 @@ public class Processos {
     ArrayList<Processo> filaProcessos;
     ArrayList<ArrayList<Processo>> filas;
 
-    private static int TAMANHO_MAXIMO = 1000;
-
-    public Processos(ArrayList<Processo> filaProcessos) {
-        this.filaProcessos = filaProcessos;
-        this.filas = new ArrayList<ArrayList<Processo>>();
-        for (int i = 0; i <= 3; i++) {
-            filas.add(new ArrayList<Processo>());
-        }
+    public Processos() {
+    	super();
     }
 
     /**
@@ -89,7 +84,7 @@ public class Processos {
      * Diminui a prioridade do processo.
      */
     public void diminuiPrioridade(Processo processo) {
-        if (processo.isRecursoBlocante()) {
+        if (processo.recursoBloqueado()) {
             return;
         }
         if (processo.getPrioridade() == 0) {
@@ -171,4 +166,20 @@ public class Processos {
     private boolean verificaTamanho(ArrayList<Processo> fila) {
         return fila.size() < TAMANHO_MAXIMO;
     }
+
+	public ArrayList<ArrayList<Processo>> getFilas() {
+		return filas;
+	}
+
+	public void setFilas(ArrayList<ArrayList<Processo>> filas) {
+		this.filas = filas;
+	}
+
+	public ArrayList<Processo> getFilaProcessos() {
+		return filaProcessos;
+	}
+
+	public void setFilaProcessos(ArrayList<Processo> filaProcessos) {
+		this.filaProcessos = filaProcessos;
+	}
 }

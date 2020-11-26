@@ -9,17 +9,8 @@ public class Recursos {
     private int[] impressoras;
     private int[] discoRigido;
 
-    private int SEMAFORO = 0;
-
     public Recursos() {
-        this.scanner = SEMAFORO;
-        this.modem = SEMAFORO;
-        this.impressoras = new int[2];
-        impressoras[0] = SEMAFORO;
-        impressoras[1] = SEMAFORO;
-        this.discoRigido = new int[2];
-        discoRigido[0] = SEMAFORO;
-        discoRigido[1] = SEMAFORO;
+    	super();
     }
 
     public int getScanner() {
@@ -46,11 +37,19 @@ public class Recursos {
         this.impressoras[id] = impressoras;
     }
 
-    public int[] getDiscoRigido() {
+    public void setEstruturaImpressoras(int[] impressoras) {
+		this.impressoras = impressoras;
+	}
+
+	public int[] getDiscoRigido() {
         return discoRigido;
     }
 
     public void setDiscoRigido(int id, int discoRigido) {
         this.discoRigido[id] = discoRigido;
     }
+
+	public void setEstruturaDiscoRigido(int[] discoRigido) {
+		this.discoRigido = discoRigido;
+	}
 }

@@ -7,47 +7,51 @@ import static util.Constantes.NAO_SELECIONADO_PROCESSOS;
 import static util.Constantes.PROCESSOS;
 import static util.Util.arquivoInvalido;
 import static util.Util.arquivoValidado;
+import static util.Util.memoriaEmBranco;
 
-import java.awt.EventQueue;
+import static modules.Semaforo.SEMAFORO_ABERTO;
+
 import java.io.File;
 import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
 import models.Processo;
+import modules.Disco;
 import modules.Filas;
 import modules.Interface;
 import modules.LeitorDeArquivos;
+import modules.Memoria;
+import modules.Processos;
+import modules.Recursos;
+import util.Util;
 
 // Lucas da Silva Souza                        16/0013020
 // Anne Carolina Borges Gontijo Gomes          14/0016546
 // Eduardo Freire Fernandes                    16/0027136
 
 public class PseudoSO {
-    private static Interface terminal;
+    private Interface terminal;
     private File arquivoDeProcessos = null;
     private File arquivoDeOperacao = null;
     private ArrayList<Processo> processos;
     private ArrayList<Operacao> operacoes;
     private ArrayList<Arquivo> arquivos;
     private LeitorDeArquivos manipulador;
-
+    
     /**
      * Funcao inicializadora do programa, cria a tela principal da aplicacao.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PseudoSO pseudoSO = new PseudoSO();
-                    terminal = new Interface(pseudoSO);
-                    terminal.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            PseudoSO pseudoSO = new PseudoSO();
+            pseudoSO.setTerminal(new Interface());
+            pseudoSO.getTerminal().setMainListener(pseudoSO);
+            pseudoSO.getTerminal().initialize();
+            pseudoSO.getTerminal().setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -71,23 +75,12 @@ public class PseudoSO {
             return;
         }
         terminal.logMessage(INICIANDO);
-
-        Filas filas = new Filas(processos, operacoes, arquivos, terminal, manipulador.getBlocosDisco());
+        Filas filas = criaContexto();
         filas.setDaemon(true);
         filas.start();
-//		Filas filas = new Filas();
-//		filas.setGerenciadorDaMemoriaPrincipal(gerenciadorDaMemoriaPrincipal);
-//		filas.setGerenciadorDoDisco(gerenciadorDoDisco);
-//		filas.setGerenciadorDeRecursos(gerenciadorDeRecursos);
-//		filas.setGerenciadorDeProcessos(processos);
-//            gerenciadorDoDisco = new Disco(blocosDisco, this, arquivos);
-//            clock = 0;
-//    
-//            this.terminal = terminal;
-//            this.processos = processos;
-//            this.processosIniciais = processos;
-//            this.operacoes = operacoes;
     }
+    
+    
 
     /**
      * Funcao que valida os arquivos selecionados.
@@ -128,5 +121,58 @@ public class PseudoSO {
         this.arquivoDeOperacao = null;
         this.operacoes = null;
         this.arquivos = null;
+    }
+
+	public Interface getTerminal() {
+		return terminal;
+	}
+
+	public void setTerminal(Interface terminal) {
+		this.terminal = terminal;
+	}
+	
+	/**
+     * Esse metodo cria o contexto da thread de acordo com os arquivos de texto recebidos
+     */
+    private Filas criaContexto() {
+    	Filas filas = new Filas();
+    	
+    	//MEMORIA PRINCIPAL
+		filas.setGerenciadorDaMemoriaPrincipal(new Memoria());
+		filas.getGerenciadorDaMemoriaPrincipal().setMemoriaAsString(memoriaEmBranco());
+		filas.getGerenciadorDaMemoriaPrincipal().setProcessos(new ArrayList<>());
+		
+		//RECURRSOS
+		filas.setGerenciadorDeRecursos(new Recursos());
+		filas.getGerenciadorDeRecursos().setScanner(SEMAFORO_ABERTO);
+		filas.getGerenciadorDeRecursos().setModem(SEMAFORO_ABERTO);
+		filas.getGerenciadorDeRecursos().setEstruturaImpressoras(new int[2]);
+		filas.getGerenciadorDeRecursos().setImpressoras(0,SEMAFORO_ABERTO);
+		filas.getGerenciadorDeRecursos().setImpressoras(1,SEMAFORO_ABERTO);
+		filas.getGerenciadorDeRecursos().setEstruturaDiscoRigido(new int[2]);
+		filas.getGerenciadorDeRecursos().setDiscoRigido(0,SEMAFORO_ABERTO);
+		filas.getGerenciadorDeRecursos().setDiscoRigido(1,SEMAFORO_ABERTO);
+		
+        //DISCO
+		filas.setGerenciadorDoDisco(new Disco());
+        filas.getGerenciadorDoDisco().setDiscoAsString(Util.discoEmBranco(manipulador.getBlocosDisco()));
+        filas.getGerenciadorDoDisco().setArquivos(arquivos);
+        filas.getGerenciadorDoDisco().setFilas(filas);
+        filas.getGerenciadorDoDisco().processaArquivos();
+        //PROCESSOS
+        filas.setGerenciadorDeProcessos(new Processos());
+        ArrayList <ArrayList<Processo>> filasPrioridade= new ArrayList<ArrayList<Processo>>();
+        for (int i = 0; i <= 3; i++) {
+        	filasPrioridade.add(new ArrayList<Processo>());
+        }
+        filas.getGerenciadorDeProcessos().setFilas(filasPrioridade);
+        filas.getGerenciadorDeProcessos().setFilaProcessos(processos);
+        
+        //TERMINAL
+        filas.setTerminal(terminal);
+        filas.setLstProcessos(processos);
+        filas.setProcessos(processos);
+        filas.setOperacoes(operacoes);
+    	return filas;
     }
 }

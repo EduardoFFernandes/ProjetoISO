@@ -106,19 +106,20 @@ public class Util {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");
 		sb.append(DISCO_MAPA_OCUPACAO);
-
-		for (int i = 0; i < gerenciadorDoDisco.getBlocosDisco(); i++) {
-			if (i % 10 != 0) {
-				sb.append(gerenciadorDoDisco.getDiscoAsString().charAt(i) + " | ");
+		int count = 0;
+		for (char c : gerenciadorDoDisco.getDiscoAsString().toCharArray()) {
+			if (count % 10 != 0) {
+				sb.append(c + " | ");
 			} else {
 				sb.append("\n");
-				sb.append("| " + gerenciadorDoDisco.getDiscoAsString().charAt(i) + " | ");
+				sb.append("| " + c + " | ");
 			}
+			count++;
 		}
 		terminal.logMessage(sb.toString());
 	}
 
-	public static void processoInfo(Interface terminal, Processo processo) throws InterruptedException {
+	synchronized public static void processoInfo(Interface terminal, Processo processo) {
 		terminal.logMessage(PROCESSO + processo.getPID() + INICIO);
 		for (int i = 1; i <= 3; i++) {
 			terminal.logMessage(PROCESSO + processo.getPID() + INSTRUCAO + i);
@@ -167,16 +168,16 @@ public class Util {
 	}
 	
 	// Metodos que criam a logica do disco e memoria
-	public static String memoriaEmBranco(String blocoMemoria) {
-	    blocoMemoria = new String();
+	public static String memoriaEmBranco() {
+		String blocoMemoria = new String();
 	    for (int i = 0; i < 1024; i++) {
 	        blocoMemoria = blocoMemoria.concat("E");
 	    }
 	   return blocoMemoria;
 	}
 	
-	public static String discoEmBranco(String blocoDisco, int tamanho) {
-	    blocoDisco = new String();
+	public static String discoEmBranco(int tamanho) {
+		String blocoDisco = new String();
         for (int i = 0; i < tamanho; i++) {
             blocoDisco = blocoDisco.concat("0");
         }

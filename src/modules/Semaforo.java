@@ -12,8 +12,8 @@ import models.Processo;
  */
 public class Semaforo {
 
-    private static int SEMAFORO_ABERTO = 0;
-    private static int SEMAFORO_FECHADO = 1;
+    public static int SEMAFORO_ABERTO = 0;
+    public static int SEMAFORO_FECHADO = 1;
 
     /**
      * Esse metodo implementa a logica de semaforo, atribui o recurso ao

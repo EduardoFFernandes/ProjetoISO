@@ -61,16 +61,6 @@ public class Interface extends JFrame implements ActionListener {
 	private Style estiloTerminal;
 
 	/**
-	 * Atribui o objeto Main e os parametros para a Interface.
-	 * 
-	 * 
-	 */
-	public Interface(PseudoSO pseudoSO) throws BadLocationException {
-		this.mainListener = pseudoSO;
-		initialize();
-	}
-
-	/**
 	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com
 	 * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
 	 * os arquivos e iniciar o Pseudo SO.
@@ -110,21 +100,15 @@ public class Interface extends JFrame implements ActionListener {
 	 * 
 	 */
 	synchronized public void logMessage(String texto) {
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					StyleConstants.setForeground(estiloTerminal, Color.WHITE);
-					terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
-					revalidate();
-					scrollVertical.setValue(scrollVertical.getMaximum() + 1);
-					revalidate();
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			StyleConstants.setForeground(estiloTerminal, Color.WHITE);
+			terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
+			revalidate();
+			scrollVertical.setValue(scrollVertical.getMaximum() + 1);
+			revalidate();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -148,7 +132,7 @@ public class Interface extends JFrame implements ActionListener {
 	 * 
 	 * 
 	 */
-	private void initialize() throws BadLocationException {
+	public void initialize() throws BadLocationException {
 
 		// TERMINAL
 		terminalView = new DefaultStyledDocument();
@@ -192,5 +176,13 @@ public class Interface extends JFrame implements ActionListener {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
 		pack();
 
+	}
+
+	public PseudoSO getMainListener() {
+		return mainListener;
+	}
+
+	public void setMainListener(PseudoSO mainListener) {
+		this.mainListener = mainListener;
 	}
 }

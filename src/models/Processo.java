@@ -61,11 +61,11 @@ public class Processo {
         return PID;
     }
 
-    public boolean isRecursosAlocados() {
+    public boolean recursosAlocado() {
         return recursosAlocados;
     }
 
-    public boolean isRecursoBlocante() {
+    public boolean recursoBloqueado() {
         return recursoBlocante;
     }
 

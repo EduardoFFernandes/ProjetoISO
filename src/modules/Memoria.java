@@ -3,15 +3,13 @@ package modules;
 import java.util.ArrayList;
 
 import models.Processo;
-import util.Util;
 
 public class Memoria {
     private String memoriaAsString;
     private ArrayList<Processo> processos;
 
-    Memoria() {
-        memoriaAsString = Util.memoriaEmBranco(memoriaAsString);
-        processos = new ArrayList<>();
+    public Memoria() {
+        super();
     }
     
     /**
@@ -64,4 +62,16 @@ public class Memoria {
     public ArrayList<Processo> getProcessos() {
         return processos;
     }
+
+	public String getMemoriaAsString() {
+		return memoriaAsString;
+	}
+
+	public void setMemoriaAsString(String memoriaAsString) {
+		this.memoriaAsString = memoriaAsString;
+	}
+
+	public void setProcessos(ArrayList<Processo> processos) {
+		this.processos = processos;
+	}
 }

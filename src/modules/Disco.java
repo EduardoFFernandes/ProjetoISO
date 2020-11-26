@@ -13,22 +13,13 @@ import java.util.ArrayList;
 
 import models.Arquivo;
 import models.Operacao;
-import util.Util;
 
 public class Disco {
 
     private ArrayList<Arquivo> arquivos;
     private Filas filas;
     private String discoAsString;
-    private int blocosDisco;
-
-    public Disco(int blocosDisco, Filas listenerSO, ArrayList<Arquivo> arquivos) {
-        this.arquivos = arquivos;
-        this.blocosDisco = blocosDisco;
-        this.filas = listenerSO;
-        discoAsString = Util.discoEmBranco(discoAsString, blocosDisco);
-    }
-
+    
     /**
      * Metodo que cria os arquivos do disco.
      */
@@ -72,7 +63,7 @@ public class Disco {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
                     deleta(arquivo);
                     filas.getTerminal().logMessage(excluiuArq(operacao));
-                } else if (filas.isProcessoTempoReal(operacao.getIdProcesso())) {
+                } else if (filas.processoTempoReal(operacao.getIdProcesso())) {
                     terminal.logMessage(operacoesDoSistema(posicaoOperacao, true));
                     deleta(arquivo);
                     filas.getTerminal().logMessage(excluiuArq(operacao));
@@ -83,7 +74,7 @@ public class Disco {
                 }
 
             }
-            if (!filas.isProcessoValido(operacao.getIdProcesso())) {
+            if (!filas.processoValidado(operacao.getIdProcesso())) {
                 terminal.logMessage(operacoesDoSistema(posicaoOperacao, false));
                 filas.getTerminal().logMessage(NAO_EXISTE_PROCESSO);
                 return;
@@ -142,14 +133,6 @@ public class Disco {
         this.discoAsString = discoAsString;
     }
 
-    public int getBlocosDisco() {
-        return blocosDisco;
-    }
-
-    public void setBlocosDisco(int blocosDisco) {
-        this.blocosDisco = blocosDisco;
-    }
-
     public ArrayList<Arquivo> getArquivos() {
         return arquivos;
     }
@@ -158,12 +141,12 @@ public class Disco {
         this.arquivos = arquivos;
     }
 
-    public Filas getListenerSO() {
+    public Filas getFilas() {
         return filas;
     }
 
-    public void setListenerSO(Filas listenerSO) {
-        this.filas = listenerSO;
+    public void setFilas(Filas filas) {
+        this.filas = filas;
     }
 
 }
