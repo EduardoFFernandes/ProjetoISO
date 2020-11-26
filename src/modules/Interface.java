@@ -14,7 +14,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,146 +42,146 @@ import pseudoSO.PseudoSO;
  */
 public class Interface extends JFrame implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private PseudoSO mainListener;
-	private String icone = JAVA_PNG;
-	private DefaultStyledDocument terminalView;
-	private JTextPane painelTerminal;
-	private JScrollPane scrollTerminal;
-	private JScrollBar scrollVertical;
-	private JFileChooser selecionador;
+    private PseudoSO mainListener;
+    private String icone = JAVA_PNG;
+    private DefaultStyledDocument terminalView;
+    private JTextPane painelTerminal;
+    private JScrollPane scrollTerminal;
+    private JScrollBar scrollVertical;
+    private JFileChooser selecionador;
 
-	JMenuBar menuBar = new JMenuBar();
-	JMenu menu = new JMenu(MENU);
-	JMenuItem itemAddProcesso, itemAddArquivo, iniciar;
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu(MENU);
+    JMenuItem itemAddProcesso, itemAddArquivo, iniciar;
 
-	private StyleContext contextoDeEstilo;
-	private Style estiloTerminal;
+    private StyleContext contextoDeEstilo;
+    private Style estiloTerminal;
 
-	/**
-	 * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com
-	 * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
-	 * os arquivos e iniciar o Pseudo SO.
-	 * 
-	 */
-	@Override
-	public void actionPerformed(ActionEvent source) {
-		switch (source.getActionCommand()) {
-		case PROCESSOS:
-			File processo = selecionaArquivo((JMenuItem) source.getSource());
-			if (processo != null) {
-				mainListener.valida(processo, source.getActionCommand());
-			} else {
-				mainListener.invalida(source.getActionCommand());
-				logMessage(SELECIONAR_CANCELADO);
-			}
-			break;
-		case ARQUIVOS:
-			File arquivo = selecionaArquivo((JMenuItem) source.getSource());
-			if (arquivo != null) {
-				mainListener.valida(arquivo, source.getActionCommand());
-			} else {
-				mainListener.invalida(source.getActionCommand());
-				logMessage(SELECIONAR_CANCELADO);
-			}
-			break;
-		case INICIAR:
-			mainListener.iniciar();
-			break;
-		default:
-			break;
-		}
-	}
+    /**
+     * Esse metodo vem da interface ActionListener foi sobreescrevido para lidar com
+     * os eventos dentro da interface, e aqui que e tratado a questão de selecionar
+     * os arquivos e iniciar o Pseudo SO.
+     * 
+     */
+    @Override
+    public void actionPerformed(ActionEvent source) {
+        switch (source.getActionCommand()) {
+        case PROCESSOS:
+            File processo = selecionaArquivo((JMenuItem) source.getSource());
+            if (processo != null) {
+                mainListener.valida(processo, source.getActionCommand());
+            } else {
+                mainListener.invalida(source.getActionCommand());
+                logMessage(SELECIONAR_CANCELADO);
+            }
+            break;
+        case ARQUIVOS:
+            File arquivo = selecionaArquivo((JMenuItem) source.getSource());
+            if (arquivo != null) {
+                mainListener.valida(arquivo, source.getActionCommand());
+            } else {
+                mainListener.invalida(source.getActionCommand());
+                logMessage(SELECIONAR_CANCELADO);
+            }
+            break;
+        case INICIAR:
+            mainListener.iniciar();
+            break;
+        default:
+            break;
+        }
+    }
 
-	/**
-	 * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
-	 * 
-	 */
-	synchronized public void logMessage(String texto) {
-		try {
-			StyleConstants.setForeground(estiloTerminal, Color.WHITE);
-			terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
-			revalidate();
-			scrollVertical.setValue(scrollVertical.getMaximum() + 1);
-			revalidate();
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
+     * 
+     */
+    synchronized public void logMessage(String texto) {
+        try {
+            StyleConstants.setForeground(estiloTerminal, Color.WHITE);
+            terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
+            revalidate();
+            scrollVertical.setValue(scrollVertical.getMaximum() + 1);
+            revalidate();
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Metodo que abre o dialogo de busca de arquivos.
-	 */
-	public File selecionaArquivo(Component component) {
-		selecionador = new JFileChooser();
+    /**
+     * Metodo que abre o dialogo de busca de arquivos.
+     */
+    public File selecionaArquivo(Component component) {
+        selecionador = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter(null, TXT);
-		selecionador.setFileFilter(filtro);
-		int retorno = selecionador.showDialog(component, SELECIONAR);
+        selecionador.setFileFilter(filtro);
+        int retorno = selecionador.showDialog(component, SELECIONAR);
 
-		if (retorno == JFileChooser.APPROVE_OPTION) {
-			return selecionador.getSelectedFile();
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Atribui os valores da Interface do sistema.
-	 * 
-	 * 
-	 */
-	public void initialize() throws BadLocationException {
+        if (retorno == JFileChooser.APPROVE_OPTION) {
+            return selecionador.getSelectedFile();
+        } else {
+            return null;
+        }
+    }
 
-		// TERMINAL
-		terminalView = new DefaultStyledDocument();
-		painelTerminal = new JTextPane(terminalView);
-		scrollTerminal = new JScrollPane(painelTerminal);
-		scrollVertical = scrollTerminal.getVerticalScrollBar();
+    /**
+     * Atribui os valores da Interface do sistema.
+     * 
+     * 
+     */
+    public void initialize() throws BadLocationException {
 
-		// MENU
-		iniciar = new JMenuItem(INICIAR);
-		iniciar.addActionListener(this);
-		iniciar.setActionCommand(INICIAR);
-		menu.add(iniciar);
+        // TERMINAL
+        terminalView = new DefaultStyledDocument();
+        painelTerminal = new JTextPane(terminalView);
+        scrollTerminal = new JScrollPane(painelTerminal);
+        scrollVertical = scrollTerminal.getVerticalScrollBar();
 
-		itemAddProcesso = new JMenuItem(PROCESSOS);
-		itemAddProcesso.addActionListener(this);
-		itemAddProcesso.setActionCommand(PROCESSOS);
-		menu.add(itemAddProcesso);
+        // MENU
+        iniciar = new JMenuItem(INICIAR);
+        iniciar.addActionListener(this);
+        iniciar.setActionCommand(INICIAR);
+        menu.add(iniciar);
 
-		itemAddArquivo = new JMenuItem(ARQUIVOS);
-		itemAddArquivo.addActionListener(this);
-		itemAddArquivo.setActionCommand(ARQUIVOS);
-		menu.add(itemAddArquivo);
-		menuBar.add(menu);
+        itemAddProcesso = new JMenuItem(PROCESSOS);
+        itemAddProcesso.addActionListener(this);
+        itemAddProcesso.setActionCommand(PROCESSOS);
+        menu.add(itemAddProcesso);
 
-		contextoDeEstilo = new StyleContext();
-		estiloTerminal = contextoDeEstilo.addStyle(null, null);
+        itemAddArquivo = new JMenuItem(ARQUIVOS);
+        itemAddArquivo.addActionListener(this);
+        itemAddArquivo.setActionCommand(ARQUIVOS);
+        menu.add(itemAddArquivo);
+        menuBar.add(menu);
 
-		painelTerminal.setEditable(false);
-		painelTerminal.setPreferredSize(new Dimension(200, 200));
-		painelTerminal.setBackground(Color.black);
+        contextoDeEstilo = new StyleContext();
+        estiloTerminal = contextoDeEstilo.addStyle(null, null);
 
-		// JFrame
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle(TITULO);
-		setJMenuBar(menuBar);
-		getContentPane().add(scrollTerminal, BorderLayout.CENTER);
-		setMinimumSize(new Dimension(500, 300));
-		setDefaultLookAndFeelDecorated(true);
+        painelTerminal.setEditable(false);
+        painelTerminal.setPreferredSize(new Dimension(200, 200));
+        painelTerminal.setBackground(Color.black);
 
-		// ICONE
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
-		pack();
+        // JFrame
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle(TITULO);
+        setJMenuBar(menuBar);
+        getContentPane().add(scrollTerminal, BorderLayout.CENTER);
+        setMinimumSize(new Dimension(500, 300));
+        setDefaultLookAndFeelDecorated(true);
 
-	}
+        // ICONE
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(icone)));
+        pack();
 
-	public PseudoSO getMainListener() {
-		return mainListener;
-	}
+    }
 
-	public void setMainListener(PseudoSO mainListener) {
-		this.mainListener = mainListener;
-	}
+    public PseudoSO getMainListener() {
+        return mainListener;
+    }
+
+    public void setMainListener(PseudoSO mainListener) {
+        this.mainListener = mainListener;
+    }
 }
