@@ -123,13 +123,7 @@ public class PseudoSO {
         this.arquivos = null;
     }
 
-	public Interface getTerminal() {
-		return terminal;
-	}
-
-	public void setTerminal(Interface terminal) {
-		this.terminal = terminal;
-	}
+	
 	
 	/**
      * Esse metodo cria o contexto da thread de acordo com os arquivos de texto recebidos
@@ -175,4 +169,12 @@ public class PseudoSO {
         filas.setOperacoes(operacoes);
     	return filas;
     }
+    
+    public Interface getTerminal() {
+		return terminal;
+	}
+
+	public void setTerminal(Interface terminal) {
+		this.terminal = terminal;
+	}
 }
