@@ -14,6 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -96,18 +97,25 @@ public class Interface extends JFrame implements ActionListener {
 
     /**
      * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
-     * 
+     * importante ressaltar o metodo invokeLater, e utilizado nessa funcao para
+     * garantir que a mensagem seja escrita de forma assincrona evitando a condicao
+     * de corrida que acusa um systemException.
      */
     synchronized public void logMessage(String texto) {
-        try {
-            StyleConstants.setForeground(estiloTerminal, Color.WHITE);
-            terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
-            revalidate();
-            scrollVertical.setValue(scrollVertical.getMaximum() + 1);
-            revalidate();
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StyleConstants.setForeground(estiloTerminal, Color.WHITE);
+                    terminalView.insertString(terminalView.getLength(), texto + "\n", estiloTerminal);
+                    revalidate();
+                    scrollVertical.setValue(scrollVertical.getMaximum() + 1);
+                    revalidate();
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
