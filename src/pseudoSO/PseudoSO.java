@@ -41,9 +41,9 @@ public class PseudoSO {
 
     /**
      * Funcao inicializadora do programa, cria a tela principal da aplicacao.
-     * importante ressaltar o metodo invokeLater, e utilizado nessa funcao para
-     * garantir que o terminal seja criado de forma assincrona evitando a condicao
-     * de corrida que acusa um systemException.
+     * importante ressaltar o metodo invokeLater, como estamos trabalhando com o
+     * objeto Thread precisamos avisar que esse metodo vai alterar os atributos
+     * referentes a esse objeto, caso contrario ele emite um exception.
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {

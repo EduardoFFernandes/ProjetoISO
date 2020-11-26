@@ -97,9 +97,9 @@ public class Interface extends JFrame implements ActionListener {
 
     /**
      * Esse metodo controla tudo que sera escrito no terminal da aplicacao.
-     * importante ressaltar o metodo invokeLater, e utilizado nessa funcao para
-     * garantir que a mensagem seja escrita de forma assincrona evitando a condicao
-     * de corrida que acusa um systemException.
+     * importante ressaltar o metodo invokeLater, como estamos trabalhando com um
+     * objeto thread temos que avisar que outra thread vai alterar o terminal, caso
+     * contrario acontece um exception.
      */
     synchronized public void logMessage(String texto) {
         EventQueue.invokeLater(new Runnable() {
