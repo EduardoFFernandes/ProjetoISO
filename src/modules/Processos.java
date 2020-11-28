@@ -148,7 +148,7 @@ public class Processos {
     }
 
     /**
-     * Remove o processo para a fila correspondente a sua prioridade
+     * Remove o processo da sua a fila.
      */
     public void removeProcesso(Processo processo) {
 

@@ -86,7 +86,7 @@ public class Semaforo {
     }
 
     /**
-     * Esse metodo implementa a logica de sem�foro, retira o recurso do
+     * Esse metodo implementa a logica de semaforo, retira o recurso do
      * processamento para libera-lo para os outros. Aqui o semaforo fica aberto.
      */
     public static boolean desalocaRecursos(Recursos gerenciadorDeRecursos, Processo processoAtual) {

@@ -76,7 +76,6 @@ public class PseudoSO {
         }
         terminal.logMessage(INICIANDO);
         Filas filas = criaContexto();
-        filas.setDaemon(true);
         filas.start();
     }
     
