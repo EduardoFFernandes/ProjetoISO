@@ -64,23 +64,6 @@ public class Processos {
     }
 
     /**
-     * Aumenta a prioridade do processo.
-     */
-    public void aumentaPrioridade(Processo processo) {
-        if (processo.getPrioridade() == 0 || processo.getPrioridade() == 1) {
-            return;
-        } else if (processo.getPrioridade() == 2) {
-            filas.get(2).remove(processo);
-            processo.setPrioridade(processo.getPrioridade() - 1);
-            filas.get(1).add(processo);
-        } else if (processo.getPrioridade() == 3) {
-            filas.get(3).remove(processo);
-            processo.setPrioridade(processo.getPrioridade() - 1);
-            filas.get(2).remove(processo);
-        }
-    }
-
-    /**
      * Diminui a prioridade do processo.
      */
     public void diminuiPrioridade(Processo processo) {
